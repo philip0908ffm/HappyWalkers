@@ -752,9 +752,10 @@ fieldset {
   margin-bottom: var(--space-4);
 }
 .invite-code {
-  font-size: 2rem;
+  font-size: 1.6rem;
   font-weight: 700;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
   font-family: ui-monospace, 'Courier New', monospace;
   background: var(--color-surface);
   border: 2px dashed var(--color-primary);
