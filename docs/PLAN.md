@@ -35,11 +35,26 @@ Regeln für alle:
 - Gemeinsame Dateien (`app.ts`, `schema.ts` fremder Tabellen, `common.json`, `components.css`)
   nur nach Absprache.
 
-## Phase 2 – Prüfen
+## Phase 1 – erledigt
+Alle Pakete A–F umgesetzt (siehe Git-Verlauf).
+
+## Phase 2 – Prüfen (erledigt)
 - Thomas: API-Tests über alle Pakete, End-to-End-Abläufe der Leit-Persona, axe auf allen Seiten,
   200 % Zoom, Tablet.
 - Aylin: Sicherheitsprüfung (Zugriff, Uploads, Anmeldung, Header), Befunde beheben.
 - Miriam: Barrierefreiheitsprüfung aller Seiten.
 
-## Phase 3 – Abschluss
-- Migration erzeugen, Railway-Anleitung, README, Abnahme durch Lena.
+## Phase 3 – Abschluss (erledigt)
+- [x] Migration erzeugt, Railway-Anleitung (`docs/DEPLOY-RAILWAY.md`), README
+- [x] Sicherheitsrunden 1 + 2 (`docs/SICHERHEIT.md`), Entscheidungen Lena: Premium-Testmodus in Produktion gesperrt,
+      Privatzone 300 m für Routen, geschützte Anzeigenamen, Distanz-Beiträge nur für Teilnehmende
+- [x] Abschlussrunde: Fotos an Beiträgen, Melden, „Meine nächsten Walks“, Challenge-Zeiträume, eine Quelle für Abzeichen-Namen
+
+## Offen für später
+- Echten Zahlungsanbieter anbinden (`server/src/lib/billing.ts`, z. B. Stripe oder Mollie, mit Webhooks)
+- SMS-Anbieter anbinden (`server/src/lib/sms.ts`)
+- Ansicht für Meldungen (Moderation durch Betreiber)
+- Ratenbegrenzung in gemeinsamer Ablage, falls mehrere Server-Instanzen laufen
+- HEIC-Fotos (iPhone) – sharp mit HEVC-Unterstützung
+- Weitere Sprachen (Türkisch, Russisch): Ordner `web/src/i18n/locales/tr|ru` anlegen
+- Mobile App (iOS/Android) gegen dieselbe API (Bearer-Token)
