@@ -14,7 +14,16 @@ export const sentMails: MailMessage[] = [];
 
 const resend = config.RESEND_API_KEY ? new Resend(config.RESEND_API_KEY) : null;
 
-export async function sendMail(msg: MailMessage): Promise<void> {
+/**
+ * Betreff ist eine Kopfzeile und enthält oft Benutzertexte (Anzeigename, Gruppen-/Walk-Titel):
+ * Zeilenumbrüche und andere Steuerzeichen entfernen (Header-Injection), Länge begrenzen.
+ */
+export function safeSubject(subject: string): string {
+  return subject.replace(/[\u0000-\u001F\u007F\u2028\u2029]+/g, ' ').replace(/\s{2,}/g, ' ').trim().slice(0, 200);
+}
+
+export async function sendMail(input: MailMessage): Promise<void> {
+  const msg = { ...input, subject: safeSubject(input.subject) };
   if (!resend) {
     sentMails.push(msg);
     if (sentMails.length > 200) sentMails.shift();

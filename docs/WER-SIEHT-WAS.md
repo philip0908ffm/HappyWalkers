@@ -26,23 +26,25 @@ für Personen/Profilbilder) statt eigener Regeln. Neue Regeln dort ergänzen, ni
 |---|---|---|
 | Profil-Details (Ort, Abzeichen, Statistik, Bio) | selbst; `followers` → bestätigte Folgende; `public` → alle Angemeldeten | `modules/social.ts` `GET /users/:id` |
 | Anzeigename | alle, die die Person in einem Kontext sehen (Gruppe, Walk, Beitrag) | `PersonRef` |
-| Name in Ranglisten | `leaderboardMode = 'hidden'` → „Teilnehmerin“ | `modules/challenges.ts` |
+| Name in Ranglisten | `leaderboardMode = 'hidden'` oder Blockierung → „Teilnehmende Person“; Gruppen-Challenge: Rangliste nur für aktive Mitglieder (Ausgetretene/Gesperrte sehen nur die eigene Zeile) | `modules/challenges.ts` |
 | Profilbild | selbst, gemeinsame aktive Gruppe, bestätigte Kontakte, öffentliches Profil; sonst 404 | `lib/people.ts` `avatarVisibleSet` |
 | Geburtsjahr, Geschlecht | **nur selbst** (`GET /me`, Export). Geschlecht nur für `canJoinWomenOnly` | `lib/access.ts` |
 | Wohnort | gespeichert nur PLZ + PLZ-Mittelpunkt; andere sehen höchstens `city`; Entfernungen auf ganze km gerundet | `lib/geo.ts`, `modules/rural.ts` |
-| Genauer Treffpunkt | Gruppen-Walk: aktive Mitglieder; Partner-Walk: Personen mit RSVP-Zeile; Erstellerin; sonst `meetingPoint: null`, Liste/Karte nur `lat/lon` des Gruppen-/PLZ-Mittelpunkts. Gilt auch für ICS-Datei | `canSeeMeetingPoint` |
-| Teilnehmerliste eines Walks | Mitglieder / Teilnehmende, sonst `participants: null` | `modules/walks.ts` |
-| Beiträge, Fotos, Einträge | `private` selbst; `group` aktive Mitglieder der Gruppe (ohne Gruppe: wie `followers`); `followers` bestätigte Folgende; `public` alle Angemeldeten | `canSeeContent` |
+| Genauer Treffpunkt | Gruppen-Walk: **nur** aktive Mitglieder (auch die Erstellerin nur, solange sie aktives Mitglied ist – gesperrt/entfernt → kein Treffpunkt, auch nicht für künftige Serientermine); Partner-Walk: Personen mit RSVP-Zeile und Erstellerin; Distanz-Termin: Erstellerin; sonst `meetingPoint: null`, Liste/Karte nur `lat/lon` des Gruppen-/PLZ-Mittelpunkts. Gilt auch für ICS-Datei, Aushang (kein Treffpunkt), Serien (`SeriesSummary` ohne Treffpunkt), Benachrichtigungen und E-Mails (nie Treffpunkt) | `canSeeMeetingPoint` |
+| Teilnehmerliste eines Walks | Gruppen-Walk: aktive Mitglieder; sonst Teilnehmende/Erstellerin; sonst `participants: null` | `modules/walks.ts` |
+| Walk ändern/absagen/bestätigen | Gruppen-Walk: aktuelle Gruppenleitung (nicht mehr eine gesperrte/entfernte Erstellerin); Partner-/Distanz-Termin: Erstellerin (Distanz mit Gruppe zusätzlich Leitung) | `canManageWalk` |
+| Beiträge, Fotos, Einträge | `private` selbst; `group` aktive Mitglieder der Gruppe (ohne Gruppe: wie `followers`; eingetragene Walks: Mitglieder gemeinsamer Gruppen); `followers` bestätigte Folgende; `public` alle Angemeldeten. Achtung: Beiträge zu „Gemeinsam auf Distanz“ aus der Übersicht werden `public` gepostet (Hinweis wird angezeigt). Routen eingetragener Walks sind vollständig sichtbar, wer den Eintrag sehen darf (Start/Ende oft an der Wohnung – Empfehlung S2-13) | `canSeeContent` |
 | Kommentare, Herzen | wer den Beitrag sehen darf | `canSeeContent` des Beitrags |
 | Folgen | nur nach Bestätigung (`status = 'accepted'`) | `isAcceptedFollower` |
 | Blockierungen, Meldungen | nur die Person selbst (Meldungen zusätzlich Betreiber-Team) | `modules/social.ts` |
-| Gehpartner-Gesuch | angemeldete Personen im Umkreis: `PersonRef`, Stadt, gerundete Entfernung, Tempo, Zeiten, Notiz – keine Kontaktdaten | `modules/rural.ts` |
+| Gehpartner-Gesuch | angemeldete Personen im Umkreis: `PersonRef`, Stadt, gerundete Entfernung, Tempo, Zeiten, Notiz – keine Kontaktdaten. Anfragen blockierter Personen: unsichtbar und nicht annehmbar | `modules/rural.ts` |
 | Geteiltes Abzeichen | öffentlich nur per zufälligem Token, nur `displayName` + Abzeichen; Teilen beenden löscht Token | `modules/badges.ts` |
 | Browser-Standort | nur als Suchparameter `lat/lon` einer Anfrage; **nie speichern, nie protokollieren** | `modules/groups.ts`, `walks.ts` |
 | E-Mail/Telefon | nur selbst; Benachrichtigungen laufen über Gehmeinsam | `services/notify.ts` |
 | Fotos (Dateien) | nur über Routen mit Zugriffsprüfung, nie statisch; EXIF/GPS beim Speichern entfernt | `services/storage.ts` |
-| Gruppen „nur auf Einladung“ | erscheinen nicht in Suchen; Details nur für Mitglieder/Eingeladene (sonst 404) | `modules/groups.ts` |
-| „Nur Frauen“-Gruppen | Beitritt nur mit `gender = 'woman'`; Geschlecht wird nie angezeigt | `canJoinWomenOnly` |
+| Gruppen „nur auf Einladung“ | erscheinen nicht in Suchen (Gruppen, Walks, `nearest`, `rural/overview`, Distanz-Termine mit dieser Gruppe); Details, Walks und Beitrittsversuch nur für Mitglieder/Eingeladene (sonst 404). Ausnahme: das Gruppenbild (`/groups/:id/photo`) ist wie bei allen Gruppen ohne Anmeldung abrufbar, wenn man die ID kennt (Einladungsseite) | `modules/groups.ts` |
+| Gruppenbild | öffentlich (wie Name und Ort der Gruppe) – keine Personen erkennbar zeigen | `modules/groups.ts` |
+| „Nur Frauen“-Gruppen | Beitritt (direkt, per Code, per Einladung) und Freigabe einer Anfrage nur mit `gender = 'woman'`; Geschlecht wird nie angezeigt | `canJoinWomenOnly` |
 | Gesperrte Mitglieder (`banned`) | keine Inhalte der Gruppe, kein Treffpunkt, kein erneuter Beitritt (auch nicht per Einladung) | `isActiveMember` |
 
 ## Benachrichtigungen
@@ -51,6 +53,9 @@ für Personen/Profilbilder) statt eigener Regeln. Neue Regeln dort ergänzen, ni
   und Blockieren erzeugen **keine** Benachrichtigung.
 - `notifications.data` darf keine Kontaktdaten, kein Geburtsjahr und keinen Treffpunkt enthalten
   (Treffpunkt nur über die Walk-Seite mit Zugriffsprüfung).
+- Beteiligte Person steht in `data.actorId` (bzw. `userId` bei Beitrittsanfragen, `fromUserId` bei Gehpartner-Anfragen):
+  Hinweise blockierter Personen werden ausgeblendet; bei Kontolöschung werden sie bei allen Empfängerinnen gelöscht.
+- E-Mails an andere (Einladungen, Gehpartner-Anfragen) sind mengenbegrenzt (30 Einladungen bzw. 10 Anfragen je Person und Tag).
 
 ## Eigene Daten
 
@@ -67,4 +72,6 @@ für Personen/Profilbilder) statt eigener Regeln. Neue Regeln dort ergänzen, ni
 - [ ] Treffpunkt/Koordinaten? → `canSeeMeetingPoint`, sonst nur ungefährer Ort.
 - [ ] Gruppenbezug? → `getMembership` + `isActiveMember` / `isGroupLead`, gesperrte ausschließen.
 - [ ] Datei? → `resolveKey` + Zugriffsprüfung, `Cache-Control: private`.
+- [ ] Sendet der Endpunkt E-Mails an andere oder prüft er erratbare Codes? → Kontingent/Ratenbegrenzung (`lib/ratelimit.ts`).
+- [ ] Rechte aus `createdBy`? → bei Gruppenbezug zusätzlich aktive Mitgliedschaft/Leitung prüfen (Sperre!).
 - [ ] Test für „darf nicht sehen“ geschrieben.

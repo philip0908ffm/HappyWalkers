@@ -125,8 +125,8 @@ export async function walkSummaries(rows: WalkRow[], viewerId?: string, center?:
   );
   const meetingVisible = (w: WalkRow) => {
     if (!viewerId) return false;
-    if (w.createdBy === viewerId) return true;
     if (w.kind === 'group' && w.groupId) return activeGroups.has(w.groupId);
+    if (w.createdBy === viewerId) return true;
     if (w.kind === 'partner') return myRsvpMap.has(w.id);
     return false;
   };
@@ -159,6 +159,8 @@ export async function walkSummaries(rows: WalkRow[], viewerId?: string, center?:
 
 async function canManageWalk(w: WalkRow, userId: string | undefined): Promise<boolean> {
   if (!userId) return false;
+  // Gruppen-Walk: nur die aktuelle Gruppenleitung (eine gesperrte/entfernte Erstellerin nicht mehr)
+  if (w.kind === 'group' && w.groupId) return isGroupLead(await getMembership(w.groupId, userId));
   if (w.createdBy === userId) return true;
   if (w.groupId) return isGroupLead(await getMembership(w.groupId, userId));
   return false;
@@ -184,6 +186,37 @@ async function canViewWalk(w: WalkRow, viewerId: string | undefined): Promise<bo
   return true;
 }
 
+/**
+ * „Gemeinsam auf Distanz“-Listen (ohne Ortsfilter): ohne Termine blockierter Personen und ohne
+ * Termine aus Gruppen „nur auf Einladung“, in denen die Person nicht aktives Mitglied ist
+ * (sonst stünden Name und ID der Einladungsgruppe in einer öffentlichen Liste).
+ */
+export async function visibleDistanceWalks(rows: WalkRow[], viewerId: string | undefined): Promise<WalkRow[]> {
+  const blocked = await blockedIds(viewerId);
+  const groupIds = [...new Set(rows.map((w) => w.groupId).filter((x): x is string => !!x))];
+  const hidden = new Set<string>();
+  if (groupIds.length) {
+    const inviteGroups = (
+      await db
+        .select({ id: s.groups.id })
+        .from(s.groups)
+        .where(and(inArray(s.groups.id, groupIds), eq(s.groups.joinPolicy, 'invite')))
+    ).map((g) => g.id);
+    const mine = new Set(
+      viewerId && inviteGroups.length
+        ? (
+            await db
+              .select({ id: s.groupMembers.groupId })
+              .from(s.groupMembers)
+              .where(and(inArray(s.groupMembers.groupId, inviteGroups), eq(s.groupMembers.userId, viewerId), eq(s.groupMembers.status, 'active')))
+          ).map((m) => m.id)
+        : [],
+    );
+    for (const id of inviteGroups) if (!mine.has(id)) hidden.add(id);
+  }
+  return rows.filter((w) => (!w.createdBy || !blocked.has(w.createdBy)) && (!w.groupId || !hidden.has(w.groupId)));
+}
+
 async function requireVisibleWalk(id: string, viewerId: string | undefined): Promise<WalkRow> {
   const [w] = await db.select().from(s.walks).where(eq(s.walks.id, id)).limit(1);
   if (!w || !(await canViewWalk(w, viewerId))) throw notFound('walk_not_found');
@@ -193,8 +226,8 @@ async function requireVisibleWalk(id: string, viewerId: string | undefined): Pro
 /** Wer darf die Teilnehmerliste sehen? Gruppen-Walk: aktive Mitglieder; sonst Teilnehmende. */
 async function canSeeParticipants(w: WalkRow, viewerId: string | undefined, myRsvp: string | null): Promise<boolean> {
   if (!viewerId) return false;
-  if (w.createdBy === viewerId) return true;
   if (w.kind === 'group' && w.groupId) return isActiveMember(await getMembership(w.groupId, viewerId));
+  if (w.createdBy === viewerId) return true;
   return myRsvp === 'yes' || (w.kind === 'partner' && myRsvp !== null);
 }
 
@@ -338,8 +371,7 @@ router.get('/', async (req, res) => {
       .where(and(...conds, eq(s.walks.kind, 'distance')))
       .orderBy(asc(s.walks.startsAt))
       .limit(200);
-    const blocked = await blockedIds(viewerId);
-    const visible = rows.filter((w) => !w.createdBy || !blocked.has(w.createdBy));
+    const visible = await visibleDistanceWalks(rows, viewerId);
     res.json({ walks: await walkSummaries(visible, viewerId, null), center: null, nearest: [] });
     return;
   }

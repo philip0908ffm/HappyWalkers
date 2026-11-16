@@ -133,8 +133,10 @@ describe('Gruppen', () => {
     const g = await createGroup(founder.agent, { name: 'Geheime Einladungsrunde', joinPolicy: 'invite' });
     const p = await signUp({ name: 'Ute' });
     const r = await p.agent.post(`/api/v1/groups/${g.id}/join`).send({});
-    expect(r.status).toBe(403);
-    expect(r.body.error.code).toBe('invite_only');
+    // S2-07: wer die Einladungsgruppe nicht sehen darf, bekommt 404 (Existenz wird nicht verraten);
+    // 403 invite_only nur für Personen, die die Gruppe sehen dürfen (z. B. per E-Mail eingeladen)
+    expect(r.status).toBe(404);
+    expect(r.body.error.code).toBe('group_not_found');
     const search = await p.agent.get('/api/v1/groups?postalCode=34117&radiusKm=15').expect(200);
     expect(search.body.groups.map((x: { id: string }) => x.id)).not.toContain(g.id);
     const q = await p.agent.get('/api/v1/groups?q=Geheime').expect(200);

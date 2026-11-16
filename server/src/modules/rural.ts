@@ -1,5 +1,5 @@
 import { TEMPOS } from '@gehmeinsam/shared';
-import { and, asc, desc, eq, gte, inArray, lte, ne, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, gt, gte, inArray, lte, ne, sql } from 'drizzle-orm';
 import { Router } from 'express';
 import { z } from 'zod';
 import { config } from '../config.js';
@@ -7,12 +7,12 @@ import { db } from '../db/index.js';
 import * as s from '../db/schema.js';
 import { isBlockedEitherWay } from '../lib/access.js';
 import { distanceKm, lookupPostalCode } from '../lib/geo.js';
-import { badRequest, conflict, notFound, parse, zId, zPostalCode, zText } from '../lib/http.js';
+import { badRequest, conflict, notFound, parse, tooManyRequests, zId, zPostalCode, zText } from '../lib/http.js';
 import { me, requireUser } from '../middleware/auth.js';
 import { notifyInterest } from '../services/interest.js';
 import { notify } from '../services/notify.js';
 import { blockedIds, greeting, groupSummaries, mailPerson, personRefs, resolveCenter, roundKm, signOff } from './groups.js';
-import { formatBerlin, walkSummaries, zRadius } from './walks.js';
+import { formatBerlin, visibleDistanceWalks, walkSummaries, zRadius } from './walks.js';
 
 /** Modul „rural“ – ländliche Regionen: Überblick, Interesse anmelden, Gehpartner. */
 export const router = Router();
@@ -90,11 +90,7 @@ router.get('/overview', async (req, res) => {
     .where(and(eq(s.walks.kind, 'distance'), eq(s.walks.status, 'planned'), gte(s.walks.startsAt, now), lte(s.walks.startsAt, in30)))
     .orderBy(asc(s.walks.startsAt))
     .limit(20);
-  const distanceWalks = await walkSummaries(
-    distanceRows.filter((w) => !w.createdBy || !blocked.has(w.createdBy)).slice(0, 10),
-    userId,
-    null,
-  );
+  const distanceWalks = await walkSummaries((await visibleDistanceWalks(distanceRows, userId)).slice(0, 10), userId, null);
 
   res.json({
     center,
@@ -236,6 +232,9 @@ router.delete('/partner-offer', async (req, res) => {
 
 type RequestRow = typeof s.partnerRequests.$inferSelect;
 
+/** Höchstens so viele neue Gehpartner-Anfragen (jeweils mit E-Mail) je Person in 24 Stunden. */
+export const PARTNER_REQUESTS_PER_DAY = 10;
+
 async function requestViews(rows: { r: RequestRow; toUserId: string }[]) {
   const refs = await personRefs(rows.flatMap((x) => [x.r.fromUserId, x.toUserId]));
   return rows.map(({ r, toUserId }) => ({
@@ -256,6 +255,18 @@ router.post('/partners/:offerId/request', async (req, res) => {
   const [offer] = await db.select().from(s.partnerOffers).where(eq(s.partnerOffers.id, offerId)).limit(1);
   if (!offer || !offer.active || offer.userId === userId || (await isBlockedEitherWay(userId, offer.userId))) {
     throw notFound('offer_not_found');
+  }
+  const [already] = await db
+    .select({ id: s.partnerRequests.id })
+    .from(s.partnerRequests)
+    .where(and(eq(s.partnerRequests.offerId, offer.id), eq(s.partnerRequests.fromUserId, userId)))
+    .limit(1);
+  if (!already) {
+    const [{ n }] = await db
+      .select({ n: sql<number>`count(*)::int` })
+      .from(s.partnerRequests)
+      .where(and(eq(s.partnerRequests.fromUserId, userId), gt(s.partnerRequests.createdAt, new Date(Date.now() - 86_400_000))));
+    if (Number(n) >= PARTNER_REQUESTS_PER_DAY) throw tooManyRequests();
   }
   const [created] = await db
     .insert(s.partnerRequests)
@@ -323,6 +334,8 @@ async function requireIncomingRequest(id: string, userId: string) {
     .where(eq(s.partnerRequests.id, id))
     .limit(1);
   if (!row || row.offer.userId !== userId) throw notFound('not_found');
+  // Blockieren gilt auch für bereits gestellte Anfragen (sie sind in der Liste ausgeblendet)
+  if (await isBlockedEitherWay(userId, row.r.fromUserId)) throw notFound('not_found');
   return row;
 }
 
@@ -392,7 +405,7 @@ router.post('/partner-requests/:id/accept', async (req, res) => {
   const refs = await personRefs([userId]);
   const name = refs.get(userId)!.displayName;
   const when = formatBerlin(body.startsAt);
-  await notify(r.fromUserId, 'partner_accepted', { walkId, displayName: name, startsAt: body.startsAt.toISOString() });
+  await notify(r.fromUserId, 'partner_accepted', { walkId, actorId: userId, displayName: name, startsAt: body.startsAt.toISOString() });
   await mailPerson(r.fromUserId, ({ du, name: toName }) => ({
     subject: du ? `${name} geht gern mit dir` : `${name} geht gern mit Ihnen`,
     text: [

@@ -188,7 +188,7 @@
     "photoTitle": "Gruppenfoto",
     "photoCurrent": "Aktuelles Gruppenfoto",
     "photoLabel": "Neues Foto auswählen",
-    "photoHint": "JPG, PNG oder HEIC, höchstens 10 MB. Ort und Kameradaten werden automatisch entfernt.",
+    "photoHint": "JPG, PNG oder HEIC, höchstens 10 MB. Ort und Kameradaten werden automatisch entfernt. Das Gruppenfoto ist für alle sichtbar, auch ohne Anmeldung – zeigen Sie darauf am besten keine erkennbaren Personen.",
     "photoUpload": "Foto hochladen",
     "photoSaved": "Das Gruppenfoto ist gespeichert.",
     "create": "Gruppe gründen",

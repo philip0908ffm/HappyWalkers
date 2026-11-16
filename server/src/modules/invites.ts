@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { db } from '../db/index.js';
 import * as s from '../db/schema.js';
 import { notFound, parse } from '../lib/http.js';
+import { codeLookupLimiter } from '../lib/ratelimit.js';
 import { me, requireUser } from '../middleware/auth.js';
 import { awardBadge } from '../services/gamification.js';
 import { groupPhotoUrl, isInviteCode, joinGroup, normalizeCode } from './groups.js';
@@ -30,7 +31,7 @@ async function resolveInvite(codeOrToken: string, viewerId: string | undefined) 
 }
 
 /** Öffentlich: Vorschau der Einladung (ohne Treffpunkte, ohne Mitgliederliste). */
-router.get('/:codeOrToken', async (req, res) => {
+router.get('/:codeOrToken', codeLookupLimiter, async (req, res) => {
   const { codeOrToken } = parse(zCodeOrToken, req.params);
   const inv = await resolveInvite(codeOrToken, req.user?.id);
   if (!inv) {
@@ -60,7 +61,7 @@ router.get('/:codeOrToken', async (req, res) => {
  * Einladung annehmen. Umgeht „auf Anfrage“ und „nur auf Einladung“, nicht aber Sperre und
  * „nur Frauen“. Vergibt der einladenden Person das Abzeichen „inviter“. Idempotent.
  */
-router.post('/:codeOrToken/accept', requireUser, async (req, res) => {
+router.post('/:codeOrToken/accept', requireUser, codeLookupLimiter, async (req, res) => {
   const { codeOrToken } = parse(zCodeOrToken, req.params);
   const userId = me(req).id;
   const inv = await resolveInvite(codeOrToken, userId);

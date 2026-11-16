@@ -20,7 +20,8 @@ import {
 } from '../lib/access.js';
 import { sendMail, textToHtml } from '../lib/email.js';
 import { boundingBox, distanceKm, lookupPostalCode, nearestPlace, type Place } from '../lib/geo.js';
-import { badRequest, conflict, forbidden, notFound, parse, zId, zPostalCode, zText } from '../lib/http.js';
+import { badRequest, conflict, forbidden, notFound, parse, tooManyRequests, zId, zPostalCode, zText } from '../lib/http.js';
+import { codeLookupLimiter } from '../lib/ratelimit.js';
 import { me, requireUser } from '../middleware/auth.js';
 import { awardBadge } from '../services/gamification.js';
 import { notifyInterest } from '../services/interest.js';
@@ -586,7 +587,7 @@ router.get('/:id/photo', async (req, res) => {
 
 /* ---------- Mitgliedschaft ---------- */
 
-router.post('/join-by-code', requireUser, async (req, res) => {
+router.post('/join-by-code', requireUser, codeLookupLimiter, async (req, res) => {
   const { code } = parse(z.object({ code: z.string().trim().min(4).max(20) }), req.body);
   const [g] = await db.select().from(s.groups).where(eq(s.groups.inviteCode, normalizeCode(code))).limit(1);
   if (!g) throw notFound('invite_invalid');
@@ -598,6 +599,8 @@ router.post('/:id/join', requireUser, async (req, res) => {
   const { id } = parse(z.object({ id: zId }), req.params);
   const { message } = parse(z.object({ message: zText(500).optional() }), req.body ?? {});
   const g = await requireGroup(id);
+  // Einladungsgruppen: wer sie nicht sehen darf, erfährt auch hier nicht, dass es sie gibt (404 statt 403)
+  if (!(await canViewGroup(g, req.user, await getMembership(g.id, me(req).id)))) throw notFound('group_not_found');
   const { membership } = await joinGroup(g, me(req).id, { message });
   res.json({ membership });
 });
@@ -681,6 +684,8 @@ router.patch('/:id/members/:userId', requireUser, async (req, res) => {
   switch (action) {
     case 'approve':
       if (target!.status === 'pending') {
+        // „nur Frauen“ gilt auch bei der Freigabe (Gruppe kann seit der Anfrage umgestellt worden sein)
+        if (g.womenOnly && !(await canJoinWomenOnly(targetId))) throw forbidden('women_only');
         await db.update(s.groupMembers).set({ status: 'active', requestMessage: null }).where(where);
         await notify(targetId, 'join_approved', { groupId: g.id, groupName: g.name });
       } else if (target!.status === 'banned') throw forbidden('banned');
@@ -737,6 +742,8 @@ router.get('/:id/invite', requireUser, async (req, res) => {
 });
 
 const INVITE_DAYS = 14;
+/** Höchstens so viele Einladungs-Mails je Person in 24 Stunden (Schutz vor Spam über unsere Absender-Domain). */
+export const INVITE_MAILS_PER_DAY = 30;
 
 router.post('/:id/invite/email', requireUser, async (req, res) => {
   const { id } = parse(z.object({ id: zId }), req.params);
@@ -752,6 +759,11 @@ router.post('/:id/invite/email', requireUser, async (req, res) => {
   await requireActiveMember(g.id, userId);
   const inviter = await personRef(userId);
   const emails = [...new Set(body.emails.map((e) => e.toLowerCase()))];
+  const [{ n: sentToday }] = await db
+    .select({ n: sql<number>`count(*)::int` })
+    .from(s.groupInvites)
+    .where(and(eq(s.groupInvites.createdBy, userId), gt(s.groupInvites.createdAt, new Date(Date.now() - 86_400_000))));
+  if (Number(sentToday) + emails.length > INVITE_MAILS_PER_DAY) throw tooManyRequests();
   const expiresAt = new Date(Date.now() + INVITE_DAYS * 86_400_000);
   let sent = 0;
   for (const email of emails) {

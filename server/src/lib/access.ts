@@ -70,7 +70,7 @@ export async function canJoinWomenOnly(userId: string): Promise<boolean> {
 
 /**
  * Darf die Person den genauen Treffpunkt eines Walks sehen?
- *  - Gruppen-Walk: nur aktive Mitglieder der Gruppe
+ *  - Gruppen-Walk: nur aktive Mitglieder der Gruppe (auch die Erstellerin nur, solange sie aktiv ist)
  *  - Gehpartner-Walk: nur eingeladene/zugesagte Personen
  *  - Gemeinsam auf Distanz: kein gemeinsamer Treffpunkt
  */
@@ -79,8 +79,10 @@ export async function canSeeMeetingPoint(
   userId: string | undefined,
 ): Promise<boolean> {
   if (!userId) return false;
-  if (walk.createdBy === userId) return true;
+  // Gruppen-Walk: allein die aktive Mitgliedschaft zählt – auch für die Erstellerin
+  // (gesperrt/entfernt → kein Treffpunkt mehr, auch nicht für künftige Serientermine).
   if (walk.kind === 'group' && walk.groupId) return isActiveMember(await getMembership(walk.groupId, userId));
+  if (walk.createdBy === userId) return true;
   if (walk.kind === 'partner') {
     const [r] = await db
       .select({ s: walkRsvps.status })

@@ -1,7 +1,8 @@
 # Sicherheit und Datenschutz – Bedrohungsmodell, Maßnahmen, Befunde
 
 Verantwortlich: Aylin Demir. Regeln zur Sichtbarkeit: `docs/WER-SIEHT-WAS.md`.
-Tests zu den Befunden: `server/test/security.test.ts` (S-xx), `web/src/pages/auth/safeNext.test.ts`.
+Tests zu den Befunden: `server/test/security.test.ts` (S-xx), `server/test/security2.test.ts` (S2-xx),
+`web/src/pages/auth/safeNext.test.ts`.
 
 ## 1. Was wir schützen
 
@@ -75,7 +76,7 @@ Schwere: hoch / mittel / niedrig. Status: ✅ behoben (mit Test) · ⏳ offen.
 | S-11 | mittel | `server/src/config.ts:54` | `BILLING_PROVIDER` ist standardmäßig `dev` → in Produktion Premium ohne Zahlung. Entscheidung Lena: ohne Angabe gilt in Produktion `none`, `dev` verhindert den Start. | ✅ behoben |
 | S-12 | niedrig | `web/src/pages/profile/Settings.tsx` | Einstellungen: Export per GET mit Cookie (ok, nur eigene Daten), Löschen mit Eingabe „LÖSCHEN“ + Server-Prüfung (ok). Hinweis: Fotos im Format HEIC werden vom vorinstallierten sharp nicht gelesen (nur AVIF/HEIF) → Fehlermeldung `invalid_image`. | ⏳ Hinweis Paket C |
 
-## 5. Für die zweite Prüfrunde (Pakete A/B/C)
+## 5. Prüfliste für die zweite Prüfrunde (Pakete A/B/C) – abgearbeitet, Ergebnis in Abschnitt 6
 
 Paket A (Gruppen, Walks, Einladungen, ländlich)
 - Treffpunkt nur über `canSeeMeetingPoint` – auch in `GET /walks` (Liste), Karte, ICS, Druck/Aushang (`/poster` → kein Treffpunkt für Nicht-Mitglieder), Serien (`walk_series.meeting*`) und Benachrichtigungen.
@@ -100,3 +101,48 @@ Paket C (Soziales, Fotos, Benachrichtigungen)
 - `notifications.data`: keine Kontaktdaten/Treffpunkte; Löschen/Sperren ohne Benachrichtigung.
 - Bei Löschung eines Beitrags/Fotos/Avatars die Datei entfernen (`deleteStoredFiles`).
 - Neue Tabellen mit Personenbezug in Export und Löschung (`modules/me.ts`) aufnehmen.
+
+## 6. Befunde – zweite Prüfrunde (Pakete A/B/C, alle Funktionen gebaut)
+
+Geprüft: `modules/{groups,walks,invites,rural,activities,badges,challenges,premium,social,photos,notifications}.ts`,
+`services/{interest,series,gamification}.ts`, `lib/{gpx,billing,people,email,ics}.ts`, `web/src/**`.
+Schwere: hoch / mittel / niedrig. Status: ✅ behoben (Test in `server/test/security2.test.ts`) · ⏳ offen/Empfehlung · ✔ geprüft, in Ordnung.
+
+| ID | Schwere | Ort | Befund | Status |
+|---|---|---|---|---|
+| S2-01 | hoch | `server/src/lib/access.ts:82`, `modules/walks.ts:126,162,197` | `canSeeMeetingPoint`, `walkSummaries`, `canManageWalk` und die Teilnehmerliste prüften **zuerst `createdBy`**. Eine Moderatorin, die einen (wiederkehrenden) Termin angelegt hat und danach **gesperrt oder entfernt** wurde, sah weiter Treffpunkt, Teilnehmende und ICS – auch für alle künftig vom Hintergrund-Job erzeugten Serientermine (`walks.createdBy = series.createdBy`) – und konnte die Termine ändern/absagen. → Bei Gruppen-Walks zählt nur noch die aktive Mitgliedschaft bzw. Gruppenleitung. | ✅ |
+| S2-02 | mittel | `modules/walks.ts:194,374`, `modules/rural.ts:93` | `GET /walks?kind=distance` (auch anonym) und `GET /rural/overview` listeten „Gemeinsam auf Distanz“-Termine mit `groupId` einer Gruppe **„nur auf Einladung“** – inkl. Gruppenname/-ID. → gemeinsamer Filter `visibleDistanceWalks` (blockierte Erstellerinnen + fremde Einladungsgruppen). | ✅ |
+| S2-03 | mittel | `modules/groups.ts:746,766` | `POST /groups/:id/invite/email`: max. 10 Adressen je Anfrage, aber **beliebig viele Anfragen** – jedes Mitglied einer offenen Gruppe konnte über unsere Absender-Domain Spam mit eigenem Text („Persönliche Nachricht“) versenden (Domain-Reputation, Phishing). → höchstens 30 Einladungs-Mails je Person in 24 h (DB-Zähler über `group_invites.created_by`, gilt auch bei mehreren Instanzen), sonst 429 `rate_limited`. Nachricht wird in HTML korrekt escaped (`textToHtml`). | ✅ |
+| S2-04 | mittel | `lib/ratelimit.ts`, `modules/invites.ts:34,64`, `modules/groups.ts:590` | Einladungscodes `WALK-XXXXXX` (32^6 ≈ 1 Mrd.) nur durch die allgemeine Grenze 300/min je IP geschützt. → eigener Begrenzer 30 / 15 min je IP für `GET /invites/:code`, `POST /invites/:code/accept`, `POST /groups/join-by-code` (im Testmodus aus). Persönliche E-Mail-Tokens: 192 Bit, ✔. | ✅ |
+| S2-05 | mittel | `modules/rural.ts:236,269` | `POST /rural/partners/:offerId/request` sendet je Gesuch eine E-Mail mit frei wählbarer Nachricht; mit `GET /rural/partners?postalCode=…` lassen sich bundesweit Gesuche finden → Massen-Anschreiben. → höchstens 10 neue Anfragen je Person in 24 h (429 `rate_limited`); bestehende bleiben idempotent. | ✅ |
+| S2-06 | mittel | `modules/groups.ts:688` | „Nur Frauen“ umgehbar: Anfrage an eine „auf Anfrage“-Gruppe stellen, Leitung stellt danach auf „nur Frauen“ um (oder Person ändert ihr Geschlecht nach der Anfrage) → `approve` prüfte das Geschlecht nicht. → `approve` prüft `canJoinWomenOnly` (403 `women_only`). Beitritt per Code/Einladung/Gründung/Umstellung: ✔ geprüft. | ✅ |
+| S2-07 | niedrig | `modules/groups.ts:602` | `POST /groups/:id/join` auf eine Einladungsgruppe antwortete 403 `invite_only`/`women_only`/`banned` → Existenz und Eigenschaften der Gruppe erkennbar (Grundsatz 4). → 404 `group_not_found` für alle, die die Gruppe nicht sehen dürfen. `test/groups.test.ts` angepasst, `docs/API.md` ergänzt. | ✅ |
+| S2-08 | niedrig | `lib/email.ts:21`, `lib/ics.ts:15` | Betreffzeilen enthalten Benutzertexte (Anzeigename, Gruppen-/Walk-Titel; zod `trim()` lässt innere Zeilenumbrüche zu) → **Header-Injection**, falls je ein SMTP-Versand statt Resend-API genutzt wird. ICS: `esc` behandelte `\n`, aber nicht einzelnes `\r` → eingeschleuste Kalender-Eigenschaften (z. B. `ATTENDEE`, `URL`) bei toleranten Kalendern. → `safeSubject` in `sendMail`, ICS-Escaping für `\r` und Steuerzeichen. HTML-Escaping aller Mail-Texte: ✔ (`textToHtml`). | ✅ |
+| S2-09 | niedrig | `modules/notifications.ts:39` | Ausblenden blockierter Personen nur über `data.actorId`; Beitrittsanfragen (`data.userId`) und Gehpartner-Anfragen (`data.fromUserId`) blockierter Personen blieben sichtbar. → alle drei Felder werden geprüft. | ✅ |
+| S2-10 | niedrig | `modules/me.ts:224`, `modules/rural.ts:408` | Nach Kontolöschung blieb der Anzeigename in Benachrichtigungen **anderer** Personen (`join_request`, `partner_request`, `partner_accepted` speichern `displayName` in `data`). → `DELETE /me` löscht Hinweise mit `actorId`/`userId`/`fromUserId` = Person; `partner_accepted` trägt jetzt `actorId`. | ✅ |
+| S2-11 | niedrig | `modules/challenges.ts:175` | Gruppen-Challenge: wer beigetreten war und dann **entfernt/gesperrt** wurde, sah weiter die Rangliste mit Namen der Gruppenmitglieder (`canSee` → `joined`). → Nicht-Mitglieder sehen nur die eigene Zeile. | ✅ |
+| S2-12 | niedrig | `modules/rural.ts:337` | Gehpartner-Anfrage einer später blockierten Person konnte noch angenommen werden (legt 1:1-Walk mit Treffpunkt an). → 404 bei Blockierung in beide Richtungen. | ✅ |
+| S2-13 | mittel | `modules/activities.ts:32`, `modules/social.ts:134` | Eingetragene Routen (GPX/aufgezeichnet) beginnen und enden meist **an der Wohnung**. Sie sind für Sichtbarkeit `group` (Mitglieder gemeinsamer Gruppen), `followers` und `public` (alle Angemeldeten) vollständig sichtbar. | ⏳ Empfehlung: „Privatzone“ – für andere die ersten/letzten ~300 m der Route abschneiden (oder Route nur für sich selbst als Standard), Hinweis beim Teilen. Produktentscheidung (Lena/Miriam). |
+| S2-14 | niedrig | `modules/groups.ts:576` | `GET /groups/:id/photo` ist öffentlich – auch für Gruppen „nur auf Einladung“. Die ID (UUID) ist nicht erratbar und wird nur über Einladungscode/-link oder an Mitglieder ausgegeben; die Einladungsseite braucht das Bild ohne Anmeldung. | ⏳ bewusst akzeptiert (Restrisiko: wer die ID kennt, z. B. nach Austritt, sieht weiter das Gruppenbild). Gruppenbild-Hinweis in der Oberfläche: „für alle sichtbar, keine Personen zeigen“. |
+| S2-15 | niedrig | `web/src/pages/rural/DistanceSection.tsx:66`, `web/src/pages/walks/WalkDetail.tsx:180` | Beiträge zu „Gemeinsam auf Distanz“-Terminen: Übersicht postet mit `visibility: 'public'` (alle Angemeldeten, auch im Profil-Feed `GET /feed?userId=` einer sonst privaten Person), die Walk-Seite mit `'followers'` (andere Teilnehmende sehen dann fast nichts). Hinweis `VisibilityHint` wird angezeigt → kein Leck, aber uneinheitlich. | ⏳ Empfehlung: einheitlich; besser serverseitig eine Regel „Beitrag mit `walkId` eines Distanz-Termins → sichtbar für Teilnehmende (RSVP) des Termins“ statt `public`. |
+| S2-16 | niedrig | `modules/walks.ts:511` | „Gemeinsam auf Distanz“ ohne Gruppe speichert `lat/lon` des **PLZ-Mittelpunkts der Erstellerin**; `WalkSummary.lat/lon` gibt ihn an alle aus → PLZ ableitbar (Stadt steht ohnehin da). | ⏳ Empfehlung: für `kind = 'distance'` `lat/lon` = Stadtmittelpunkt oder `null`. |
+| S2-17 | niedrig | `modules/social.ts` (`/users/:id/follow`, `/reports`), `modules/rural.ts` (`/rural/partners?postalCode`) | Keine eigene Ratenbegrenzung für Folge-Anfragen (Benachrichtigungs-Flut) und Meldungen; Gehpartner-Entfernungen (ganze km) über viele `postalCode`-Abfragen trianguliertbar (Ergebnis ≈ PLZ, Stadt ist ohnehin sichtbar). | ⏳ Empfehlung: Tageskontingent für Folge-Anfragen; Ratenbegrenzer S-05f gilt auch für `lib/ratelimit.ts` (im Speicher). |
+| S2-18 | niedrig | `lib/access.ts` (`canJoinWomenOnly`) | Geschlecht ist Selbstauskunft; wer nach dem Beitritt das Geschlecht ändert, bleibt Mitglied. Leitung kann Personen entfernen/sperren. | ⏳ Hinweis (Produkt): Moderation statt Technik. |
+| S2-19 | niedrig | `modules/groups.ts` (E-Mail-Einladung) | Einladungs-Mail nennt im Betreff den frei wählbaren Anzeigenamen der einladenden Person („Gehmeinsam-Team lädt Sie …“) → Vortäuschen möglich; persönliche Nachricht kann Links enthalten (Mailprogramme verlinken sie). | ⏳ Empfehlung: Anzeigenamen mit „Gehmeinsam“/„Team“ nicht zulassen; Hinweis in der Mail „Diese Nachricht schrieb ein Mitglied, nicht Gehmeinsam“. |
+
+### Geprüft und in Ordnung (Auswahl)
+
+- **Treffpunkt** nur über `canSeeMeetingPoint`: Detail, Liste/Karte (nur Gruppen-/PLZ-Mittelpunkt), ICS, Aushang (`/poster` nur aktive Mitglieder, ohne Treffpunkt), Serien (`SeriesSummary` ohne Treffpunkt), Benachrichtigungen/E-Mails (Absage, Bestätigung, Gehpartner: nur Titel/Zeit, „Treffpunkt in der App“). Interessen-Mails: nur Art, Stadt, gerundete km.
+- **pending/banned** sind keine Mitglieder (`isActiveMember`, `walkSummaries`, `loadViewerContext`, `canSeeContent`); Austreten hebt Sperre nicht auf; Einladung/Code umgehen Sperre und „nur Frauen“ nicht.
+- **Einladungsgruppen**: nicht in `GET /groups`, `nearest`, `GET /walks` (Ortssuche), `rural/overview`; `GET /groups/:id`, `/walks?groupId=`, `/walks/:id` → 404.
+- **Rollen**: Moderatorin kann keine Moderatorin ernennen/abberufen, keine Leitung entfernen/sperren; Gründerin kann nicht entfernt/gesperrt werden und nicht austreten; Aktionen auf sich selbst → 400; Leitung fremder Gruppe → 403.
+- **IDOR**: fremde Aktivitäten (`loadOwn` / `canSeeActivity`), Fotos (`canSeeContent`, 404), Serien (`requireGroupLead(series.groupId)`), Mitglieder anderer Gruppen (`where groupId`), Gehpartner-Anfragen (nur Empfängerin), Ziele (`goals.userId`), Abzeichen-Teilen/Urkunde (`loadOwnBadge`), Benachrichtigungen (`userId`), Beiträge/Kommentare (Sichtbarkeit + Autorin/Leitung).
+- **Massenzuweisung**: alle zod-Schemas sind `z.object` (unbekannte Felder werden verworfen); `PATCH` übernimmt nur gesendete Schemafelder (`sentFields`); kein `kind`/`groupId`/`createdBy`/`userId` aus dem Body.
+- **SQL**: nur Drizzle-Abfragen bzw. `sql`-Template mit Parametern; kein `sql.raw`. `ilike`-Suche escaped `%`/`_`.
+- **Personen** nur als `PersonRef`; `birthYear`, `gender`, `email`, `phoneNumber`, `postalCode`/`lat`/`lon` des Profils erscheinen in keiner fremden Antwort (grep über alle Module; nur `GET /me`, Export, `canJoinWomenOnly`). Gehpartner: Entfernung gerundet, keine PLZ.
+- **Tokens**: Abzeichen-Teilen 192 Bit (`randomBytes(24)`), E-Mail-Einladung 192 Bit, Teilen beenden löscht Token; geteilte Seite nur `displayName` + Abzeichen.
+- **Uploads**: Gruppenbild, Fotos, Profilbild über `storeImage` (Neu-Kodierung, EXIF weg, Größen-/Pixelgrenze); GPX ≤ 5 MB, DTD/Entitäten abgelehnt, `processEntities: false`, Punktzahl auf 2000 vereinfacht. Bildauslieferung `private`, `nosniff`.
+- **Export/Löschung**: alle neuen Tabellen (Serien, Einladungen, Interessen, Gehpartner-Gesuche/-Anfragen, Ziele, Abo, Benachrichtigungen, Abzeichen, Punkte, Challenges) im Export; Löschung per Kaskade, Dateien (Profilbild, Fotos, Bilder aufgelöster Gruppen) werden entfernt.
+- **Premium**: alle Routen nur eigene Daten; `dev`-Anbieter in Produktion verboten (S-11).
+- **Feed nach `walkId`** (`social.ts` `canSeeWalk`): Partner-Walk nur Beteiligte, Einladungsgruppe nur Mitglieder, Blockierung der Erstellerin → 404; einzelne Beiträge zusätzlich nach `visibility`. ✔
+- **Oberfläche**: `dangerouslySetInnerHTML` nur für das vom Server erzeugte QR-SVG (Inhalt = `APP_URL` + Code, keine Benutzertexte) ✔; `target="_blank"` nur mit `rel="noopener noreferrer"` ✔; Links mit Benutzerdaten nur `encodeURIComponent`-kodiert (WhatsApp/Mailto serverseitig) ✔; `localStorage` nur Schriftgröße/Anrede ✔; Tokens nicht in Drittanfragen (`Referrer-Policy: no-referrer`) ✔; Benutzertexte nur über React-Textknoten ✔.

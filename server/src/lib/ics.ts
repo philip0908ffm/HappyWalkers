@@ -10,7 +10,15 @@ export interface IcsEvent {
 }
 
 const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
-const esc = (s: string) => s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/([,;])/g, '\\$1');
+// Zeilenumbrüche (auch einzelnes \r) werden zu \n, andere Steuerzeichen entfernt → Benutzertexte
+// (Titel, Beschreibung, Treffpunkt) können keine eigenen Kalender-Eigenschaften einschleusen.
+const esc = (s: string) =>
+  s
+    .replace(/\r\n?/g, '\n')
+    .replace(/[\u0000-\u0008\u000B-\u001F\u007F]/g, '')
+    .replace(/\\/g, '\\\\')
+    .replace(/\n/g, '\\n')
+    .replace(/([,;])/g, '\\$1');
 
 /** Zeilen nach 75 Oktetten falten (RFC 5545). */
 function fold(line: string): string {

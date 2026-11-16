@@ -35,10 +35,10 @@ router.get('/', async (req, res) => {
     unreadCount(userId),
   ]);
   const actorOf = (d: Record<string, unknown>) => (typeof d?.actorId === 'string' ? d.actorId : null);
-  const visible = rows.filter((n) => {
-    const a = actorOf(n.data);
-    return !a || !blocked.has(a);
-  });
+  // Beteiligte Person steht je nach Typ in actorId, userId (Beitrittsanfrage) oder fromUserId (Gehpartner)
+  const involved = (d: Record<string, unknown>) =>
+    [d?.actorId, d?.userId, d?.fromUserId].filter((x): x is string => typeof x === 'string');
+  const visible = rows.filter((n) => !involved(n.data).some((id) => blocked.has(id)));
   const people = await personRefs(
     visible.map((n) => actorOf(n.data)),
     userId,

@@ -110,18 +110,18 @@ WalkDetail = WalkSummary & {
 | DELETE | `/groups/:id` | nur Gründerin → `{ ok }` |
 | POST | `/groups/:id/photo` | Leitung, multipart Feld `photo` → `{ photoUrl }` |
 | GET | `/groups/:id/photo` | Bild (JPEG) |
-| POST | `/groups/:id/join` | `{ message? }` → `{ membership: { role, status } }`. open → `active`; request → `pending` (Leitung wird benachrichtigt); invite → 403 `invite_only`; gesperrt → 403 `banned`; nur Frauen → 403 `women_only`. Idempotent. |
+| POST | `/groups/:id/join` | `{ message? }` → `{ membership: { role, status } }`. open → `active`; request → `pending` (Leitung wird benachrichtigt); invite → 403 `invite_only` (nur wer die Gruppe sehen darf, z. B. per E-Mail eingeladen; alle anderen 404 `group_not_found`); gesperrt → 403 `banned`; nur Frauen → 403 `women_only`. Idempotent. |
 | POST | `/groups/:id/leave` | → `{ ok }` (Gründerin: 409 `founder_cannot_leave`, erst Leitung übergeben) |
 | GET | `/groups/:id/members` | aktive Mitglieder: `{ members: (PersonRef & { role, status, joinedAt, requestMessage? })[] }`. Leitung sieht zusätzlich `pending` und `banned`. Nicht-Mitglieder: 403. |
-| PATCH | `/groups/:id/members/:userId` | Leitung: `{ action: 'approve'\|'decline'\|'remove'\|'ban'\|'unban'\|'make_moderator'\|'remove_moderator'\|'make_founder' }`. Moderatorinnen ernennen/abberufen und Gründung übergeben nur Gründerin. **Entfernen/Sperren erzeugt keine Benachrichtigung.** → `{ member }` |
-| POST | `/groups/join-by-code` | `{ code }` → `{ groupId, membership }`. Code = Einladung: open/invite → active, request → pending. |
+| PATCH | `/groups/:id/members/:userId` | Leitung: `{ action: 'approve'\|'decline'\|'remove'\|'ban'\|'unban'\|'make_moderator'\|'remove_moderator'\|'make_founder' }`. Moderatorinnen ernennen/abberufen und Gründung übergeben nur Gründerin. `approve` in einer „nur Frauen“-Gruppe → 403 `women_only`, wenn die Person nicht „Frau“ angegeben hat. **Entfernen/Sperren erzeugt keine Benachrichtigung.** → `{ member }` |
+| POST | `/groups/join-by-code` | `{ code }` → `{ groupId, membership }`. Code = Einladung: open/invite → active, request → pending. Ratenbegrenzung je IP (gemeinsam mit `/invites/:code`): 30 / 15 min → 429 `rate_limited`. |
 | GET | `/groups/:id/invite` | aktive Mitglieder: `{ url, code, whatsappUrl, mailtoUrl }` (`url` = `${APP_URL}/einladung/<code>`) |
-| POST | `/groups/:id/invite/email` | aktive Mitglieder: `{ emails: string[] (max 10), message? }` → `{ sent: number }` – E-Mail mit persönlichem Link `/einladung/<token>` (14 Tage gültig) |
+| POST | `/groups/:id/invite/email` | aktive Mitglieder: `{ emails: string[] (max 10), message? }` → `{ sent: number }` – E-Mail mit persönlichem Link `/einladung/<token>` (14 Tage gültig). Höchstens 30 Einladungs-Mails je Person in 24 Stunden, sonst 429 `rate_limited`. |
 | GET | `/groups/:id/poster` | Mitglieder: `{ group: { name, city, description }, code, url, qrSvg, series: SeriesSummary[], nextWalks: WalkSummary[] }` für den druckbaren Aushang |
 
 ### Einladungen – `server/src/modules/invites.ts`
 
-| GET | `/invites/:codeOrToken` | öffentlich: `{ valid: boolean, group: { id, name, city, description, memberCount, womenOnly, photoUrl } \| null }` |
+| GET | `/invites/:codeOrToken` | öffentlich: `{ valid: boolean, group: { id, name, city, description, memberCount, womenOnly, photoUrl } \| null }`. Ratenbegrenzung je IP 30 / 15 min (auch `accept`) → 429 `rate_limited` |
 |---|---|---|
 | POST | `/invites/:codeOrToken/accept` | angemeldet → `{ groupId, membership }` (Einladung umgeht „auf Anfrage“/„nur Einladung“, nicht aber Sperre und „nur Frauen“). Vergibt dem Einladenden Abzeichen `inviter`. Idempotent. |
 
@@ -135,7 +135,7 @@ Ablauf Einladungslink: `/einladung/:code` → nicht angemeldet → Anmeldung mit
 | GET | `/walks?postalCode&lat&lon&radiusKm&from&to&tempo&groupId&kind` | `{ walks: WalkSummary[], center: Place\|null, nearest: (WalkSummary)[] }` – Standard `from`=jetzt, `to`=+30 Tage, sortiert nach Zeit. Walks von Einladungsgruppen nur für Mitglieder. `kind=distance` liefert „Gemeinsam auf Distanz“-Termine (ohne Ortsfilter). `groupId` ohne Ortsfilter (für Gruppenkalender, auch vergangene mit `from`). `nearest` wie bei Gruppen. |
 | GET | `/walks/:id` | `{ walk: WalkDetail }` |
 | POST | `/walks` | Gruppen-Walk (Leitung) oder „Gemeinsam auf Distanz“ (jede Person): `{ kind: 'group'\|'distance', groupId?, title, description?, startsAt, durationMinutes, distanceKm?, tempo, meetingPointName?, meetingAddress?, meetingDescription?, meetingLat?, meetingLon?, maxParticipants?, recurring?: { weekday, timeOfDay } }` → `{ walk: WalkDetail, seriesId? }`. Mit `recurring` (Schalter „Wiederkehrender Termin“) wird eine Serie angelegt und die nächsten 8 Wochen erzeugt; ein Hintergrund-Job erzeugt laufend nach. Löst Interessen-Benachrichtigung aus. |
-| PATCH | `/walks/:id` | Leitung/Erstellerin, Felder wie POST → `{ walk }` |
+| PATCH | `/walks/:id` | Leitung/Erstellerin, Felder wie POST → `{ walk }` (Gruppen-Walk: nur die aktuelle Gruppenleitung – eine gesperrte/entfernte Erstellerin nicht mehr; gilt auch für DELETE, Bestätigen, Treffpunkt und Teilnehmerliste) |
 | DELETE | `/walks/:id` | absagen (status `cancelled`), Zusagende werden benachrichtigt (in-App + E-Mail) → `{ ok }` |
 | PATCH | `/walks/series/:id` | Leitung, Felder der Serie; ändert künftige Termine ohne Zusagen |
 | DELETE | `/walks/series/:id` | Serie beenden, künftige Termine absagen |
@@ -154,14 +154,14 @@ Ablauf Einladungslink: `/einladung/:code` → nicht angemeldet → Anmeldung mit
 | GET | `/rural/partner-offer` | `{ offer \| null }` eigenes Gesuch |
 | PUT | `/rural/partner-offer` | `{ postalCode, tempo, availability, note, active }` → `{ offer }` |
 | DELETE | `/rural/partner-offer` | `{ ok }` |
-| POST | `/rural/partners/:offerId/request` | `{ message }` → `{ request }` – Anfrage an die Person (in-App + E-Mail, ohne Kontaktdaten preiszugeben). Idempotent je Paar. |
+| POST | `/rural/partners/:offerId/request` | `{ message }` → `{ request }` – Anfrage an die Person (in-App + E-Mail, ohne Kontaktdaten preiszugeben). Idempotent je Paar. Höchstens 10 neue Anfragen je Person in 24 Stunden, sonst 429 `rate_limited`. |
 | GET | `/rural/partner-requests` | `{ incoming: Req[], outgoing: Req[] }`, `Req = { id, from: PersonRef, to: PersonRef, message, status, walkId, createdAt }` |
 | POST | `/rural/partner-requests/:id/accept` | Empfängerin: `{ startsAt, meetingPointName, meetingAddress, meetingDescription?, durationMinutes?, tempo? }` → `{ walkId }` – legt 1:1-Walk (`kind: 'partner'`) mit beiden Zusagen an |
 | POST | `/rural/partner-requests/:id/decline` | `{ ok }` (Absenderin wird NICHT aktiv benachrichtigt, sieht nur Status) |
 
 Fehlercodes Paket A: `group_not_found`, `walk_not_found`, `not_group_member`, `not_group_lead`, `not_founder`,
 `women_only`, `banned`, `invite_only`, `invite_invalid`, `walk_full`, `walk_cancelled`, `walk_in_past`,
-`walk_not_started`, `founder_cannot_leave`, `offer_not_found`.
+`walk_not_started`, `founder_cannot_leave`, `offer_not_found`, `rate_limited` (429).
 
 #### Umsetzungshinweise Paket A (Stand Umsetzung, Jonas)
 
@@ -196,7 +196,8 @@ Fehlercodes Paket A: `group_not_found`, `walk_not_found`, `not_group_member`, `n
   Annahme per Code über `/invites/:code/accept` umgeht „auf Anfrage“ (Einladung), `POST /groups/join-by-code` dagegen nicht.
 - **Ländliche Regionen:** Standard-Umkreis 30 km. `GET /rural/partners` nimmt optional `postalCode`
   (sonst Ort des eigenen Gesuchs bzw. Profil-PLZ); das eigene Gesuch ist immer enthalten (`isMine`).
-  Annahme/Ablehnung einer fremden Anfrage → 404 `not_found`; Annahme einer abgelehnten Anfrage → 409 `conflict`.
+  Annahme/Ablehnung einer fremden Anfrage oder einer Anfrage einer blockierten Person → 404 `not_found`; Annahme einer abgelehnten Anfrage → 409 `conflict`.
+  Benachrichtigung `partner_accepted` enthält `{ walkId, actorId, displayName, startsAt }`.
   Interessen-Nachrichten: in der App immer, per E-Mail nur mit `emailNotifications`; höchstens eine pro Tag.
   Gruppen „nur auf Einladung“ lösen keine Interessen-Nachricht aus.
 
@@ -247,7 +248,7 @@ berücksichtigen nachgetragene Walks noch 3 Tage nach Ende. Urkunde/Teil-Bild nu
 
 | GET | `/challenges` | `{ active: Challenge[], past: Challenge[] }` – allgemeine, Stadt- (eigene Profil-Stadt) und Gruppen-Challenges (eigene Gruppen) |
 |---|---|---|
-| GET | `/challenges/:id` | `{ challenge, leaderboard: [{ rank, name, progress, isMe }] }` – Name = Anzeigename bzw. **„Teilnehmende Person“** (neutral) bei `leaderboardMode: hidden` oder Blockierung; die eigene Zeile zeigt immer den eigenen Namen. Gleicher Fortschritt → gleicher Rang. Top 20 + eigene Zeile. Keine Personen-IDs. |
+| GET | `/challenges/:id` | `{ challenge, leaderboard: [{ rank, name, progress, isMe }] }` – Name = Anzeigename bzw. **„Teilnehmende Person“** (neutral) bei `leaderboardMode: hidden` oder Blockierung; die eigene Zeile zeigt immer den eigenen Namen. Gleicher Fortschritt → gleicher Rang. Top 20 + eigene Zeile. Keine Personen-IDs. Gruppen-Challenge und keine aktive Mitgliedschaft (mehr) → nur die eigene Zeile. |
 | POST | `/challenges/:id/join` | idempotent → `{ challenge }` (Fortschritt wird aus vorhandenen Walks im Zeitraum berechnet, kann direkt abschließen). Beendet → 409 `challenge_ended`. |
 | DELETE | `/challenges/:id/join` | `{ ok }` |
 | POST | `/challenges` | Gruppenleitung: `{ groupId, title, summary, type, target, startsAt, endsAt }` → **201** `{ challenge }` (Ziel-Obergrenzen: single_distance 100 km, walk_count 500, total_distance 5000 km; höchstens 1 Jahr). `GET /challenges` → `past`: die letzten 20 beendeten (sichtbare oder beigetretene). |

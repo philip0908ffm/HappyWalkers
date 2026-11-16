@@ -47,6 +47,7 @@
     "commentSent": "Dein Kommentar ist gesendet."
   },
   "form": {
+    "photoHint": "JPG, PNG oder HEIC, höchstens 10 MB. Ort und Kameradaten werden automatisch entfernt. Das Gruppenfoto ist für alle sichtbar, auch ohne Anmeldung – zeig darauf am besten keine erkennbaren Personen.",
     "templateText": "Wähle eine Vorlage – Beschreibung, Regeln und Tempo sind dann schon ausgefüllt. Du kannst alles ändern.",
     "noTemplateText": "Du schreibst alles selbst.",
     "nameRequired": "Bitte gib einen Namen mit mindestens 3 Zeichen ein.",

@@ -1,5 +1,5 @@
 import { ANREDEN, FONT_SCALES, LOCALES, PROFILE_VISIBILITIES } from '@gehmeinsam/shared';
-import { and, asc, eq, inArray, ne, or } from 'drizzle-orm';
+import { and, asc, eq, inArray, ne, or, sql } from 'drizzle-orm';
 import { Router } from 'express';
 import { z } from 'zod';
 import { db } from '../db/index.js';
@@ -220,6 +220,17 @@ router.delete('/', async (req, res) => {
     // Einladungen an die eigene E-Mail-Adresse und offene SMS-Codes enthalten Kontaktdaten → mitlöschen.
     if (u?.email) await tx.delete(s.groupInvites).where(eq(s.groupInvites.email, u.email));
     if (u?.phone) await tx.delete(s.verification).where(eq(s.verification.identifier, `phone-number-otp-${u.phone}`));
+
+    // Hinweise bei anderen, die diese Person nennen (Anzeigename in data), mitlöschen
+    await tx
+      .delete(s.notifications)
+      .where(
+        or(
+          sql`${s.notifications.data}->>'actorId' = ${userId}`,
+          sql`${s.notifications.data}->>'userId' = ${userId}`,
+          sql`${s.notifications.data}->>'fromUserId' = ${userId}`,
+        ),
+      );
 
     // Sitzungen, Konten, Profil, Einträge, Beiträge … werden per ON DELETE CASCADE entfernt.
     await tx.delete(s.user).where(eq(s.user.id, userId));

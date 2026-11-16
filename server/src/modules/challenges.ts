@@ -169,9 +169,12 @@ router.get('/:id', async (req, res) => {
     const anonymous = !isMe && (r.mode === 'hidden' || blocked.has(r.userId) || !r.displayName);
     return { rank, name: anonymous ? HIDDEN_LEADERBOARD_NAME : (r.displayName ?? ''), progress: r.progress, isMe };
   });
-  const leaderboard = ranked.slice(0, LEADERBOARD_TOP);
   const mine = ranked.findIndex((r) => r.isMe);
-  if (mine >= LEADERBOARD_TOP) leaderboard.push(ranked[mine]);
+  // Gruppen-Challenge: Namen der Mitglieder nur für aktive Mitglieder. Wer die Gruppe verlassen hat
+  // oder gesperrt wurde, sieht nur noch die eigene Zeile.
+  const outsider = ch.scope === 'group' && (!ch.groupId || !v.groupIds.includes(ch.groupId));
+  const leaderboard = outsider ? (mine >= 0 ? [ranked[mine]] : []) : ranked.slice(0, LEADERBOARD_TOP);
+  if (!outsider && mine >= LEADERBOARD_TOP) leaderboard.push(ranked[mine]);
   const [challenge] = await toChallenges([ch], userId);
   res.json({ challenge, leaderboard });
 });

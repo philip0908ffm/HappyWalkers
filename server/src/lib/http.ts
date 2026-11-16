@@ -22,6 +22,7 @@ export const forbidden = (code = 'forbidden') => new ApiError(403, code);
 export const notFound = (code = 'not_found') => new ApiError(404, code);
 export const conflict = (code = 'conflict') => new ApiError(409, code);
 export const paymentRequired = () => new ApiError(402, 'premium_required');
+export const tooManyRequests = () => new ApiError(429, 'rate_limited');
 
 /** Validiert Body/Query/Params mit zod und gibt die geprüften Daten zurück. */
 export function parse<T extends ZodType>(schema: T, data: unknown): z.infer<T> {
