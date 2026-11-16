@@ -1,0 +1,166 @@
+{
+  "title": "Premium",
+  "lead": "Für alle, die ihren Fortschritt genauer sehen möchten. Freiwillig – alles Wichtige bleibt kostenlos.",
+  "price": {
+    "title": "Preis",
+    "amount": "{{price}} {{interval}}",
+    "interval_month": "pro Monat",
+    "interval_year": "pro Jahr"
+  },
+  "promise": {
+    "free": "Walks, Gruppen und das Eintragen von Walks bleiben immer kostenlos.",
+    "cancel": "Monatlich mit einem Klick kündbar.",
+    "noTrial": "Kein Probeabo – es kostet erst etwas, wenn Sie es selbst abschließen.",
+    "noAds": "Keine Werbung und keine Weitergabe Ihrer Daten."
+  },
+  "features": {
+    "title": "Das enthält Premium",
+    "stats": "Statistiken mit gut lesbaren Diagrammen",
+    "stats_hint": " – Kilometer und Walks pro Woche, Monat und Jahr.",
+    "tempo": "Ihr Tempo im Verlauf",
+    "tempo_hint": " – werden Sie schneller? In Alltagssprache erklärt.",
+    "goals": "Eigene Wochen- und Monatsziele",
+    "goals_hint": " – mit Fortschrittsbalken.",
+    "yearReview": "Jahresrückblick",
+    "yearReview_hint": " – Ihre Walks, Orte und Abzeichen des Jahres.",
+    "shareCard": "Fortschritt als Bild",
+    "shareCard_hint": " – zum Herunterladen und Verschicken an Familie und Freunde."
+  },
+  "action": {
+    "title": "Mein Premium",
+    "intro": "Sie können Premium jederzeit abschließen und mit einem Klick wieder kündigen.",
+    "signInFirst": "Bitte melden Sie sich zuerst an, um Premium abzuschließen.",
+    "signIn": "Anmelden",
+    "toProgress": "Zu meinem Fortschritt"
+  },
+  "status": {
+    "active": "Premium ist aktiv. Die nächste Abbuchung ({{price}}) ist am {{date}}.",
+    "activeNoDate": "Premium ist aktiv.",
+    "cancelled": "Sie haben gekündigt. Premium läuft noch bis zum {{date}}. Danach endet es von selbst und es wird nichts mehr abgebucht."
+  },
+  "subscribe": {
+    "button": "Premium abschließen – {{price}}",
+    "title": "Premium abschließen?",
+    "point1": "Premium kostet {{price}}. Der Betrag wird jeden Monat abgebucht.",
+    "point2": "Sie können jederzeit mit einem Klick kündigen. Dann läuft Premium bis zum Monatsende und endet von selbst.",
+    "point3": "Es gibt kein Probeabo und keine versteckten Kosten.",
+    "devHint": "Testbetrieb: Im Moment wird nichts abgebucht.",
+    "confirm": "Ja, kostenpflichtig abschließen ({{price}})",
+    "done": "Willkommen bei Premium! Ihr Fortschritt wartet auf Sie."
+  },
+  "cancel": {
+    "title": "Premium kündigen",
+    "intro": "Ein Klick genügt. Vorher zeigen wir Ihnen, was danach passiert.",
+    "button": "Premium kündigen",
+    "dialogTitle": "Premium wirklich kündigen?",
+    "whatHappens": "Das passiert nach der Kündigung:",
+    "point1": "Premium läuft noch bis zum {{date}}.",
+    "point1NoDate": "Premium läuft noch bis zum Ende des bezahlten Monats.",
+    "point2": "Danach wird nichts mehr abgebucht.",
+    "point3": "Ihre Walks, Abzeichen, Gruppen und Ziele bleiben erhalten.",
+    "point4": "Sie können die Kündigung bis dahin jederzeit zurücknehmen.",
+    "confirm": "Ja, kündigen",
+    "keep": "Premium behalten",
+    "done": "Gekündigt. Premium läuft noch bis zum {{date}}, danach wird nichts mehr abgebucht."
+  },
+  "resume": {
+    "button": "Kündigung zurücknehmen",
+    "hint": "Dann läuft Premium wie bisher weiter und verlängert sich jeden Monat.",
+    "done": "Die Kündigung ist zurückgenommen. Premium läuft weiter."
+  },
+  "progress": {
+    "title": "Mein Fortschritt",
+    "lead": "Wie viel Sie gegangen sind, wie sich Ihr Tempo entwickelt und was Sie sich vorgenommen haben.",
+    "noPremiumTitle": "Diese Seite gehört zu Premium",
+    "noPremiumText": "Mit Premium sehen Sie hier Ihren Fortschritt genauer:",
+    "toPremium": "Mehr über Premium",
+    "toShowcaseFree": "Zur Vitrine (kostenlos)"
+  },
+  "stats": {
+    "title": "Statistik",
+    "range": "Zeitraum",
+    "range_week": "Diese Woche",
+    "range_month": "Dieser Monat",
+    "range_year": "Dieses Jahr",
+    "walks_one": "Walk",
+    "walks_other": "Walks",
+    "walksValue_one": "1 Walk",
+    "walksValue_other": "{{count}} Walks",
+    "km": "Kilometer",
+    "time": "unterwegs",
+    "avgSpeed": "km pro Stunde im Schnitt",
+    "colPeriod": "Zeitraum",
+    "kmChart_week": "Kilometer pro Tag",
+    "kmChart_month": "Kilometer pro Woche",
+    "kmChart_year": "Kilometer pro Monat",
+    "walksChart_week": "Walks pro Tag",
+    "walksChart_month": "Walks pro Woche",
+    "walksChart_year": "Walks pro Monat",
+    "kmSummary": "Am meisten: {{label}} mit {{km}} km. Zusammen {{total}} km.",
+    "noWalks": "In diesem Zeitraum gibt es noch keine Walks."
+  },
+  "tempo": {
+    "title": "Ihr Tempo",
+    "average": "Im Schnitt gehen Sie {{kmh}} km pro Stunde – das ist {{tempo}}.",
+    "trend_up": "Sie sind schneller geworden. Prima!",
+    "trend_down": "Sie gehen etwas ruhiger als am Anfang – das ist völlig in Ordnung.",
+    "trend_same": "Ihr Tempo ist gleich geblieben.",
+    "trend_few": "",
+    "chart": "Tempo im Verlauf (km pro Stunde)",
+    "colSpeed": "km pro Stunde",
+    "kmh": "{{kmh}} km/h",
+    "explain": "Zum Vergleich: gemütlich sind etwa 4 km pro Stunde, zügig etwa 5, flott 6 und mehr."
+  },
+  "goals": {
+    "title": "Meine Ziele",
+    "intro": "Nehmen Sie sich etwas vor – zum Beispiel 15 km pro Woche. Wir zeigen, wie viel noch fehlt.",
+    "empty": "Sie haben noch kein Ziel. Legen Sie unten eins an.",
+    "label_week": "Wochenziel: {{target}}",
+    "label_month": "Monatsziel: {{target}}",
+    "progress": "{{progress}} geschafft – noch {{rest}}",
+    "reached": "Ziel erreicht: {{progress}}. Herzlichen Glückwunsch!",
+    "delete": "Ziel löschen",
+    "deleted": "Das Ziel wurde gelöscht.",
+    "formTitle": "Ziel festlegen",
+    "period": "Für welchen Zeitraum?",
+    "period_week": "pro Woche",
+    "period_month": "pro Monat",
+    "metric": "Was möchten Sie zählen?",
+    "metric_km": "Kilometer",
+    "metric_walks": "Anzahl Walks",
+    "targetKm": "Ziel in Kilometern",
+    "targetWalks": "Ziel: Anzahl Walks",
+    "targetHint": "Gibt es schon ein Ziel für diesen Zeitraum, wird es ersetzt.",
+    "kmInvalid": "Bitte geben Sie eine Zahl zwischen 1 und 1000 an, zum Beispiel 15 oder 12,5.",
+    "walksInvalid": "Bitte geben Sie eine ganze Zahl zwischen 1 und 100 an.",
+    "save": "Ziel speichern",
+    "saved": "Ihr Ziel ist gespeichert."
+  },
+  "year": {
+    "title": "Jahresrückblick {{year}}",
+    "choose": "Welches Jahr?",
+    "empty": "Für {{year}} gibt es noch keine Walks.",
+    "summary": "{{year}} sind Sie {{walks}} gegangen: zusammen {{km}} km in {{time}}.",
+    "groupWalks_one": "1 Walk davon gemeinsam mit der Gruppe",
+    "groupWalks_other": "{{count}} Walks davon gemeinsam mit der Gruppe",
+    "bestMonth": "Bester Monat: {{month}} ({{km}} km)",
+    "bestMonthShort": "Bester Monat: {{month}}",
+    "longest": "Längster Walk: {{km}} km",
+    "longestOn": "Längster Walk: {{km}} km am {{date}}",
+    "places_one": "Unterwegs an 1 Ort: {{list}}",
+    "places_other": "Unterwegs an {{count}} Orten: {{list}}",
+    "badges_one": "1 neues Abzeichen",
+    "badges_other": "{{count}} neue Abzeichen"
+  },
+  "card": {
+    "title": "Fortschritt als Bild teilen",
+    "text": "Laden Sie ein schönes Bild mit Ihren Kilometern herunter und schicken Sie es zum Beispiel an Ihre Familie.",
+    "privacy": "Das Bild zeigt Ihren Namen, Kilometer, Walks und Abzeichen – keinen Ort und keine Route. Es wird nur auf Ihr Gerät geladen; Sie entscheiden, wem Sie es schicken.",
+    "month": "Bild für diesen Monat herunterladen",
+    "year": "Bild für dieses Jahr herunterladen"
+  },
+  "errors": {
+    "premium_required": "Diese Funktion gehört zu Premium.",
+    "already_premium": "Sie haben Premium bereits."
+  }
+}
