@@ -1,5 +1,8 @@
 {
-  "app": { "name": "Gehmeinsam", "tagline": "Gemeinsam zügig gehen – in Ihrer Nähe." },
+  "app": {
+    "name": "Gehmeinsam",
+    "tagline": "Gemeinsam zügig gehen – in Ihrer Nähe."
+  },
   "nav": {
     "label": "Hauptnavigation",
     "skipToContent": "Zum Inhalt springen",
@@ -16,7 +19,11 @@
     "imprint": "Impressum & Quellen",
     "premium": "Premium"
   },
-  "status": { "loading": "Wird geladen …", "saving": "Wird gespeichert …", "sending": "Wird gesendet …" },
+  "status": {
+    "loading": "Wird geladen …",
+    "saving": "Wird gespeichert …",
+    "sending": "Wird gesendet …"
+  },
   "actions": {
     "save": "Speichern",
     "cancel": "Abbrechen",
@@ -39,7 +46,9 @@
     "block": "Blockieren",
     "unblock": "Blockierung aufheben"
   },
-  "explain": { "whatIs": "Was bedeutet „{{term}}“?" },
+  "explain": {
+    "whatIs": "Was bedeutet „{{term}}“?"
+  },
   "visibility": {
     "label": "Wer kann das sehen?",
     "private": "Nur ich",
@@ -55,10 +64,19 @@
     "zuegig": "zügig",
     "zuegig_hint": "etwa 5 km pro Stunde – man kommt leicht ins Schwitzen",
     "flott": "flott",
-    "flott_hint": "etwa 6 km pro Stunde und mehr – für Geübte"
+    "flott_hint": "etwa 6 km pro Stunde und mehr – für Geübte",
+    "any": "Egal"
   },
-  "units": { "km": "{{value}} km", "minutes": "{{count}} Minuten", "points": "{{count}} Punkte", "points_one": "1 Punkt" },
-  "premium": { "label": "Premium", "only": "Nur mit Premium" },
+  "units": {
+    "km": "{{value}} km",
+    "minutes": "{{count}} Minuten",
+    "points": "{{count}} Punkte",
+    "points_one": "1 Punkt"
+  },
+  "premium": {
+    "label": "Premium",
+    "only": "Nur mit Premium"
+  },
   "errors": {
     "network": "Keine Verbindung. Bitte prüfen Sie Ihre Internetverbindung und versuchen Sie es noch einmal.",
     "server_error": "Da ist leider etwas schiefgegangen. Bitte versuchen Sie es in einem Moment noch einmal.",
@@ -86,5 +104,37 @@
     "blocked": "Das ist leider nicht möglich.",
     "conflict": "Das gibt es schon.",
     "rate_limited": "Das waren sehr viele Versuche. Bitte warten Sie ein paar Minuten."
+  },
+  "newWindow": "(öffnet in neuem Fenster)",
+  "search": {
+    "placeLabel": "Postleitzahl oder Ort",
+    "placeHint": "Zum Beispiel: 34117 oder Kassel",
+    "placeRequired": "Bitte geben Sie eine Postleitzahl (5 Ziffern) oder einen Ortsnamen ein.",
+    "placeNotFound": "Zu „{{q}}“ haben wir keinen Ort gefunden. Bitte prüfen Sie die Schreibweise oder geben Sie die Postleitzahl ein.",
+    "submit": "Suchen",
+    "whichPlace": "Welchen Ort meinen Sie? Bitte wählen Sie:",
+    "locationExplain": "Sie können auch Ihren aktuellen Standort verwenden. Wir nutzen Ihren Standort nur für diese Suche und speichern ihn nicht.",
+    "useLocation": "Meinen Standort verwenden",
+    "locating": "Standort wird ermittelt …",
+    "locationDenied": "Der Standort wurde nicht freigegeben. Das ist in Ordnung – geben Sie einfach Ihre Postleitzahl ein.",
+    "locationUnavailable": "Ihr Standort konnte nicht ermittelt werden. Bitte geben Sie Ihre Postleitzahl ein.",
+    "myLocation": "Ihrem Standort",
+    "radius": "Umkreis",
+    "radiusKm": "{{km}} km"
+  },
+  "map": {
+    "zoomIn": "Karte vergrößern",
+    "zoomOut": "Karte verkleinern",
+    "entries_one": "1 Termin an diesem Ort",
+    "entries_other": "{{count}} Termine an diesem Ort",
+    "approxNote": "Die Karte zeigt nur den ungefähren Ort (Ortsmitte). Den genauen Treffpunkt sehen Mitglieder der Gruppe."
+  },
+  "calendar": {
+    "prev": "Vormonat",
+    "next": "Nächster Monat",
+    "caption": "Termine im {{month}}",
+    "tableLabel": "Kalender {{month}}",
+    "today": "heute",
+    "cancelled": "abgesagt"
   }
 }

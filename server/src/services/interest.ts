@@ -114,7 +114,7 @@ async function sendInterestMail(userId: string, ev: InterestEvent, km: number) {
   const url = `${config.APP_URL}${ev.path}`;
   const text = [
     hello,
-    `${du ? t.du : t.sie}: in ${ev.city}, etwa ${km} km entfernt.`,
+    `${du ? t.du : t.sie} – in ${ev.city}, etwa ${km} km entfernt.`,
     du ? 'Schau es dir in Ruhe an:' : 'Schauen Sie es sich in Ruhe an:',
     url,
     du

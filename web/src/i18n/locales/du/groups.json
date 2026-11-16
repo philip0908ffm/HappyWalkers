@@ -1,0 +1,78 @@
+{
+  "joinPolicy": {
+    "open_explain": "Diese Gruppe ist offen: Du kannst sofort beitreten und siehst dann alle Treffpunkte.",
+    "request_explain": "Bei dieser Gruppe schickst du eine kurze Anfrage. Die Gruppenleitung nimmt dich dann auf – meist innerhalb weniger Tage.",
+    "invite_explain": "Dieser Gruppe kann man nur mit einer Einladung beitreten. Frag ein Mitglied nach dem Einladungslink oder dem Code."
+  },
+  "status": { "member": "Du bist Mitglied" },
+  "list": {
+    "lead": "Gemeinsam gehen macht mehr Freude. Finde eine Gruppe in deiner Nähe – oder gründe selbst eine.",
+    "mineEmpty": "Du bist noch in keiner Gruppe. Unten findest du Gruppen in deiner Nähe.",
+    "empty": "In diesem Umkreis gibt es noch keine Gruppe. Vielleicht möchtest du die erste gründen?"
+  },
+  "code": {
+    "text": "Du hast einen Code bekommen, zum Beispiel auf einem Aushang? Gib ihn hier ein.",
+    "required": "Bitte gib den Code ein, so wie er auf der Einladung steht."
+  },
+  "join": {
+    "joined": "Willkommen in der Gruppe „{{name}}“! Jetzt siehst du alle Treffpunkte.",
+    "requested": "Deine Anfrage ist unterwegs. Die Gruppenleitung meldet sich bei dir.",
+    "pendingInfo": "Deine Anfrage ist unterwegs. Sobald die Gruppenleitung dich aufnimmt, siehst du alle Treffpunkte.",
+    "signInFirst": "Um beizutreten, melde dich bitte an. Das geht ohne Passwort.",
+    "womenOnlyHint": "Diese Gruppe ist nur für Frauen. Damit du beitreten kannst, gib in deinem Profil „Frau“ an. Das sieht niemand sonst."
+  },
+  "detail": {
+    "youAreMember": "Deine Mitgliedschaft",
+    "leaveText": "Du siehst dann keine Treffpunkte und Neuigkeiten der Gruppe mehr. Du kannst später wieder beitreten.",
+    "left": "Du hast die Gruppe „{{name}}“ verlassen.",
+    "founderCannotLeave": "Als Gründerin bzw. Gründer kannst du die Gruppe erst verlassen, wenn du die Leitung übergeben hast (unter „Mitglieder und Termine“)."
+  },
+  "invite": {
+    "lead": "Zu zweit oder zu dritt macht es noch mehr Spaß. Wähle, wie du einladen möchtest:",
+    "linkText": "Diesen Link kannst du per Nachricht weitergeben.",
+    "copied": "Der Link ist kopiert. Du kannst ihn jetzt einfügen, zum Beispiel in eine Nachricht.",
+    "copyManually": "Der Link ist markiert. Kopiere ihn mit Strg + C (Mac: Befehlstaste + C).",
+    "emailRequired": "Bitte gib mindestens eine E-Mail-Adresse ein."
+  },
+  "feed": {
+    "empty": "Hier gibt es noch keine Neuigkeiten. Schreib doch den ersten Beitrag!",
+    "postRequired": "Bitte schreib zuerst etwas.",
+    "posted": "Dein Beitrag ist jetzt für die Gruppe sichtbar.",
+    "liked": "Du hast ein Herz gegeben.",
+    "unliked": "Du hast dein Herz zurückgenommen.",
+    "commentLabel": "Dein Kommentar",
+    "commentRequired": "Bitte schreib zuerst einen Kommentar.",
+    "commentSent": "Dein Kommentar ist gesendet."
+  },
+  "form": {
+    "templateText": "Wähle eine Vorlage – Beschreibung, Regeln und Tempo sind dann schon ausgefüllt. Du kannst alles ändern.",
+    "noTemplateText": "Du schreibst alles selbst.",
+    "nameRequired": "Bitte gib einen Namen mit mindestens 3 Zeichen ein.",
+    "postalRequired": "Bitte gib eine Postleitzahl mit 5 Ziffern ein.",
+    "rulesHint": "Sie stehen gut sichtbar oben auf der Gruppenseite. Zum Beispiel: Wir warten aufeinander.",
+    "seriesHint": "Dauer: {{duration}}. Den Treffpunkt trägst du danach beim Termin ein.",
+    "saved": "Deine Änderungen sind gespeichert."
+  },
+  "admin": {
+    "you": "du",
+    "membersHint": "Bei jeder Aktion fragen wir noch einmal nach.",
+    "confirm": {
+      "make_founder": { "title": "Die Leitung an {{name}} übergeben?", "text": "{{name}} wird Gründerin bzw. Gründer der Gruppe. Du wirst Moderatorin bzw. Moderator.", "button": "Ja, übergeben" }
+    },
+    "seriesTitleRequired": "Bitte gib einen Namen ein.",
+    "deleteText": "Wenn die Gruppe nicht mehr gebraucht wird, kannst du sie auflösen."
+  },
+  "poster": {
+    "hint": "Tipp: Drucke auf A4. Der Aushang passt auf eine Seite."
+  },
+  "inviteLanding": {
+    "title": "Du bist eingeladen!",
+    "lead": "Jemand möchte gern mit dir gehen.",
+    "ready": "Schön, dass du da bist, {{name}}! Mit einem Klick bist du dabei.",
+    "signInText": "Um beizutreten, melde dich kurz an. Danach kommst du direkt hierher zurück.",
+    "noPassword": "Ganz ohne Passwort – wir schicken dir einen Anmelde-Link."
+  },
+  "errors": {
+    "founder_cannot_leave": "Als Gründerin bzw. Gründer kannst du die Gruppe erst verlassen, wenn du die Leitung übergeben hast."
+  }
+}

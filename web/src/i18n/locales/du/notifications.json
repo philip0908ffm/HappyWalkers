@@ -1,0 +1,18 @@
+{
+  "lead": "Hier siehst du, was sich bei deinen Gruppen, Walks und Kontakten getan hat.",
+  "yourArea": "deiner Nähe",
+  "types": {
+    "join_request": "{{name}} möchte der Gruppe „{{group}}“ beitreten. Bitte entscheide in der Gruppenverwaltung.",
+    "join_approved": "Willkommen! Du bist jetzt Mitglied der Gruppe „{{group}}“.",
+    "follow_request": "{{name}} möchte dir folgen. Du kannst die Anfrage annehmen oder ablehnen.",
+    "follow_accepted": "{{name}} hat deine Anfrage angenommen. Ihr seid jetzt verbunden.",
+    "walk_confirmed": "Der gemeinsame Walk „{{walk}}“ wurde bestätigt und mit {{km}} km bei dir eingetragen.",
+    "walk_confirmed_nokm": "Der gemeinsame Walk „{{walk}}“ wurde bestätigt und bei dir eingetragen.",
+    "comment": "{{name}} hat deinen Beitrag kommentiert.",
+    "like": "{{name}} hat deinem Beitrag ein Herz gegeben.",
+    "challenge_done": "Geschafft! Du hast die Mitmach-Aktion „{{challenge}}“ erreicht.",
+    "partner_request": "{{name}} möchte gern mit dir gehen. Schau dir die Anfrage an.",
+    "partner_accepted": "{{name}} hat deine Anfrage angenommen. Ein gemeinsamer Termin steht fest.",
+    "unknown": "Es gibt etwas Neues für dich."
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "card": { "going": "Du bist dabei" },
+  "list": {
+    "title": "Walks in deiner Nähe",
+    "lead": "Hier findest du verabredete Spaziergänge in zügigem Schritt – zum Mitgehen.",
+    "filterTitle": "Wo möchtest du gehen?",
+    "enterPlace": "Bitte gib links deine Postleitzahl oder deinen Ort ein. Dann zeigen wir dir die Walks in der Nähe.",
+    "empty": "In diesem Umkreis gibt es gerade keine Walks. Versuche einen größeren Umkreis oder ein anderes Tempo.",
+    "ideasTitle": "Ideen für deine Gegend"
+  },
+  "detail": {
+    "cancelledText": "Er findet nicht statt. Schau gerne nach einem anderen Termin.",
+    "meetingPointHidden": "Den Treffpunkt siehst du, sobald du Mitglied der Gruppe bist.",
+    "distanceText": "Bei „Gemeinsam auf Distanz“ geht jede Person an ihrem eigenen Ort – zur selben Zeit. Danach erzählt ihr euch in den Neuigkeiten, wie es war.",
+    "distanceFeedText": "Wie war dein Weg? Schreib ein paar Worte für die anderen."
+  },
+  "rsvp": {
+    "text": "Sag zu, damit die Gruppe weiß, dass du kommst.",
+    "yesToast": "Du bist dabei! Wir haben dich eingetragen.",
+    "goingTitle": "Du bist dabei!",
+    "goingText": "Wir freuen uns auf dich am {{date}} um {{time}}. Trag den Termin am besten gleich in deinen Kalender ein.",
+    "noTitle": "Möchtest du wirklich absagen?",
+    "noText": "Du kannst später jederzeit wieder zusagen.",
+    "noToast": "Du hast abgesagt. Schade – vielleicht beim nächsten Mal!",
+    "signIn": "Melde dich an, um zuzusagen. Das geht ohne Passwort.",
+    "joinFirst": "Um zuzusagen, tritt bitte zuerst der Gruppe bei (siehe „Treffpunkt“)."
+  },
+  "lead": {
+    "confirmExplain": "Nach dem Walk bestätigst du, wer dabei war. Dann zählt der Walk für jede Person: Kilometer, Punkte und Abzeichen werden gutgeschrieben.",
+    "confirmLater": "Nach Beginn des Walks kannst du hier bestätigen, wer dabei war.",
+    "kmInvalid": "Bitte gib eine Strecke zwischen 0,1 und 100 km ein.",
+    "minutesInvalid": "Bitte gib eine Dauer zwischen 1 und 1440 Minuten ein.",
+    "whoHint": "Alle, die zugesagt haben, sind angekreuzt. Entferne den Haken bei Personen, die nicht gekommen sind.",
+    "peopleRequired": "Bitte kreuze mindestens eine Person an."
+  },
+  "form": {
+    "newLead": "Lade andere zum gemeinsamen Gehen ein.",
+    "kindLegend": "Bitte wähle",
+    "kindRequired": "Bitte wähle, für wen der Termin ist.",
+    "noLedGroups": "Termine für eine Gruppe legt die Gruppenleitung an. Du kannst aber jederzeit einen Termin „Gemeinsam auf Distanz“ anlegen.",
+    "titleRequired": "Bitte gib dem Walk einen Namen.",
+    "dateRequired": "Bitte wähle ein Datum.",
+    "datePast": "Dieser Zeitpunkt liegt in der Vergangenheit. Bitte wähle ein späteres Datum.",
+    "timeRequired": "Bitte gib eine Uhrzeit ein, zum Beispiel 10:00.",
+    "tempoRequired": "Bitte wähle ein Tempo.",
+    "kmInvalid": "Bitte gib eine Strecke zwischen 0,1 und 100 km ein.",
+    "maxInvalid": "Bitte gib eine ganze Zahl ab 2 ein.",
+    "mpDesc": "So findest du uns",
+    "errorSummary": "Bitte prüfe noch diese Angaben:",
+    "saved": "Deine Änderungen sind gespeichert."
+  }
+}

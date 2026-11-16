@@ -1,0 +1,20 @@
+{
+  "welcome": {
+    "lead": "Gehmeinsam bringt Menschen zusammen, die sich gern mehr bewegen möchten: verabredete Spaziergänge in zügigem Schritt, ganz in deiner Nähe.",
+    "searchTitle": "Walks in deiner Nähe finden",
+    "step_find_text": "Gib deine Postleitzahl ein und sieh, wann und wo gegangen wird.",
+    "step_join_text": "Ein Klick genügt. Die Gruppe freut sich auf dich und wartet aufeinander.",
+    "promiseTitle": "Darauf kannst du dich verlassen",
+    "promise_privacy": "Deine Daten bleiben bei dir: Den genauen Treffpunkt sehen nur Mitglieder der Gruppe."
+  },
+  "home": {
+    "lead": "Schön, dass du da bist. Was möchtest du heute tun?",
+    "tileLogText": "Du bist gegangen? Trag es ein.",
+    "tileFindText": "Termine in deiner Nähe",
+    "nextTitle": "Deine nächsten Walks",
+    "nextEmpty": "Du hast gerade keinem Walk zugesagt. Wie wäre es mit einem Termin in deiner Nähe?",
+    "groupsEmpty": "Du bist noch in keiner Gruppe.",
+    "ruralTitle": "Noch keine Gruppe in deiner Nähe?",
+    "ruralText": "Auf dem Land ist der Weg manchmal weit. Wir haben Ideen: eine Gehpartnerin finden, „Gemeinsam auf Distanz“ gehen oder Bescheid bekommen, sobald es etwas in deiner Nähe gibt."
+  }
+}

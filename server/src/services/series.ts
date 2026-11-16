@@ -8,7 +8,7 @@
  * Eindeutiger Index (series_id, starts_at) → doppeltes Erzeugen ist ausgeschlossen. Ein einzeln
  * abgesagter Termin bleibt als „abgesagt“ bestehen und wird nicht neu erzeugt.
  */
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { db } from '../db/index.js';
 import { groups, walks, walkSeries } from '../db/schema.js';
 import { registerJob } from '../jobs.js';
@@ -127,11 +127,6 @@ export async function futureSeriesWalkIds(seriesId: string, now = new Date()) {
     .from(walks)
     .where(and(eq(walks.seriesId, seriesId), eq(walks.status, 'planned')));
   return rows.filter((r) => r.startsAt > now).map((r) => r.id);
-}
-
-export async function seriesByIds(ids: string[]) {
-  if (!ids.length) return [];
-  return db.select().from(walkSeries).where(inArray(walkSeries.id, ids));
 }
 
 registerJob({

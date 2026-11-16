@@ -669,9 +669,9 @@ router.put('/:id/rsvp', requireUser, async (req, res) => {
       .from(s.walkRsvps)
       .where(and(eq(s.walkRsvps.walkId, w.id), eq(s.walkRsvps.userId, userId)));
     if (status === 'yes') {
+      if (locked.status === 'cancelled') throw conflict('walk_cancelled');
+      if (locked.startsAt <= new Date()) throw conflict('walk_in_past');
       if (mine?.status !== 'yes') {
-        if (locked.status === 'cancelled') throw conflict('walk_cancelled');
-        if (locked.startsAt <= new Date()) throw conflict('walk_in_past');
         if (locked.maxParticipants != null) {
           const [{ n }] = await tx
             .select({ n: sql<number>`count(*)::int` })

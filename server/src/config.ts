@@ -51,6 +51,11 @@ export function productionConfigErrors(c: Config): string[] {
 const startErrors = productionConfigErrors(config);
 if (startErrors.length) throw new Error(startErrors.join('\n'));
 
-if (isProd && config.BILLING_PROVIDER === 'dev') {
-  console.warn("[Sicherheit] BILLING_PROVIDER 'dev' schaltet Premium ohne Zahlung frei. Für den echten Betrieb einen Zahlungsanbieter anbinden.");
+// Entscheidung Lena (S-11): in Produktion niemals Premium ohne Zahlung.
+// Ohne ausdrückliche Angabe gilt dort 'none'; 'dev' verhindert den Start.
+if (isProd) {
+  if (process.env.BILLING_PROVIDER === undefined) config.BILLING_PROVIDER = 'none';
+  if (config.BILLING_PROVIDER === 'dev') {
+    throw new Error("BILLING_PROVIDER 'dev' ist in Produktion nicht erlaubt (Premium ohne Zahlung). Bitte 'none' setzen oder einen Zahlungsanbieter anbinden.");
+  }
 }

@@ -89,3 +89,14 @@ html[data-font='sehr-gross'] {
     --color-focus: Highlight;
   }
 }
+
+/* Tempo-Farben (immer zusammen mit Symbol und Text verwendet). Kontrast der Symbolfarben ≥ 4,5:1 auf Weiß. */
+:root {
+  --tempo-gemuetlich: #1d5c3f;
+  --tempo-gemuetlich-soft: #e3f0e8;
+  --tempo-zuegig: #7a5200;
+  --tempo-zuegig-soft: #fff1d6;
+  --tempo-flott: #a9441c;
+  --tempo-flott-soft: #fbe2d6;
+  --sidebar-width: 22rem;
+}

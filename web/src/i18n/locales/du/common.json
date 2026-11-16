@@ -1,5 +1,7 @@
 {
-  "app": { "tagline": "Gemeinsam zügig gehen – in deiner Nähe." },
+  "app": {
+    "tagline": "Gemeinsam zügig gehen – in deiner Nähe."
+  },
   "errors": {
     "network": "Keine Verbindung. Bitte prüfe deine Internetverbindung und versuche es noch einmal.",
     "server_error": "Da ist leider etwas schiefgegangen. Bitte versuche es in einem Moment noch einmal.",
@@ -15,5 +17,14 @@
     "banned": "Du kannst dieser Gruppe nicht beitreten.",
     "invite_invalid": "Diese Einladung ist nicht mehr gültig. Bitte frag nach einer neuen Einladung.",
     "rate_limited": "Das waren sehr viele Versuche. Bitte warte ein paar Minuten."
+  },
+  "search": {
+    "placeRequired": "Bitte gib eine Postleitzahl (5 Ziffern) oder einen Ortsnamen ein.",
+    "placeNotFound": "Zu „{{q}}“ haben wir keinen Ort gefunden. Bitte prüfe die Schreibweise oder gib die Postleitzahl ein.",
+    "whichPlace": "Welchen Ort meinst du? Bitte wähle:",
+    "locationExplain": "Du kannst auch deinen aktuellen Standort verwenden. Wir nutzen deinen Standort nur für diese Suche und speichern ihn nicht.",
+    "locationDenied": "Der Standort wurde nicht freigegeben. Das ist in Ordnung – gib einfach deine Postleitzahl ein.",
+    "locationUnavailable": "Dein Standort konnte nicht ermittelt werden. Bitte gib deine Postleitzahl ein.",
+    "myLocation": "deinem Standort"
   }
 }

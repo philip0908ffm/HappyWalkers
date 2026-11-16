@@ -1,3 +1,4 @@
+@import "./features.css";
 /* ---------- Seitenrahmen und Hauptnavigation ---------- */
 .app-shell {
   min-height: 100vh;

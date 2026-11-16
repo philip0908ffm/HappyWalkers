@@ -163,6 +163,43 @@ Fehlercodes Paket A: `group_not_found`, `walk_not_found`, `not_group_member`, `n
 `women_only`, `banned`, `invite_only`, `invite_invalid`, `walk_full`, `walk_cancelled`, `walk_in_past`,
 `walk_not_started`, `founder_cannot_leave`, `offer_not_found`.
 
+#### Umsetzungshinweise Paket A (Stand Umsetzung, Jonas)
+
+- **Anmeldung:** ohne Anmeldung nutzbar sind nur `GET /groups`, `/groups/templates`, `/groups/:id`,
+  `/groups/:id/photo`, `GET /walks`, `/walks/:id`, `/walks/:id/ics` und `GET /invites/:codeOrToken`
+  (Treffpunkte, Teilnehmerlisten, Einladungscode bleiben dabei verborgen). Alles andere → 401.
+- **Einladungscode:** 6 Zeichen nach `WALK-` (z. B. `WALK-4K7P9X`, ohne 0/O/1/I) – 4 Zeichen wären
+  für „nur auf Einladung“-Gruppen zu leicht zu erraten. Eingabe ist unempfindlich gegen Groß-/Kleinschreibung,
+  Leerzeichen und fehlenden Bindestrich.
+- **Ortsangaben:** unbekannte PLZ in Suchen → 400 `postal_code_unknown`; `radiusKm` außerhalb {5,15,30,50} → 400 `invalid_input`.
+- **`GET /walks` ohne `kind`:** nur Gruppen-Walks (mit Ortsfilter). `kind=distance` ohne Ortsfilter,
+  `kind=partner` liefert nur die eigenen 1:1-Walks.
+- **`POST /walks`:** `startsAt` entfällt bei `recurring` (die Serie beginnt ab jetzt; Antwort = erster Termin).
+  `recurring` nur bei `kind: 'group'`. Gruppen-Walk: `meetingPointName` und `meetingAddress` Pflicht.
+  `startsAt` in der Vergangenheit → 409 `walk_in_past`. „Gemeinsam auf Distanz“: die Erstellerin ist automatisch zugesagt;
+  mit `groupId` (nur aktive Mitglieder) erscheint der Termin im Gruppenkalender.
+- **`PATCH /walks/series/:id`** → `{ series: SeriesSummary }` (zusätzliches Feld `maxParticipants`).
+  Bei geändertem Wochentag/Uhrzeit werden künftige Termine ohne Zusagen neu erzeugt, Termine mit Zusagen bleiben.
+  **`DELETE /walks/series/:id`**: künftige Termine mit Zusagen werden abgesagt (mit Nachricht), ohne Zusagen entfallen sie.
+  Unbekannte Serie → 404 `walk_not_found`.
+- **`PUT /walks/:id/rsvp`:** `walk_cancelled`/`walk_in_past` gelten auch bei bestehender Zusage; nur `walk_full`
+  wird bei bestehender Zusage übersprungen (idempotent).
+- **`POST /walks/:id/confirm`:** auch für 1:1-Walks (Erstellerin); bei „Gemeinsam auf Distanz“ → 403 `not_group_lead`.
+  `attendeeIds` werden auf aktive Mitglieder (bzw. Zusagende) beschränkt. `confirmedCount` = alle Einträge zu diesem Walk.
+- **`PATCH /groups/:id/members/:userId`:** nach `remove`, `decline`, `unban` ist `member` = `null`.
+  Unbekannte Person → 404 `user_not_found`; Aktion auf sich selbst → 400 `invalid_input`.
+  Moderatorinnen dürfen keine andere Leitung entfernen/sperren (403 `not_founder`). `ban` geht auch ohne Mitgliedschaft.
+  Austreten (`leave`) hebt eine Sperre nicht auf.
+- **`GroupDetail.upcomingWalks`** enthält auch abgesagte Termine (`status: 'cancelled'`), damit Mitglieder Ausfälle sehen.
+- **`GET /groups/:id/photo`** ist öffentlich wie Name und Ort der Gruppe (die Einladungsseite zeigt es ohne Anmeldung).
+- **`/invites/:token`:** persönlicher E-Mail-Link ist nach Annahme für andere ungültig (`valid: false` / 404 `invite_invalid`).
+  Annahme per Code über `/invites/:code/accept` umgeht „auf Anfrage“ (Einladung), `POST /groups/join-by-code` dagegen nicht.
+- **Ländliche Regionen:** Standard-Umkreis 30 km. `GET /rural/partners` nimmt optional `postalCode`
+  (sonst Ort des eigenen Gesuchs bzw. Profil-PLZ); das eigene Gesuch ist immer enthalten (`isMine`).
+  Annahme/Ablehnung einer fremden Anfrage → 404 `not_found`; Annahme einer abgelehnten Anfrage → 409 `conflict`.
+  Interessen-Nachrichten: in der App immer, per E-Mail nur mit `emailNotifications`; höchstens eine pro Tag.
+  Gruppen „nur auf Einladung“ lösen keine Interessen-Nachricht aus.
+
 ---
 
 ## Paket B – Walks eintragen, Punkte, Abzeichen, Challenges, Premium

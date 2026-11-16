@@ -1,0 +1,42 @@
+{
+  "welcome": {
+    "title": "Gemeinsam gehen – nicht allein",
+    "lead": "Gehmeinsam bringt Menschen zusammen, die sich gern mehr bewegen möchten: verabredete Spaziergänge in zügigem Schritt, ganz in Ihrer Nähe.",
+    "searchTitle": "Walks in Ihrer Nähe finden",
+    "searchButton": "Walks in meiner Nähe finden",
+    "haveAccount": "Schon dabei oder neu hier?",
+    "signIn": "Anmelden",
+    "howTitle": "So einfach geht's",
+    "step_find": "Walk in der Nähe finden",
+    "step_find_text": "Geben Sie Ihre Postleitzahl ein und sehen Sie, wann und wo gegangen wird.",
+    "step_join": "Zusagen und mitgehen",
+    "step_join_text": "Ein Klick genügt. Die Gruppe freut sich auf Sie und wartet aufeinander.",
+    "step_badge": "Abzeichen sammeln",
+    "step_badge_text": "Jeder Kilometer zählt – vom ersten Walk bis zum 5-km-Abzeichen und weiter.",
+    "promiseTitle": "Darauf können Sie sich verlassen",
+    "promise_pace": "Kein Leistungsdruck: Das Tempo steht bei jedem Termin dabei – gemütlich, zügig oder flott.",
+    "promise_free": "Kostenlos mitmachen. Premium ist freiwillig.",
+    "promise_privacy": "Ihre Daten bleiben bei Ihnen: Den genauen Treffpunkt sehen nur Mitglieder der Gruppe.",
+    "whoSeesWhat": "Übersicht: Wer sieht was?"
+  },
+  "home": {
+    "hello": "Hallo {{name}}",
+    "lead": "Schön, dass Sie da sind. Was möchten Sie heute tun?",
+    "quickLabel": "Schnellzugriff",
+    "tileLog": "Walk eintragen",
+    "tileLogText": "Sie sind gegangen? Tragen Sie es ein.",
+    "tileFind": "Walks finden",
+    "tileFindText": "Termine in Ihrer Nähe",
+    "tileGroups": "Meine Gruppen",
+    "tileGroupsText": "Gruppen ansehen und finden",
+    "nextTitle": "Ihre nächsten Walks",
+    "nextEmpty": "Sie haben gerade keinem Walk zugesagt. Wie wäre es mit einem Termin in Ihrer Nähe?",
+    "groupsTitle": "Meine Gruppen",
+    "groupsEmpty": "Sie sind noch in keiner Gruppe.",
+    "findGroups": "Gruppen finden",
+    "ruralTitle": "Noch keine Gruppe in Ihrer Nähe?",
+    "ruralText": "Auf dem Land ist der Weg manchmal weit. Wir haben Ideen: eine Gehpartnerin finden, „Gemeinsam auf Distanz“ gehen oder Bescheid bekommen, sobald es etwas in Ihrer Nähe gibt.",
+    "ruralLink": "Ideen ansehen",
+    "ruralFound": "Selbst eine Gruppe gründen"
+  }
+}

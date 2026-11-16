@@ -1,0 +1,55 @@
+{
+  "profile": {
+    "lead": "Deine Angaben, deine Walks und deine Kontakte auf einen Blick.",
+    "avatarHint": "Ein Foto von dir oder ein Bild, das dir gefällt (JPG, PNG, höchstens 10 MB). Ortsangaben im Foto werden entfernt.",
+    "avatarSaved": "Dein Profilbild wurde gespeichert.",
+    "avatarWrongType": "Das ist kein Bild, das wir lesen können. Bitte wähl ein JPG- oder PNG-Bild.",
+    "avatarRemoveText": "Statt des Bildes wird dann der erste Buchstabe deines Namens gezeigt.",
+    "avatarRemoved": "Dein Profilbild wurde entfernt.",
+    "name": "Dein Name",
+    "nameHint": "Vorname oder Spitzname – so sehen dich andere.",
+    "nameRequired": "Bitte gib einen Namen ein.",
+    "plzHint": "Damit finden wir Gruppen und Walks in deiner Nähe. Andere sehen höchstens den Ort.",
+    "plzRequired": "Bitte gib deine Postleitzahl mit 5 Ziffern ein.",
+    "bio": "Ein paar Worte über dich",
+    "saved": "Deine Angaben wurden gespeichert.",
+    "visibilityNow": "Wer dein Profil sehen darf: {{who}}.",
+    "activitiesEmpty": "Du hast noch keine Walks eingetragen."
+  },
+  "contacts": {
+    "intro": "Kontakte sind Personen, die dir folgen dürfen. Niemand kann dir ohne deine Zustimmung folgen.",
+    "accepted": "{{name}} ist jetzt dein Kontakt.",
+    "followersHint": "Diese Personen sehen Inhalte, die du für „Meine Kontakte“ freigibst.",
+    "noFollowing": "Du folgst noch niemandem.",
+    "unfollowed": "Du folgst {{name}} nicht mehr.",
+    "unfollowText": "Du siehst dann nur noch, was {{name}} für alle freigibt. Du kannst später wieder anfragen."
+  },
+  "block": {
+    "listIntro": "Blockierte Personen sehen nichts mehr von dir, und du siehst nichts mehr von ihnen.",
+    "listEmpty": "Du hast niemanden blockiert.",
+    "effect1": "Ihr seht gegenseitig keine Beiträge, Fotos und Kommentare mehr.",
+    "effect3": "Die Person wird nicht benachrichtigt. Du kannst das jederzeit in deinem Profil aufheben."
+  },
+  "person": {
+    "followsMe": "{{name}} folgt dir.",
+    "followExplain": "Wenn du {{name}} folgst, siehst du Beiträge, die {{name}} für Kontakte freigibt. Die Person muss zustimmen.",
+    "followTermExplain": "„Folgen“ heißt: Du bittest darum, als Kontakt die Beiträge dieser Person zu sehen. Erst wenn die Person zustimmt, klappt es. Du kannst das jederzeit beenden.",
+    "followRequested": "Deine Anfrage wurde an {{name}} gesendet. Sobald {{name}} zustimmt, seid ihr verbunden.",
+    "pending": "Deine Anfrage an {{name}} wartet auf Zustimmung.",
+    "requestWithdrawn": "Deine Anfrage wurde zurückgezogen.",
+    "following": "Du folgst {{name}}.",
+    "postsEmpty": "Keine Beiträge, die du sehen kannst.",
+    "blockedTitle": "Du hast diese Person blockiert",
+    "blockedText": "Ihr seht gegenseitig nichts voneinander.",
+    "safetyIntro": "Fühlst du dich belästigt oder stimmt etwas nicht? Du kannst die Person blockieren oder uns Bescheid geben."
+  },
+  "report": {
+    "reasonRequired": "Bitte wähl einen Grund.",
+    "done": "Danke! Deine Meldung ist bei uns angekommen."
+  },
+  "posts": {
+    "liked": "Du hast ein Herz gegeben.",
+    "unliked": "Dein Herz wurde zurückgenommen."
+  },
+  "errors": { "user_not_found": "Diese Person gibt es nicht oder du kannst ihr Profil nicht sehen." }
+}
