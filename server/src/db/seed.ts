@@ -3,7 +3,6 @@
  * Demo-Daten (Gruppen, Walks) nur mit SEED_DEMO=1 bzw. im Test.
  */
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { db, pool } from './index.js';
 import { challenges } from './schema.js';
 
@@ -54,7 +53,8 @@ export async function seedBase() {
     .onConflictDoNothing();
 }
 
-if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
+// Nur als eigenes Skript ausführen (nicht, wenn die Datei in den Server gebündelt ist)
+if (process.argv[1] && path.basename(process.argv[1]).startsWith('seed')) {
   seedBase()
     .then(async () => {
       if (process.env.SEED_DEMO === '1') {

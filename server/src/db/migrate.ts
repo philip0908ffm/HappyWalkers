@@ -14,7 +14,8 @@ export async function runMigrations() {
   await migrate(db, { migrationsFolder: folder });
 }
 
-if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
+// Nur als eigenes Skript ausführen (nicht, wenn die Datei in den Server gebündelt ist)
+if (process.argv[1] && path.basename(process.argv[1]).startsWith('migrate')) {
   runMigrations()
     .then(() => {
       console.log('Migrationen ausgeführt.');
