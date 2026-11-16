@@ -161,7 +161,7 @@ export default function PremiumPage() {
           <li>{t('subscribe.point2')}</li>
           <li>{t('subscribe.point3')}</li>
         </ul>
-        {(status.data ? config?.billingProvider : config?.billingProvider) === 'dev' ? (
+        {config?.billingProvider === 'dev' ? (
           <p className="notice notice--info">
             <Icon name="info" /> {t('subscribe.devHint')}
           </p>

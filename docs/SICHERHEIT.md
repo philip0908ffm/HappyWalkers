@@ -72,7 +72,7 @@ Schwere: hoch / mittel / niedrig. Status: ✅ behoben (mit Test) · ⏳ offen.
 | S-08c | niedrig | `server/src/modules/me.ts` | Nach Löschung bleiben Benutzer-IDs ohne Fremdschlüssel in `group_members.invited_by`, `walks.confirmed_by`, `comments.deleted_by`, `group_invites.used_by` (pseudonym, ohne Zuordnung). | ⏳ niedrig |
 | S-09 | mittel | `web/src/pages/auth/Login.tsx:13` | `safeNext` ließ `/\evil.example` und `/<Tab>/evil.example` durch (Browser lesen das als `//evil.example`) → offene Weiterleitung nach der Anmeldung (Phishing). Der Server (Better Auth) prüft `callbackURL` selbst korrekt. → Steuerzeichen/Backslash abweisen, Ziel per `URL` gegen eigene Herkunft prüfen. | ✅ |
 | S-10 | niedrig | `web/vite.config.ts` | `sourcemap: true` veröffentlicht den Quelltext in Produktion (kein Geheimnis, erleichtert aber Angriffe). | ⏳ Empfehlung: `'hidden'` |
-| S-11 | mittel | `server/src/config.ts:54` | `BILLING_PROVIDER` ist standardmäßig `dev` → in Produktion Premium ohne Zahlung. Geschäftsentscheidung (Lena); derzeit nur Warnung beim Start. | ⏳ Lena |
+| S-11 | mittel | `server/src/config.ts:54` | `BILLING_PROVIDER` ist standardmäßig `dev` → in Produktion Premium ohne Zahlung. Entscheidung Lena: ohne Angabe gilt in Produktion `none`, `dev` verhindert den Start. | ✅ behoben |
 | S-12 | niedrig | `web/src/pages/profile/Settings.tsx` | Einstellungen: Export per GET mit Cookie (ok, nur eigene Daten), Löschen mit Eingabe „LÖSCHEN“ + Server-Prüfung (ok). Hinweis: Fotos im Format HEIC werden vom vorinstallierten sharp nicht gelesen (nur AVIF/HEIF) → Fehlermeldung `invalid_image`. | ⏳ Hinweis Paket C |
 
 ## 5. Für die zweite Prüfrunde (Pakete A/B/C)
