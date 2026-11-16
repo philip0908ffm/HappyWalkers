@@ -50,7 +50,7 @@ const groupWalk = (groupId: string, over: Record<string, unknown> = {}) => ({
 describe('S2-01 Gesperrte Erstellerin verliert Treffpunkt und Verwaltung (auch Serien)', () => {
   it('nach Sperre: kein Treffpunkt in Detail/Liste/ICS, keine Änderung, keine Teilnehmerliste', async () => {
     const founder = await signUp({ name: 'Gründerin' });
-    const mod = await signUp({ name: 'Moderatorin' });
+    const mod = await signUp({ name: 'Mona' });
     const g = await newGroup(founder.agent);
     await mod.agent.post(`/api/v1/groups/${g.id}/join`).send({}).expect(200);
     await founder.agent.patch(`/api/v1/groups/${g.id}/members/${mod.userId}`).send({ action: 'make_moderator' }).expect(200);
@@ -301,5 +301,24 @@ describe('S2-12 Gehpartner: Blockieren gilt auch für offene Anfragen', () => {
       .post(`/api/v1/rural/partner-requests/${r.body.request.id}/accept`)
       .send({ startsAt: inDays(2), meetingPointName: 'Hafen', meetingAddress: 'Schiffbrücke 1, Flensburg' });
     expect(res.status).toBe(404);
+  });
+});
+
+describe('Lena-Entscheidungen: Privatzone und geschützte Namen', () => {
+  it('kürzt Start und Ziel einer Route für andere, nicht für sich selbst', async () => {
+    const { maskRouteForOthers } = await import('../src/lib/geo.js');
+    // ca. 2 km gerade Linie in 100-m-Schritten
+    const route: [number, number][] = Array.from({ length: 21 }, (_, i) => [9.49, 51.31 + i * 0.0009]);
+    const masked = maskRouteForOthers(route)!;
+    expect(masked.length).toBeLessThan(route.length);
+    expect(masked[0]).not.toEqual(route[0]);
+    expect(masked.at(-1)).not.toEqual(route.at(-1));
+    expect(maskRouteForOthers(route.slice(0, 4))).toBeNull(); // zu kurz → keine Route
+  });
+
+  it('lehnt Anzeigenamen ab, die wie das Gehmeinsam-Team aussehen', async () => {
+    const { agent } = await signUp();
+    await agent.patch('/api/v1/me/profile').send({ displayName: 'Gehmeinsam Team' }).expect(400);
+    await agent.patch('/api/v1/me/profile').send({ displayName: 'Erika' }).expect(200);
   });
 });

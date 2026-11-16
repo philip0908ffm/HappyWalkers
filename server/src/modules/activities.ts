@@ -1,3 +1,4 @@
+import { maskRouteForOthers } from '../lib/geo.js';
 import { LIMITS, VISIBILITIES } from '@gehmeinsam/shared';
 import { and, desc, eq, gte, lt, or, sql } from 'drizzle-orm';
 import { Router, type NextFunction, type Request, type Response } from 'express';
@@ -253,8 +254,10 @@ router.get('/:id', async (req, res) => {
     .from(profile)
     .where(eq(profile.userId, row.userId))
     .limit(1);
+  const activity = toActivity(row);
+  if (row.userId !== viewerId) activity.route = maskRouteForOthers(row.route);
   res.json({
-    activity: toActivity(row),
+    activity,
     author: {
       id: row.userId,
       displayName: p?.displayName ?? '',

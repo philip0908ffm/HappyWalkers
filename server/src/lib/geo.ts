@@ -122,3 +122,22 @@ export function routeLengthKm(coords: [number, number][]): number {
 }
 
 const round = (n: number) => Math.round(n * 10000) / 10000;
+
+/** Radius der Privatzone um Start und Ziel einer Route (Meter). */
+export const PRIVACY_ZONE_M = 300;
+
+/**
+ * Privatzone (Entscheidung Lena, S2-13): Für andere Personen werden Anfang und Ende einer Route
+ * gekürzt, damit Start/Ziel (oft die eigene Wohnung) nicht erkennbar sind.
+ * Bleibt danach zu wenig übrig, wird keine Route gezeigt.
+ */
+export function maskRouteForOthers(route: [number, number][] | null | undefined): [number, number][] | null {
+  if (!route || route.length < 2) return null;
+  const km = PRIVACY_ZONE_M / 1000;
+  const [sLon, sLat] = route[0];
+  const [eLon, eLat] = route[route.length - 1];
+  const outside = route.filter(
+    ([lon, lat]) => distanceKm(lat, lon, sLat, sLon) > km && distanceKm(lat, lon, eLat, eLon) > km,
+  );
+  return outside.length >= 2 ? outside : null;
+}

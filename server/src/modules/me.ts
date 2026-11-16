@@ -53,7 +53,14 @@ router.get('/', async (req, res) => {
 });
 
 const profileSchema = z.object({
-  displayName: z.string().trim().min(1).max(40).optional(),
+  // geschützte Namen (S2-19): niemand soll sich als Gehmeinsam-Team ausgeben können
+  displayName: z
+    .string()
+    .trim()
+    .min(1)
+    .max(40)
+    .refine((n) => !/geh\s*meinsam|\bteam\b|admin|moderat|support/i.test(n), 'reserved_name')
+    .optional(),
   bio: z.string().trim().max(500).nullable().optional(),
   postalCode: z.string().regex(/^\d{5}$/).optional(),
   birthYear: z.number().int().min(1900).max(new Date().getFullYear() - 16).nullable().optional(),

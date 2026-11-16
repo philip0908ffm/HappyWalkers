@@ -1,3 +1,4 @@
+import { maskRouteForOthers } from '../lib/geo.js';
 import { badgeDefinition, LIMITS, REPORT_TARGETS, VISIBILITIES } from '@gehmeinsam/shared';
 import { and, asc, count, desc, eq, inArray, isNull, notInArray, or, sql, sum, type SQL } from 'drizzle-orm';
 import { Router } from 'express';
@@ -131,7 +132,7 @@ async function serializePosts(rows: PostRow[], ctx: ViewerContext) {
       group: g ? { id: g.id, name: g.name } : null,
       walk: w ? { id: w.id, title: w.title, startsAt: w.startsAt } : null,
       activity: a
-        ? { id: a.id, distanceKm: a.distanceKm, durationMinutes: a.durationMinutes, startedAt: a.startedAt, route: showRoute ? (a.route ?? null) : null }
+        ? { id: a.id, distanceKm: a.distanceKm, durationMinutes: a.durationMinutes, startedAt: a.startedAt, route: showRoute ? (a.userId === ctx.userId ? (a.route ?? null) : maskRouteForOthers(a.route)) : null }
         : null,
       text: p.text,
       visibility: p.visibility,
