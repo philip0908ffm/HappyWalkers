@@ -1,12 +1,25 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, type Page } from '@playwright/test';
+import pg from 'pg';
 
 let n = 0;
 
+export function newEmail() {
+  return `e2e${Date.now()}${n++}@example.org`;
+}
+
 /** Meldet eine neue Person über den echten Magic-Link-Ablauf an und füllt das Profil aus. */
 export async function signUpViaUi(page: Page, opts: { name?: string; postalCode?: string } = {}) {
-  const email = `e2e${Date.now()}${n++}@example.org`;
   await page.goto('/anmelden');
+  return signUpFromLoginPage(page, opts);
+}
+
+/**
+ * Wie `signUpViaUi`, aber die Anmeldeseite ist bereits geöffnet (z. B. über „Anmelden und beitreten“
+ * mit Rücksprung-Adresse). Danach steht die Person auf der Rücksprung-Seite.
+ */
+export async function signUpFromLoginPage(page: Page, opts: { name?: string; postalCode?: string } = {}) {
+  const email = newEmail();
   await page.getByLabel('Ihre E-Mail-Adresse').fill(email);
   await page.getByRole('button', { name: 'Anmelde-Link senden' }).click();
   await expect(page.getByRole('heading', { name: /Bitte schauen Sie in Ihr E-Mail-Postfach/ })).toBeVisible();
@@ -40,4 +53,26 @@ export async function expectNoA11yViolations(page: Page) {
   const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
   const summary = results.violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`);
   expect(summary, summary.join('\n')).toEqual([]);
+}
+
+/** Direkter Datenbankzugriff – nur für Testvorbereitungen, die über die Oberfläche nicht gehen (Zeit vorstellen). */
+export async function dbQuery<T = Record<string, unknown>>(text: string, params: unknown[] = []): Promise<T[]> {
+  const client = new pg.Client({
+    connectionString: process.env.E2E_DATABASE_URL ?? 'postgres://gehmeinsam:gehmeinsam@localhost:5432/gehmeinsam_e2e',
+  });
+  await client.connect();
+  try {
+    return (await client.query(text, params)).rows as T[];
+  } finally {
+    await client.end();
+  }
+}
+
+/** Kein waagerechtes Scrollen (Zoom 200 % / 320 px). */
+export async function expectNoHorizontalScroll(page: Page) {
+  const { scrollWidth, innerWidth } = await page.evaluate(() => ({
+    scrollWidth: document.documentElement.scrollWidth,
+    innerWidth: window.innerWidth,
+  }));
+  expect(scrollWidth, `Seite ${page.url()} ist ${scrollWidth}px breit bei ${innerWidth}px Fenster`).toBeLessThanOrEqual(innerWidth);
 }

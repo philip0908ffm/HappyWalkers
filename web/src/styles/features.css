@@ -523,6 +523,8 @@ fieldset {
 }
 .leaflet-control-attribution a {
   color: var(--color-primary-strong) !important;
+  /* Links im Fließtext nicht nur über Farbe erkennbar (WCAG 1.4.1) */
+  text-decoration: underline !important;
 }
 .leaflet-bar a {
   width: 2.75rem !important;

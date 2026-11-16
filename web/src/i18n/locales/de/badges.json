@@ -39,7 +39,7 @@
     "challenge_done": "Für eine Mitmach-Aktion, die bis zum Ziel geschafft wurde.",
     "places_3": "Für Walks an 3 verschiedenen Orten.",
     "places_10": "Für Walks an 10 verschiedenen Orten.",
-    "region": "Für mindestens einen Walk im Landkreis {{label}}."
+    "region": "Für mindestens einen Walk in diesem Gebiet: {{label}}."
   },
   "tier": {
     "1": "Bronze",
