@@ -1,0 +1,30 @@
+{
+  "name": "gehmeinsam",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Gehmeinsam – gemeinsam zügig gehen. Community-Plattform für Menschen ab 50.",
+  "workspaces": [
+    "shared",
+    "server",
+    "web"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "npm run dev --workspace server & npm run dev --workspace web",
+    "build": "npm run build --workspace web && npm run build --workspace server",
+    "start": "npm run start --workspace server",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspace server && npm run test --workspace web",
+    "db:generate": "npm run db:generate --workspace server",
+    "db:migrate": "npm run db:migrate --workspace server",
+    "db:seed": "npm run db:seed --workspace server",
+    "e2e:server": "bash scripts/e2e-server.sh",
+    "test:e2e": "playwright test --trace off"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.65.1"
+  }
+}

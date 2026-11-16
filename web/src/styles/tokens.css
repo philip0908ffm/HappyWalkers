@@ -1,0 +1,91 @@
+/*
+ * Gestaltungsgrundlagen „Gehmeinsam“ (Miriam Schulz)
+ * Alle Größen in rem → Schriftgröße-Einstellung und Browser-Zoom wirken überall.
+ * Kontraste geprüft gegen --color-bg und --color-surface (mind. 4,5:1 Text, 3:1 Bedienelemente).
+ */
+:root {
+  /* Farben */
+  --color-bg: #fbf8f2;
+  --color-surface: #ffffff;
+  --color-surface-2: #f2ede3;
+  --color-text: #1a1a1a;
+  --color-text-muted: #45413a;
+  --color-border: #8a8378;
+  --color-border-soft: #d9d2c5;
+  --color-primary: #1d5c3f;
+  --color-primary-strong: #123d29;
+  --color-primary-soft: #e3f0e8;
+  --color-on-primary: #ffffff;
+  --color-accent: #a9441c;
+  --color-accent-soft: #fbe9df;
+  --color-success: #1d5c3f;
+  --color-success-soft: #e3f0e8;
+  --color-error: #a4161a;
+  --color-error-soft: #fbe4e4;
+  --color-warning-soft: #fff3cd;
+  --color-premium: #6b3fa0;
+  --color-premium-soft: #efe7f8;
+  --color-heart: #b3123f;
+  --color-focus: #0a3d91;
+  --color-focus-halo: #ffd27a;
+  --tier-1: #9a5b2b; /* Bronze */
+  --tier-2: #5f6b78; /* Silber */
+  --tier-3: #8a6400; /* Gold */
+
+  /* Schrift */
+  --font-family: 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-size-sm: 0.9rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.2rem;
+  --font-size-xl: 1.5rem;
+  --font-size-xxl: 2rem;
+  --line-height: 1.55;
+
+  /* Abstände */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+
+  /* Formen */
+  --radius-sm: 0.4rem;
+  --radius: 0.75rem;
+  --radius-lg: 1.25rem;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.08), 0 4px 12px rgb(0 0 0 / 0.06);
+
+  /* Bedienelemente: mind. 44 px (2.75rem bei 16 px, bei 18 px Grundschrift ≈ 50 px) */
+  --tap-min: 2.75rem;
+  --content-max: 72rem;
+  --nav-height: 4.5rem;
+}
+
+/* Schriftgröße in der App einstellbar: Normal (18 px) / Groß (20 px) / Sehr groß (23 px) */
+html {
+  font-size: 112.5%;
+}
+html[data-font='gross'] {
+  font-size: 125%;
+}
+html[data-font='sehr-gross'] {
+  font-size: 143.75%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Windows-Kontrastmodus */
+@media (forced-colors: active) {
+  :root {
+    --color-focus: Highlight;
+  }
+}

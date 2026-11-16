@@ -1,0 +1,19 @@
+{
+  "app": { "tagline": "Gemeinsam zügig gehen – in deiner Nähe." },
+  "errors": {
+    "network": "Keine Verbindung. Bitte prüfe deine Internetverbindung und versuche es noch einmal.",
+    "server_error": "Da ist leider etwas schiefgegangen. Bitte versuche es in einem Moment noch einmal.",
+    "not_signed_in": "Bitte melde dich zuerst an.",
+    "forbidden": "Dafür hast du leider keine Berechtigung.",
+    "invalid_input": "Bitte prüfe deine Eingaben. Die markierten Felder sind noch nicht richtig ausgefüllt.",
+    "field_invalid": "Bitte prüfe diese Angabe.",
+    "postal_code_unknown": "Diese Postleitzahl kennen wir leider nicht. Bitte prüfe die 5 Ziffern.",
+    "file_too_large": "Die Datei ist zu groß. Bitte wähle eine kleinere Datei (höchstens 10 MB).",
+    "invalid_image": "Diese Datei ist kein Foto, das wir lesen können. Bitte wähle ein JPG- oder PNG-Bild.",
+    "invalid_gpx": "Diese Datei konnten wir nicht lesen. Bitte wähle eine GPX-Datei von deiner Uhr oder deinem Handy.",
+    "women_only": "Diese Gruppe ist nur für Frauen. Du kannst das in deinem Profil angeben.",
+    "banned": "Du kannst dieser Gruppe nicht beitreten.",
+    "invite_invalid": "Diese Einladung ist nicht mehr gültig. Bitte frag nach einer neuen Einladung.",
+    "rate_limited": "Das waren sehr viele Versuche. Bitte warte ein paar Minuten."
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "settings": {
+    "lead": "Hier stellst du ein, wie Gehmeinsam für dich aussieht und wer was sehen darf.",
+    "profile_private_hint": "Andere sehen nur deinen Namen in Gruppen.",
+    "profile_followers_hint": "Personen, deren Anfrage du bestätigt hast.",
+    "profile_public_hint": "Dein Name, Ort und deine Abzeichen sind sichtbar. Dein Alter nie.",
+    "emailNotifications": "E-Mails von Gehmeinsam erhalten (z. B. wenn sich jemand in deiner Nähe einträgt)",
+    "saved": "Deine Einstellungen wurden gespeichert.",
+    "signedOut": "Du wurdest abgemeldet. Bis bald!",
+    "yourData": "Deine Daten",
+    "exportHint": "Du erhältst eine Datei mit allen Daten, die wir über dich gespeichert haben.",
+    "deleteHint": "Dein Konto und alle deine Einträge, Fotos und Kommentare werden endgültig gelöscht. Das lässt sich nicht rückgängig machen.",
+    "deleteConfirmLabel": "Zur Bestätigung tippe bitte LÖSCHEN in das Feld",
+    "deleteConfirmWrong": "Bitte tippe genau LÖSCHEN (in Großbuchstaben).",
+    "deleted": "Dein Konto wurde gelöscht. Alles Gute!"
+  }
+}
