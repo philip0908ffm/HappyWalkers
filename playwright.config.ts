@@ -27,6 +27,26 @@ export default defineConfig({
         launchOptions: { executablePath: process.env.PW_CHROMIUM ?? '/opt/pw-browsers/chromium' },
       },
     },
+    {
+      // Laptop 1280 px bei 200 % Browser-Zoom ≙ 640 CSS-Pixel Breite
+      name: 'zoom-200',
+      testMatch: /ansichten\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 640, height: 360 },
+        launchOptions: { executablePath: process.env.PW_CHROMIUM ?? '/opt/pw-browsers/chromium' },
+      },
+    },
+    {
+      name: 'tablet',
+      testMatch: /ansichten\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 820, height: 1180 },
+        hasTouch: true,
+        launchOptions: { executablePath: process.env.PW_CHROMIUM ?? '/opt/pw-browsers/chromium' },
+      },
+    },
   ],
   webServer: [
     {

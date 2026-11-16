@@ -10,3 +10,4 @@ playwright-report/
 *.log
 .DS_Store
 .pw-*.cjs
+e2e/_explore/

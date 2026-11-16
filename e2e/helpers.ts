@@ -76,3 +76,46 @@ export async function expectNoHorizontalScroll(page: Page) {
   }));
   expect(scrollWidth, `Seite ${page.url()} ist ${scrollWidth}px breit bei ${innerWidth}px Fenster`).toBeLessThanOrEqual(innerWidth);
 }
+
+export type RichUser = {
+  storageState: Awaited<ReturnType<import('@playwright/test').BrowserContext['storageState']>>;
+  groupId: string;
+  walkId: string;
+  activityId: string;
+  challengeId: string;
+};
+
+/**
+ * Legt eine Person mit „gefülltem“ Konto an: Mitglied der Demo-Gruppe Karlsaue mit Zusage,
+ * eigene Gruppe (Leitung), ein eingetragener Walk, Premium aktiv. Für Seitenprüfungen.
+ */
+export async function setupRichUser(browser: import('@playwright/test').Browser): Promise<RichUser> {
+  const ctx = await browser.newContext({ locale: 'de-DE', timezoneId: 'Europe/Berlin' });
+  const page = await ctx.newPage();
+  await signUpViaUi(page, { name: 'Erika', postalCode: '34117' });
+  const api = async (method: 'post' | 'put', url: string, data?: unknown) => {
+    const r = await page.request[method](`/api/v1${url}`, { data: data ?? {} });
+    expect(r.ok(), `${method} ${url} → ${r.status()} ${await r.text()}`).toBeTruthy();
+    return r.json();
+  };
+  await api('post', '/groups/demo-group-karlsaue/join');
+  const walks = await page.request.get('/api/v1/walks?groupId=demo-group-karlsaue').then((r) => r.json());
+  const walkId = walks.walks[0].id as string;
+  await api('put', `/walks/${walkId}/rsvp`, { status: 'yes' });
+  const { group } = await api('post', '/groups', {
+    name: `Prüfgruppe ${Date.now() % 100000}`,
+    description: 'Eine Gruppe für die Prüfung der Seiten.',
+    rules: 'Wir warten aufeinander.',
+    joinPolicy: 'open',
+    womenOnly: false,
+    postalCode: '34117',
+    defaultTempo: 'zuegig',
+  });
+  const started = new Date(Date.now() - 24 * 3600_000).toISOString();
+  const { activity } = await api('post', '/activities', { startedAt: started, durationMinutes: 62, distanceKm: 5.2, title: 'Runde im Park' });
+  await api('post', '/premium/subscribe');
+  const ch = await page.request.get('/api/v1/challenges').then((r) => r.json());
+  const storageState = await ctx.storageState();
+  await ctx.close();
+  return { storageState, groupId: group.id, walkId, activityId: activity.id, challengeId: ch.active[0].id };
+}

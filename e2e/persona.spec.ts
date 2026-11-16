@@ -44,6 +44,10 @@ test('Persona: Walk finden, Gruppe beitreten, zusagen und in den Kalender übern
   const icsBefore = await page.request.get(`/api/v1/walks/${walkId}/ics`);
   expect(icsBefore.ok()).toBeTruthy();
   expect(await icsBefore.text()).not.toContain('Karlsaue 20c');
+  // Wer sieht was: Nicht-Mitglieder sehen weder Treffpunkt noch Teilnehmerliste
+  const apiBefore = await page.request.get(`/api/v1/walks/${walkId}`).then((r) => r.json());
+  expect(apiBefore.walk.meetingPoint).toBeNull();
+  expect(apiBefore.walk.participants).toBeNull();
 
   // Gruppe beitreten
   await meeting.getByRole('button', { name: 'Gruppe beitreten' }).click();

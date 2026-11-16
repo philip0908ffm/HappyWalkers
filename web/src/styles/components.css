@@ -73,6 +73,17 @@
   color: var(--color-on-primary);
 }
 
+/* Sehr schmal (320 px, 400 % Zoom): alle 5 Punkte passen nebeneinander */
+@media (max-width: 22em) {
+  .app-nav ul {
+    gap: 0;
+  }
+  .app-header .app-nav a {
+    padding-inline: 0;
+    font-size: 0.75rem;
+  }
+}
+
 /* Breiter Bildschirm: Navigation oben rechts neben dem Logo */
 @media (min-width: 60em) {
   .app-header__inner .app-nav {
@@ -103,6 +114,9 @@
   }
   .app-nav li {
     flex: 1 1 0;
+  }
+  .app-nav li {
+    min-width: 0;
   }
   .app-nav a {
     min-width: 0;

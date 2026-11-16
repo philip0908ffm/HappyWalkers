@@ -136,7 +136,8 @@
   height: 100%;
 }
 .poster__how {
-  flex: 1 1 18rem;
+  flex: 1 1 min(100%, 18rem);
+  min-width: 0;
 }
 .poster__how ol {
   padding-left: 1.4rem;
@@ -148,6 +149,8 @@
 }
 .poster__code {
   display: table;
+  max-width: 100%;
+  overflow-wrap: anywhere;
   margin-top: var(--space-2);
   font-family: ui-monospace, 'Courier New', monospace;
   font-size: 2.6rem;

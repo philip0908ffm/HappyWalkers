@@ -742,6 +742,7 @@ fieldset {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
 }
 .invite-option {
+  min-width: 0; /* Eingabefelder dürfen schrumpfen (320 px Breite) */
   padding: var(--space-4);
   border: 2px solid var(--color-border-soft);
   border-radius: var(--radius);
@@ -757,7 +758,8 @@ fieldset {
   font-size: 1.6rem;
   font-weight: 700;
   letter-spacing: 0.08em;
-  white-space: nowrap;
+  max-width: 100%;
+  overflow-wrap: anywhere; /* bricht nur bei sehr schmaler Ansicht um (320 px) */
   font-family: ui-monospace, 'Courier New', monospace;
   background: var(--color-surface);
   border: 2px dashed var(--color-primary);

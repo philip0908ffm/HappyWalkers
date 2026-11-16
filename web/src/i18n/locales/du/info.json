@@ -115,7 +115,7 @@
     "lead": "Diese Erklärung sagt in einfachen Worten, welche Daten Gehmeinsam speichert, wofür und welche Rechte du hast.",
     "short": [
       "Wir speichern nur, was für Gehmeinsam nötig ist.",
-      "Keine Werbung, kein Verkauf von Daten, keine Tracking-Cookies.",
+      "Keine Werbung, kein Verkauf von Daten, keine Cookies, die dich im Internet verfolgen.",
       "Alter, E-Mail-Adresse und Telefonnummer sieht niemand außer dir.",
       "Du kannst alle deine Daten jederzeit herunterladen oder dein Konto löschen."
     ],
@@ -172,7 +172,7 @@
         "paras": [
           "Gehmeinsam setzt genau ein Cookie: das Anmelde-Cookie. Es sorgt dafür, dass du auf deinem Gerät angemeldet bleibst (bis zu 90 Tage, bei Nutzung verlängert es sich). Ohne dieses Cookie könntest du dich nicht anmelden.",
           "Außerdem merkt sich dein Browser zwei Geräteeinstellungen: die Schriftgröße und die Anrede („Sie“ oder „Du“). Diese bleiben auf deinem Gerät und werden nicht ausgewertet.",
-          "Es gibt keine Werbe-, Statistik- oder Tracking-Cookies und keine Dienste, die dein Verhalten verfolgen. Alles, was wir speichern, ist für den von dir gewünschten Dienst unbedingt erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG). Dafür ist keine Einwilligung nötig – deshalb gibt es keinen Cookie-Hinweis."
+          "Es gibt keine Cookies für Werbung, Statistik oder zum Verfolgen und keine Dienste, die dein Verhalten verfolgen. Alles, was wir speichern, ist für den von dir gewünschten Dienst unbedingt erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG). Dafür ist keine Einwilligung nötig – deshalb gibt es keinen Cookie-Hinweis."
         ]
       },
       {

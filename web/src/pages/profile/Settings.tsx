@@ -44,6 +44,13 @@ export default function Settings() {
   if (!me) return <Loading />;
   const s = me.settings;
 
+  /** Auswahl sofort anzeigen (nicht erst nach der Server-Antwort); bei Fehler den gespeicherten Stand neu laden. */
+  function save(patch: Partial<Me['settings']>) {
+    if (!me) return;
+    setMe({ ...me, settings: { ...me.settings, ...patch } });
+    update.mutate(patch, { onError: () => void qc.invalidateQueries({ queryKey: ['me'] }) });
+  }
+
   async function signOut(all: boolean) {
     if (all) await authClient.revokeSessions();
     await authClient.signOut();
@@ -86,7 +93,7 @@ export default function Settings() {
                   onChange={() => {
                     applyFontScale(f);
                     writeLocalPref('fontScale', f);
-                    update.mutate({ fontScale: f });
+                    save({ fontScale: f });
                   }}
                 />
                 <span style={{ fontSize: f === 'normal' ? '1rem' : f === 'gross' ? '1.15rem' : '1.3rem' }}>{t(`settings.font_${f}`)}</span>
@@ -99,7 +106,7 @@ export default function Settings() {
           <div className="choice-list choice-list--row">
             {(['sie', 'du'] as const).map((a) => (
               <label key={a} className="choice">
-                <input type="radio" name="anrede" checked={s.anrede === a} onChange={() => update.mutate({ anrede: a })} />
+                <input type="radio" name="anrede" checked={s.anrede === a} onChange={() => save({ anrede: a })} />
                 {t(`settings.anrede_${a}`)}
               </label>
             ))}
@@ -119,7 +126,7 @@ export default function Settings() {
           <div className="choice-list">
             {PROFILE_VISIBILITIES.map((v) => (
               <label key={v} className="choice">
-                <input type="radio" name="pv" checked={s.profileVisibility === v} onChange={() => update.mutate({ profileVisibility: v })} />
+                <input type="radio" name="pv" checked={s.profileVisibility === v} onChange={() => save({ profileVisibility: v })} />
                 <span className="choice__text">
                   <strong>{t(`settings.profile_${v}`)}</strong>
                   {t(`settings.profile_${v}_hint`)}
@@ -133,7 +140,7 @@ export default function Settings() {
           <div className="choice-list">
             {(['display', 'hidden'] as const).map((v) => (
               <label key={v} className="choice">
-                <input type="radio" name="lb" checked={s.leaderboardMode === v} onChange={() => update.mutate({ leaderboardMode: v })} />
+                <input type="radio" name="lb" checked={s.leaderboardMode === v} onChange={() => save({ leaderboardMode: v })} />
                 {t(`settings.leaderboard_${v}`)}
               </label>
             ))}
@@ -144,7 +151,7 @@ export default function Settings() {
             type="checkbox"
             role="switch"
             checked={s.emailNotifications}
-            onChange={(e) => update.mutate({ emailNotifications: e.target.checked })}
+            onChange={(e) => save({ emailNotifications: e.target.checked })}
           />
           <span>{t('settings.emailNotifications')}</span>
         </label>
