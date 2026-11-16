@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Testgerät" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata><name>Runde am Kiessee</name></metadata>
+  <trk>
+    <name>Runde am Kiessee</name>
+    <trkseg>
+      <trkpt lat="51.5200" lon="9.9200"><ele>150</ele><time>2026-11-10T09:00:00Z</time></trkpt>
+      <trkpt lat="51.5250" lon="9.9250"><ele>151</ele><time>2026-11-10T09:08:00Z</time></trkpt>
+      <trkpt lat="51.5300" lon="9.9300"><ele>152</ele><time>2026-11-10T09:16:00Z</time></trkpt>
+    </trkseg>
+    <trkseg>
+      <trkpt lat="51.5350" lon="9.9350"><time>2026-11-10T09:24:00Z</time></trkpt>
+      <trkpt lat="51.5400" lon="9.9400"><time>2026-11-10T09:32:00Z</time></trkpt>
+    </trkseg>
+  </trk>
+</gpx>
