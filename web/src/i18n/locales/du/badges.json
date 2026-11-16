@@ -7,7 +7,9 @@
     "regionsIntro": "Für jeden Landkreis, in dem du mindestens einmal gegangen bist, gibt es ein eigenes Wappen.",
     "regionsEmpty": "Noch keine Ortswappen. Das erste bekommst du mit deinem ersten Walk."
   },
-  "progress": { "single": "Dein längster Walk bisher: {{current}} km. Ziel: {{target}} km am Stück." },
+  "progress": {
+    "single": "Dein längster Walk bisher: {{current}} km. Ziel: {{target}} km am Stück."
+  },
   "share": {
     "publicWarning": "Achtung, öffentlich: Wer den Link hat, sieht deinen Namen und das Abzeichen „{{name}}“ – auch ohne Anmeldung. Sonst nichts von dir. Du kannst das Teilen jederzeit beenden.",
     "created": "Der Link wurde erstellt. Du kannst ihn jetzt kopieren und weitergeben.",
@@ -25,7 +27,9 @@
     "rankingEmpty": "Noch niemand in der Rangliste. Mach als Erste mit!",
     "you": "(du)",
     "anonymousHint": "Du möchtest lieber ohne Namen erscheinen? Dann wähl in den Einstellungen bei „Name in Ranglisten“ die Möglichkeit „Anonym“.",
-    "anonymousOn": "Du erscheinst in Ranglisten anonym als „Teilnehmerin“."
+    "anonymousOn": "Du erscheinst in Ranglisten ohne Namen als „Teilnehmende Person“."
   },
-  "errors": { "badge_not_found": "Dieses Abzeichen gibt es nicht oder du hast es noch nicht erreicht." }
+  "errors": {
+    "badge_not_found": "Dieses Abzeichen gibt es nicht oder du hast es noch nicht erreicht."
+  }
 }

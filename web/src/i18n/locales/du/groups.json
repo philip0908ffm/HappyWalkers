@@ -4,7 +4,9 @@
     "request_explain": "Bei dieser Gruppe schickst du eine kurze Anfrage. Die Gruppenleitung nimmt dich dann auf – meist innerhalb weniger Tage.",
     "invite_explain": "Dieser Gruppe kann man nur mit einer Einladung beitreten. Frag ein Mitglied nach dem Einladungslink oder dem Code."
   },
-  "status": { "member": "Du bist Mitglied" },
+  "status": {
+    "member": "Du bist Mitglied"
+  },
   "list": {
     "lead": "Gemeinsam gehen macht mehr Freude. Finde eine Gruppe in deiner Nähe – oder gründe selbst eine.",
     "mineEmpty": "Du bist noch in keiner Gruppe. Unten findest du Gruppen in deiner Nähe.",
@@ -50,14 +52,19 @@
     "nameRequired": "Bitte gib einen Namen mit mindestens 3 Zeichen ein.",
     "postalRequired": "Bitte gib eine Postleitzahl mit 5 Ziffern ein.",
     "rulesHint": "Sie stehen gut sichtbar oben auf der Gruppenseite. Zum Beispiel: Wir warten aufeinander.",
-    "seriesHint": "Dauer: {{duration}}. Den Treffpunkt trägst du danach beim Termin ein.",
-    "saved": "Deine Änderungen sind gespeichert."
+    "seriesHint": "Dauer: {{duration}}. Im nächsten Schritt trägst du nur noch den Treffpunkt ein.",
+    "saved": "Deine Änderungen sind gespeichert.",
+    "createdNextSeries": "Die Gruppe „{{name}}“ ist gegründet! Trag jetzt noch den Treffpunkt für den regelmäßigen Termin ein."
   },
   "admin": {
     "you": "du",
     "membersHint": "Bei jeder Aktion fragen wir noch einmal nach.",
     "confirm": {
-      "make_founder": { "title": "Die Leitung an {{name}} übergeben?", "text": "{{name}} wird Gründerin bzw. Gründer der Gruppe. Du wirst Moderatorin bzw. Moderator.", "button": "Ja, übergeben" }
+      "make_founder": {
+        "title": "Die Leitung an {{name}} übergeben?",
+        "text": "{{name}} wird Gründerin bzw. Gründer der Gruppe. Du wirst Moderatorin bzw. Moderator.",
+        "button": "Ja, übergeben"
+      }
     },
     "seriesTitleRequired": "Bitte gib einen Namen ein.",
     "deleteText": "Wenn die Gruppe nicht mehr gebraucht wird, kannst du sie auflösen."

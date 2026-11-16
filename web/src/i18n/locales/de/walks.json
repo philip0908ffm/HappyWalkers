@@ -13,7 +13,8 @@
     "cancelled": "Abgesagt",
     "going": "Sie sind dabei",
     "full": "Ausgebucht",
-    "confirmed": "Bestätigt"
+    "confirmed": "Bestätigt",
+    "participants_zero": "Noch keine Zusagen"
   },
   "list": {
     "title": "Walks in Ihrer Nähe",
@@ -166,7 +167,9 @@
     "save": "Änderungen speichern",
     "created": "Der Termin ist angelegt.",
     "createdSeries": "Der wiederkehrende Termin ist angelegt. Die nächsten 8 Wochen stehen schon im Kalender.",
-    "saved": "Ihre Änderungen sind gespeichert."
+    "saved": "Ihre Änderungen sind gespeichert.",
+    "mpNameRequired": "Bitte geben Sie dem Treffpunkt einen Namen, zum Beispiel „Parkplatz am Bergpark“.",
+    "mpAddressRequired": "Bitte geben Sie die Adresse des Treffpunkts ein."
   },
   "print": {
     "back": "Zurück zum Walk",

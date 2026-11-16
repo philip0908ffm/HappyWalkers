@@ -81,7 +81,9 @@
     "unfollowed": "Sie folgen {{name}} nicht mehr.",
     "unfollowTitle": "{{name}} nicht mehr folgen?",
     "unfollowText": "Sie sehen dann nur noch, was {{name}} für alle freigibt. Sie können später wieder anfragen.",
-    "unfollowConfirm": "Ja, nicht mehr folgen"
+    "unfollowConfirm": "Ja, nicht mehr folgen",
+    "sent_one": "Meine offene Anfrage (1)",
+    "sent_other": "Meine offenen Anfragen ({{count}})"
   },
   "block": {
     "listTitle": "Blockierte Personen",

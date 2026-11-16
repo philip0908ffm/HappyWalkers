@@ -9,7 +9,8 @@
     "intro": "Eine GPX-Datei speichert deinen Weg. Viele Sportuhren und Handy-Apps können sie erstellen („Exportieren“ oder „Als GPX speichern“).",
     "read": "Die Datei wurde gelesen. Bitte prüf die Angaben.",
     "wrongType": "Das ist keine GPX-Datei. Bitte wähl eine Datei, deren Name auf .gpx endet.",
-    "accepted": "Die Angaben aus der Datei sind unten eingetragen. Du kannst sie noch ändern und dann speichern."
+    "accepted": "Die Angaben aus der Datei sind unten eingetragen. Du kannst sie noch ändern und dann speichern.",
+    "noTime": "nicht in der Datei – bitte unten eintragen"
   },
   "fields": {
     "dateHint": "An welchem Tag bist du gegangen?",
@@ -27,7 +28,10 @@
     "kmTooLong": "Bitte trag höchstens {{max}} km pro Walk ein.",
     "tooFast": "Das wären über 15 km pro Stunde. Bitte prüf Strecke und Dauer.",
     "groupRequired": "Bitte wähl die Gruppe, in der du teilen möchtest.",
-    "implausible_activity": "Diese Angaben passen nicht zusammen. Bitte prüf Datum, Dauer und Strecke."
+    "implausible_activity": "Diese Angaben passen nicht zusammen. Bitte prüf Datum, Dauer und Strecke.",
+    "plaus_out_of_range": "Dieser Wert liegt außerhalb des möglichen Bereichs. Bitte prüf die Angabe.",
+    "plaus_in_future": "Das Datum liegt in der Zukunft. Bitte trag nur Walks ein, die schon stattgefunden haben.",
+    "plaus_too_fast": "Das wären über 15 km pro Stunde. Bitte prüf Strecke und Dauer."
   },
   "map": {
     "intro": "Klick nacheinander auf die Stellen deines Weges. Ohne Maus: Karte mit den Pfeiltasten verschieben und „Punkt in der Kartenmitte setzen“ wählen."
@@ -45,6 +49,6 @@
     "backToProfile": "Zurück zu meinem Profil",
     "deleteText": "„{{title}}“ wird gelöscht. Deine Punkte und Abzeichen bleiben erhalten. Der Fortschritt in Mitmach-Aktionen wird neu berechnet.",
     "saved": "Deine Änderungen wurden gespeichert.",
-    "groupLocked": "Strecke und Dauer hat die Gruppenleitung bestätigt. Du kannst sie hier nicht ändern."
+    "groupLocked": "Datum, Strecke und Dauer hat die Gruppenleitung bestätigt. Du kannst sie hier nicht ändern."
   }
 }

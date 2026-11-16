@@ -109,6 +109,7 @@ export interface GroupTemplate {
   rules: string;
   defaultTempo: Tempo;
   joinPolicy: JoinPolicy;
+  womenOnly?: boolean;
   series: { weekday: number; timeOfDay: string; durationMinutes: number; tempo: Tempo } | null;
 }
 

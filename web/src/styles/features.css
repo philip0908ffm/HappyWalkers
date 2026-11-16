@@ -5,6 +5,10 @@
  */
 
 /* ---------- Allgemeine Helfer ---------- */
+/* Fieldsets wachsen sonst auf ihre Mindestbreite (Überlauf in schmalen Spalten) */
+fieldset {
+  min-inline-size: 0;
+}
 .pre-line {
   white-space: pre-line;
 }
@@ -1371,4 +1375,55 @@
   .map-pin {
     forced-color-adjust: none;
   }
+}
+
+/* Auswahlkacheln innerhalb von .field: `.field label { display:block }` darf das Kachel-Layout nicht aufheben */
+.field .choice {
+  display: flex;
+}
+.choice-list.tempo-compact {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr));
+}
+.choice-list.choice-list--compact {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 6.5rem), 1fr));
+}
+/* Unsichtbare Screenreader-Texte in scrollenden Tabellen dürfen die Seite nicht verbreitern */
+.table-wrap {
+  position: relative;
+}
+.member-table th[scope='row'] {
+  background: var(--color-surface);
+}
+@media (max-width: 40em) {
+  .calendar__title {
+    order: -1;
+    flex-basis: 100%;
+  }
+}
+/* Abstände von Listen, die auch .plain-list (margin: 0) tragen */
+.plain-list.quick-tiles {
+  margin-bottom: var(--space-6);
+}
+.plain-list.link-list,
+.plain-list.series-list,
+.plain-list.feed__list,
+.plain-list.comments__list {
+  margin-bottom: var(--space-4);
+}
+.field .switch {
+  display: inline-flex;
+}
+.choice-list.weekday-list {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 10.5rem), 1fr));
+  max-width: 48rem;
+}
+.search-layout > *,
+.detail-layout > *,
+.home-columns > * {
+  min-width: 0;
+}
+.choice > svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  flex-shrink: 0;
 }

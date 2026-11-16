@@ -6,4 +6,6 @@
 Lizenz: Creative Commons Attribution 4.0 (CC BY 4.0) – © GeoNames (https://www.geonames.org/).
 Die Quellenangabe wird in der App unter „Impressum & Quellen“ angezeigt.
 
+Firmen-, Behörden- und Postfach-Einträge (Großkunden-PLZ) wurden entfernt, damit nur echte Orte erscheinen.
+
 Format: `{ "<PLZ>": [[Ort, Landkreis, Bundesland, Breite, Länge], ...] }`

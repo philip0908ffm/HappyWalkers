@@ -184,8 +184,7 @@
     "tempo": "Übliches Tempo der Gruppe",
     "seriesTitle": "Regelmäßiger Termin",
     "seriesCreate": "Den Termin aus der Vorlage gleich anlegen: jeden {{weekday}}, {{time}}",
-    "seriesHint": "Dauer: {{duration}}. Den Treffpunkt tragen Sie danach beim Termin ein.",
-    "seriesFailed": "Die Gruppe ist gegründet, aber der regelmäßige Termin konnte nicht angelegt werden.",
+    "seriesHint": "Dauer: {{duration}}. Im nächsten Schritt tragen Sie nur noch den Treffpunkt ein.",
     "photoTitle": "Gruppenfoto",
     "photoCurrent": "Aktuelles Gruppenfoto",
     "photoLabel": "Neues Foto auswählen",
@@ -195,7 +194,8 @@
     "create": "Gruppe gründen",
     "save": "Änderungen speichern",
     "created": "Herzlichen Glückwunsch! Die Gruppe „{{name}}“ ist gegründet.",
-    "saved": "Ihre Änderungen sind gespeichert."
+    "saved": "Ihre Änderungen sind gespeichert.",
+    "createdNextSeries": "Die Gruppe „{{name}}“ ist gegründet! Tragen Sie jetzt noch den Treffpunkt für den regelmäßigen Termin ein."
   },
   "admin": {
     "title": "Gruppe verwalten",
@@ -210,7 +210,12 @@
     "banned_one": "1 gesperrte Person",
     "banned_other": "{{count}} gesperrte Personen",
     "you": "Sie",
-    "col": { "name": "Name", "role": "Rolle", "since": "Dabei seit", "actions": "Aktionen" },
+    "col": {
+      "name": "Name",
+      "role": "Rolle",
+      "since": "Dabei seit",
+      "actions": "Aktionen"
+    },
     "action": {
       "approve": "Aufnehmen",
       "decline": "Ablehnen",
@@ -223,14 +228,46 @@
     },
     "notNotified": "Die Person wird nicht benachrichtigt.",
     "confirm": {
-      "approve": { "title": "{{name}} aufnehmen?", "text": "{{name}} wird Mitglied und sieht alle Treffpunkte und Neuigkeiten.", "button": "Ja, aufnehmen" },
-      "decline": { "title": "Anfrage von {{name}} ablehnen?", "text": "Die Anfrage wird gelöscht.", "button": "Ja, ablehnen" },
-      "remove": { "title": "{{name}} aus der Gruppe entfernen?", "text": "{{name}} sieht danach keine Treffpunkte und Neuigkeiten mehr, kann aber wieder beitreten.", "button": "Ja, entfernen" },
-      "ban": { "title": "{{name}} sperren?", "text": "{{name}} wird entfernt und kann der Gruppe nicht wieder beitreten.", "button": "Ja, sperren" },
-      "unban": { "title": "Sperre für {{name}} aufheben?", "text": "{{name}} kann danach wieder beitreten.", "button": "Ja, Sperre aufheben" },
-      "make_moderator": { "title": "{{name}} zur Moderatorin bzw. zum Moderator ernennen?", "text": "{{name}} kann dann Termine anlegen, Anfragen annehmen und Mitglieder verwalten.", "button": "Ja, ernennen" },
-      "remove_moderator": { "title": "Moderation von {{name}} beenden?", "text": "{{name}} bleibt einfaches Mitglied.", "button": "Ja, beenden" },
-      "make_founder": { "title": "Die Leitung an {{name}} übergeben?", "text": "{{name}} wird Gründerin bzw. Gründer der Gruppe. Sie werden Moderatorin bzw. Moderator.", "button": "Ja, übergeben" }
+      "approve": {
+        "title": "{{name}} aufnehmen?",
+        "text": "{{name}} wird Mitglied und sieht alle Treffpunkte und Neuigkeiten.",
+        "button": "Ja, aufnehmen"
+      },
+      "decline": {
+        "title": "Anfrage von {{name}} ablehnen?",
+        "text": "Die Anfrage wird gelöscht.",
+        "button": "Ja, ablehnen"
+      },
+      "remove": {
+        "title": "{{name}} aus der Gruppe entfernen?",
+        "text": "{{name}} sieht danach keine Treffpunkte und Neuigkeiten mehr, kann aber wieder beitreten.",
+        "button": "Ja, entfernen"
+      },
+      "ban": {
+        "title": "{{name}} sperren?",
+        "text": "{{name}} wird entfernt und kann der Gruppe nicht wieder beitreten.",
+        "button": "Ja, sperren"
+      },
+      "unban": {
+        "title": "Sperre für {{name}} aufheben?",
+        "text": "{{name}} kann danach wieder beitreten.",
+        "button": "Ja, Sperre aufheben"
+      },
+      "make_moderator": {
+        "title": "{{name}} zur Moderatorin bzw. zum Moderator ernennen?",
+        "text": "{{name}} kann dann Termine anlegen, Anfragen annehmen und Mitglieder verwalten.",
+        "button": "Ja, ernennen"
+      },
+      "remove_moderator": {
+        "title": "Moderation von {{name}} beenden?",
+        "text": "{{name}} bleibt einfaches Mitglied.",
+        "button": "Ja, beenden"
+      },
+      "make_founder": {
+        "title": "Die Leitung an {{name}} übergeben?",
+        "text": "{{name}} wird Gründerin bzw. Gründer der Gruppe. Sie werden Moderatorin bzw. Moderator.",
+        "button": "Ja, übergeben"
+      }
     },
     "done": {
       "approve": "{{name}} ist jetzt Mitglied.",
@@ -265,7 +302,8 @@
     "deleteTitle": "„{{name}}“ wirklich auflösen?",
     "deleteWarning": "Die Gruppe, ihre Termine und Neuigkeiten werden gelöscht. Das lässt sich nicht rückgängig machen.",
     "deleteConfirm": "Ja, Gruppe auflösen",
-    "deleted": "Die Gruppe „{{name}}“ ist aufgelöst."
+    "deleted": "Die Gruppe „{{name}}“ ist aufgelöst.",
+    "requests_zero": "Keine offenen Anfragen"
   },
   "poster": {
     "docTitle": "Aushang",

@@ -66,7 +66,7 @@ export function TempoPicker({
       <legend>
         {legend ?? t('tempo.label')} <Explain term={t('tempo.label')}>{t('tempo.explain')}</Explain>
       </legend>
-      <div className={`choice-list ${compact ? 'choice-list--row' : 'tempo-picker'}`}>
+      <div className={`choice-list ${compact ? 'choice-list--row tempo-compact' : 'tempo-picker'}`}>
         {options.map((o) => (
           <label key={o || 'any'} className={`choice tempo-choice ${o ? `tempo-choice--${o}` : ''}`}>
             <input type="radio" name={name} checked={value === o} onChange={() => onChange(o)} />

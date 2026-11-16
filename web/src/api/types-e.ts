@@ -53,8 +53,9 @@ export interface CreateActivityResult {
 }
 
 export interface GpxPreview {
-  startedAt: string;
-  durationMinutes: number;
+  /** null, wenn die Datei keine Zeitstempel enthält */
+  startedAt: string | null;
+  durationMinutes: number | null;
   distanceKm: number;
   route: RoutePoint[];
 }
@@ -138,9 +139,11 @@ export interface PremiumStatus {
 }
 
 export interface PremiumStats {
-  totals: { walks: number; km: number; minutes: number; avgSpeedKmh: number };
-  series: { label: string; start: string; walks: number; km: number; avgSpeedKmh: number }[];
-  speedTrend: { label: string; avgSpeedKmh: number }[];
+  range?: 'week' | 'month' | 'year';
+  totals: { walks: number; km: number; minutes: number; avgSpeedKmh: number | null };
+  /** week: 12 Kalenderwochen („2026-W47“), month: 12 Monate („2026-11“), year: 5 Jahre („2026“) – ältester zuerst */
+  series: { label: string; start: string; walks: number; km: number; avgSpeedKmh: number | null }[];
+  speedTrend: { label: string; avgSpeedKmh: number | null }[];
 }
 
 export interface Goal {
@@ -149,6 +152,8 @@ export interface Goal {
   metric: 'km' | 'walks';
   target: number;
   progress: number;
+  periodStart?: string;
+  periodEnd?: string;
 }
 
 export interface YearReview {
@@ -159,7 +164,7 @@ export interface YearReview {
   groupWalks: number;
   badges: BadgeEarned[];
   bestMonth: string | number | { month: number | string; km?: number; walks?: number } | null;
-  longestWalk: { distanceKm: number; startedAt?: string } | number | null;
+  longestWalk: { id?: string; distanceKm: number; durationMinutes?: number; startedAt?: string } | number | null;
   places: string[];
 }
 
@@ -208,13 +213,17 @@ export interface PublicProfile {
 export interface Follows {
   following: PersonRef[];
   followers: PersonRef[];
+  /** eingehende Anfragen */
   requests: PersonRef[];
+  /** eigene, noch offene Anfragen */
+  sentRequests?: PersonRef[];
 }
 
 export interface AppNotification {
   id: string;
   type: string;
   data: Record<string, unknown>;
+  actor?: PersonRef | null;
   readAt: string | null;
   createdAt: string;
 }

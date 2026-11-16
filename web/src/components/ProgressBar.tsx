@@ -1,3 +1,4 @@
+import '../styles/pages-e.css';
 import { useId } from 'react';
 
 /**

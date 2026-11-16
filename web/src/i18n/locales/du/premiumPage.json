@@ -43,10 +43,15 @@
     "walksInvalid": "Bitte gib eine ganze Zahl zwischen 1 und 100 an.",
     "saved": "Dein Ziel ist gespeichert."
   },
-  "year": { "summary": "{{year}} bist du {{walks}} gegangen: zusammen {{km}} km in {{time}}." },
+  "year": {
+    "summary": "{{year}} bist du {{walks}} gegangen: zusammen {{km}} km in {{time}}."
+  },
   "card": {
     "text": "Lade ein schönes Bild mit deinen Kilometern herunter und schick es zum Beispiel an deine Familie.",
     "privacy": "Das Bild zeigt deinen Namen, Kilometer, Walks und Abzeichen – keinen Ort und keine Route. Es wird nur auf dein Gerät geladen; du entscheidest, wem du es schickst."
   },
-  "errors": { "already_premium": "Du hast Premium bereits." }
+  "errors": {
+    "already_premium": "Du hast Premium bereits.",
+    "billing_unavailable": "Premium kann gerade nicht abgeschlossen werden. Bitte versuch es später noch einmal."
+  }
 }

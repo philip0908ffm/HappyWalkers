@@ -63,7 +63,7 @@ export default function PersonPage() {
   return (
     <div className="page-e">
       <div className="person-head-e">
-        <PersonAvatar name={p.displayName} url={p.avatarUrl} large />
+        <PersonAvatar name={p.displayName} url={p.avatarUrl ?? null} large />
         <div>
           <PageHeader title={p.displayName} lead={p.canSeeDetails && p.city ? t('person.from', { city: p.city }) : undefined} />
         </div>
@@ -210,7 +210,7 @@ export default function PersonPage() {
           <li>{t('block.effect3')}</li>
         </ul>
       </ConfirmDialogE>
-      <ReportDialog open={dialog === 'report'} onClose={() => setDialog(null)} targetType="user" targetId={p.id} name={p.displayName} />
+      <ReportDialog open={dialog === 'report'} onClose={() => setDialog(null)} targetType="user" targetId={id} name={p.displayName} />
     </div>
   );
 }

@@ -379,6 +379,11 @@ function Contacts() {
     success: (_r, p) => t('contacts.declined', { name: p.displayName }),
     invalidate: [['follows']],
   });
+  const withdraw = useAction({
+    fn: (p: PersonRef) => api.del(`/users/${p.id}/follow`),
+    success: t('person.requestWithdrawn'),
+    invalidate: [['follows']],
+  });
   const removeFollower = useAction({
     fn: (p: PersonRef) => api.del(`/follows/followers/${p.id}`),
     success: (_r, p) => t('contacts.removed', { name: p.displayName }),
@@ -419,6 +424,20 @@ function Contacts() {
           ) : (
             <p className="muted-text">{t('contacts.noRequests')}</p>
           )}
+          {q.data.sentRequests?.length ? (
+            <>
+              <h3>{t('contacts.sent', { count: q.data.sentRequests.length })}</h3>
+              <ul className="plain-list">
+                {q.data.sentRequests.map((p) => (
+                  <PersonRow key={p.id} person={p}>
+                    <button type="button" className="btn btn--ghost" disabled={withdraw.isPending} onClick={() => withdraw.mutate(p)}>
+                      {t('person.withdraw')}
+                    </button>
+                  </PersonRow>
+                ))}
+              </ul>
+            </>
+          ) : null}
           <h3>{t('contacts.followers', { count: q.data.followers.length })}</h3>
           <p className="field__hint">{t('contacts.followersHint')}</p>
           {q.data.followers.length ? (

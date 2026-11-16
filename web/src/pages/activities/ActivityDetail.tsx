@@ -169,7 +169,7 @@ function EditForm({ activity: a, onDone }: { activity: Activity; onDone: () => v
     const errs: typeof errors = {};
     const k = parseKm(km);
     const m = parseInt(minutes, 10);
-    if (!date || date > today) errs.date = t('errors.dateFuture');
+    if (!fromGroup && (!date || date > today)) errs.date = t('errors.dateFuture');
     if (!fromGroup) {
       if (!Number.isFinite(k) || k <= 0 || k > LIMITS.maxActivityKm) errs.km = t('errors.kmInvalid');
       if (!Number.isFinite(m) || m < 1 || m > LIMITS.maxActivityMinutes) errs.minutes = t('errors.durationInvalid');
@@ -178,7 +178,7 @@ function EditForm({ activity: a, onDone }: { activity: Activity; onDone: () => v
     setErrors(errs);
     if (Object.keys(errs).length) return;
     const body: Record<string, unknown> = { title: title.trim() || null, note: note.trim() || null, visibility };
-    if (date !== toDateInput(new Date(a.startedAt))) body.startedAt = new Date(`${date}T10:00:00`).toISOString();
+    if (!fromGroup && date !== toDateInput(new Date(a.startedAt))) body.startedAt = new Date(`${date}T10:00:00`).toISOString();
     if (!fromGroup) {
       body.distanceKm = Math.round(k * 100) / 100;
       body.durationMinutes = m;
@@ -191,9 +191,11 @@ function EditForm({ activity: a, onDone }: { activity: Activity; onDone: () => v
       <Field label={t('fields.title')} optional>
         <input className="input" maxLength={80} value={title} onChange={(e) => setTitle(e.target.value)} />
       </Field>
-      <Field label={t('fields.date')} error={errors.date}>
-        <input type="date" className="input input--short" max={today} value={date} onChange={(e) => setDate(e.target.value)} />
-      </Field>
+      {fromGroup ? null : (
+        <Field label={t('fields.date')} error={errors.date}>
+          <input type="date" className="input input--short" max={today} value={date} onChange={(e) => setDate(e.target.value)} />
+        </Field>
+      )}
       {fromGroup ? (
         <p className="field__hint">{t('detail.groupLocked')}</p>
       ) : (

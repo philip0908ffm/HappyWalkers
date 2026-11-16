@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { api } from '../../api/client';
+import { api, ApiError } from '../../api/client';
 import type { Place } from '../../api/types';
 import type { CreateActivityResult, GpxPreview, MyGroup, RoutePoint } from '../../api/types-e';
 import { BadgeEmblem } from '../../components/BadgeEmblem';
@@ -31,7 +31,7 @@ const MODES: { key: Mode; icon: IconName }[] = [
 type Errors = Partial<Record<'date' | 'duration' | 'km' | 'gpx' | 'group', string>>;
 
 export default function LogWalk() {
-  const { t } = useTranslation('activities');
+  const { t, i18n } = useTranslation('activities');
   const { data: me } = useMe();
   const errMsg = useErrorMessage();
   const fieldErrors = useFieldErrors();
@@ -51,6 +51,7 @@ export default function LogWalk() {
   const [gpxName, setGpxName] = useState<string | null>(null);
   const [preview, setPreview] = useState<GpxPreview | null>(null);
   const [gpxStart, setGpxStart] = useState<string | null>(null);
+  const [fromGpx, setFromGpx] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
   const [result, setResult] = useState<CreateActivityResult | null>(null);
 
@@ -109,13 +110,15 @@ export default function LogWalk() {
 
   function acceptPreview() {
     if (!preview) return;
-    const d = new Date(preview.startedAt);
-    setDate(toDateInput(d));
-    setHours(String(Math.floor(preview.durationMinutes / 60)));
-    setMinutes(String(preview.durationMinutes % 60));
+    if (preview.startedAt) setDate(toDateInput(new Date(preview.startedAt)));
+    if (preview.durationMinutes != null) {
+      setHours(String(Math.floor(preview.durationMinutes / 60)));
+      setMinutes(String(preview.durationMinutes % 60));
+    }
     setKm(formatKm(preview.distanceKm, 2));
     setRoute(preview.route ?? []);
     setGpxStart(preview.startedAt);
+    setFromGpx(true);
     setPreview(null);
     window.setTimeout(() => document.getElementById('log-details')?.focus(), 0);
   }
@@ -133,6 +136,7 @@ export default function LogWalk() {
     setPreview(null);
     setGpxName(null);
     setGpxStart(null);
+    setFromGpx(false);
     setErrors({});
     setMode('simple');
     window.scrollTo(0, 0);
@@ -179,6 +183,7 @@ export default function LogWalk() {
     };
     if (route.length >= 2) body.route = route;
     if (title.trim()) body.title = title.trim();
+    if (fromGpx) body.source = 'gpx';
     if (note.trim()) body.note = note.trim();
     if (share && groupId) {
       body.share = true;
@@ -187,12 +192,21 @@ export default function LogWalk() {
     if (!save.isPending)
       save.mutate(body, {
         onError: (err) => {
+          // implausible_activity: details [{ field, code: out_of_range | in_future | too_old | too_fast }]
+          const details = err instanceof ApiError ? (err.details ?? []) : [];
+          const msg = (code: string, fallback: string) => {
+            const key = `errors.plaus_${code}`;
+            return i18n.exists(`activities:${key}`) ? t(key) : fallback;
+          };
           const fe = fieldErrors(err);
-          setErrors({
-            date: fe.startedAt,
-            duration: fe.durationMinutes,
-            km: fe.distanceKm,
-          });
+          const next: Errors = { date: fe.startedAt, duration: fe.durationMinutes, km: fe.distanceKm };
+          for (const d of details) {
+            if (d.field === 'startedAt') next.date = msg(d.code, t('errors.dateFuture'));
+            else if (d.field === 'durationMinutes') next.duration = msg(d.code, t('errors.durationInvalid'));
+            else if (d.field === 'distanceKm') next.km = msg(d.code, t('errors.kmInvalid'));
+            else if (d.code === 'too_fast') next.km = t('errors.tooFast');
+          }
+          setErrors(next);
         },
       });
   }
@@ -243,7 +257,7 @@ export default function LogWalk() {
               <dl className="facts-e">
                 <div>
                   <dt>{t('fields.date')}</dt>
-                  <dd>{formatDate(preview.startedAt)}</dd>
+                  <dd>{preview.startedAt ? formatDate(preview.startedAt) : t('gpx.noTime')}</dd>
                 </div>
                 <div>
                   <dt>{t('fields.distance')}</dt>
@@ -251,7 +265,7 @@ export default function LogWalk() {
                 </div>
                 <div>
                   <dt>{t('fields.duration')}</dt>
-                  <dd>{formatDuration(preview.durationMinutes)}</dd>
+                  <dd>{preview.durationMinutes != null ? formatDuration(preview.durationMinutes) : t('gpx.noTime')}</dd>
                 </div>
               </dl>
               {preview.route?.length >= 2 ? <RouteDrawMap route={preview.route} readOnly label={t('map.previewLabel')} /> : null}

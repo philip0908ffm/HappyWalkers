@@ -22,6 +22,16 @@ import { useBadgeText } from '../badges/badgeText';
 
 type Range = 'week' | 'month' | 'year';
 
+const MONTH_SHORT = new Intl.DateTimeFormat('de-DE', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+/** Abschnitts-Bezeichnung der API lesbar machen: „2026-W47“ → „KW 47 (2026)“, „2026-11“ → „Nov. 2026“ */
+function periodLabel(label: string, weekWord: string): string {
+  const w = /^(\d{4})-W(\d{1,2})$/.exec(label);
+  if (w) return `${weekWord} ${parseInt(w[2], 10)} (${w[1]})`;
+  const m = /^(\d{4})-(\d{2})$/.exec(label);
+  if (m) return MONTH_SHORT.format(new Date(Date.UTC(+m[1], +m[2] - 1, 15)));
+  return label;
+}
+
 export default function ProgressPage() {
   const { t } = useTranslation('premiumPage');
   const { data: me } = useMe();
@@ -79,9 +89,11 @@ function Stats() {
     placeholderData: (p) => p,
   });
   const d = q.data;
-  const kmData = (d?.series ?? []).map((s) => ({ label: s.label, value: s.km }));
-  const walksData = (d?.series ?? []).map((s) => ({ label: s.label, value: s.walks }));
-  const speedData = (d?.speedTrend ?? []).map((s) => ({ label: s.label, value: s.avgSpeedKmh }));
+  const lbl = (l: string) => periodLabel(l, t('stats.weekShort'));
+  const kmData = (d?.series ?? []).map((s) => ({ label: lbl(s.label), value: s.km ?? 0 }));
+  const walksData = (d?.series ?? []).map((s) => ({ label: lbl(s.label), value: s.walks ?? 0 }));
+  const speedData = (d?.speedTrend ?? []).map((s) => ({ label: lbl(s.label), value: s.avgSpeedKmh ?? 0 }));
+  const avgSpeed = d?.totals.avgSpeedKmh ?? 0;
   const best = kmData.reduce<{ label: string; value: number } | null>((a, b) => (!a || b.value > a.value ? b : a), null);
 
   const speeds = speedData.filter((s) => s.value > 0);
@@ -94,6 +106,7 @@ function Stats() {
   return (
     <section aria-labelledby="stats-h" className="card stack section-e">
       <h2 id="stats-h">{t('stats.title')}</h2>
+      <p className="field__hint">{t(`stats.rangeHint_${range}`)}</p>
       <fieldset className="field">
         <legend>{t('stats.range')}</legend>
         <div className="choice-list choice-list--row">
@@ -111,6 +124,7 @@ function Stats() {
         <LoadError error={q.error} onRetry={() => q.refetch()} />
       ) : (
         <div aria-live="polite" className="stack">
+          <p className="field__label-e">{t('stats.totalsHint')}</p>
           <ul className="stat-tiles plain-list">
             <li className="stat-tile">
               <span className="stat-tile__value">{d.totals.walks}</span>
@@ -125,7 +139,7 @@ function Stats() {
               <span className="stat-tile__label">{t('stats.time')}</span>
             </li>
             <li className="stat-tile">
-              <span className="stat-tile__value">{formatKm(d.totals.avgSpeedKmh)}</span>
+              <span className="stat-tile__value">{avgSpeed ? formatKm(avgSpeed) : '–'}</span>
               <span className="stat-tile__label">{t('stats.avgSpeed')}</span>
             </li>
           </ul>
@@ -153,10 +167,10 @@ function Stats() {
           ) : null}
 
           <h3>{t('tempo.title')}</h3>
-          {d.totals.avgSpeedKmh > 0 ? (
+          {avgSpeed > 0 ? (
             <p className="summary-e">
-              {t('tempo.average', { kmh: formatKm(d.totals.avgSpeedKmh), tempo: t(`common:tempo.${tempoWord(d.totals.avgSpeedKmh)}`) })}{' '}
-              {t(`tempo.trend_${trend}`)}
+              {t('tempo.average', { kmh: formatKm(avgSpeed), tempo: t(`common:tempo.${tempoWord(avgSpeed)}`) })}
+              {trend !== 'few' ? ` ${t(`tempo.trend_${trend}`)}` : null}
             </p>
           ) : null}
           {speedData.length ? (
@@ -286,6 +300,9 @@ function Goals() {
 }
 
 function monthName(m: number | string) {
+  if (typeof m === 'string' && /^\d{4}-\d{2}$/.test(m)) {
+    return new Intl.DateTimeFormat('de-DE', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(Date.UTC(+m.slice(0, 4), +m.slice(5) - 1, 15)));
+  }
   const n = typeof m === 'string' ? parseInt(m, 10) : m;
   if (!Number.isFinite(n) || n < 1 || n > 12) return String(m);
   return new Intl.DateTimeFormat('de-DE', { month: 'long', timeZone: 'UTC' }).format(new Date(Date.UTC(2020, n - 1, 15)));

@@ -1,5 +1,7 @@
 {
-  "card": { "going": "Du bist dabei" },
+  "card": {
+    "going": "Du bist dabei"
+  },
   "list": {
     "title": "Walks in deiner Nähe",
     "lead": "Hier findest du verabredete Spaziergänge in zügigem Schritt – zum Mitgehen.",
@@ -47,6 +49,8 @@
     "maxInvalid": "Bitte gib eine ganze Zahl ab 2 ein.",
     "mpDesc": "So findest du uns",
     "errorSummary": "Bitte prüfe noch diese Angaben:",
-    "saved": "Deine Änderungen sind gespeichert."
+    "saved": "Deine Änderungen sind gespeichert.",
+    "mpNameRequired": "Bitte gib dem Treffpunkt einen Namen, zum Beispiel „Parkplatz am Bergpark“.",
+    "mpAddressRequired": "Bitte gib die Adresse des Treffpunkts ein."
   }
 }

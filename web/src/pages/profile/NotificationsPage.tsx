@@ -1,5 +1,5 @@
 import '../../styles/pages-e.css';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { api } from '../../api/client';
@@ -42,7 +42,7 @@ function linkFor(n: AppNotification): string | null {
   const d = n.data ?? {};
   const groupId = str(d, 'groupId', 'group.id');
   const walkId = str(d, 'walkId', 'walk.id');
-  const userId = str(d, 'userId', 'fromUserId', 'actor.id', 'from.id', 'user.id');
+  const userId = n.actor?.id ?? str(d, 'actorId', 'userId', 'fromUserId', 'actor.id', 'from.id', 'user.id');
   switch (n.type) {
     case 'join_request':
       return groupId ? `/gruppen/${groupId}/verwaltung` : null;
@@ -81,9 +81,14 @@ function linkFor(n: AppNotification): string | null {
 export default function NotificationsPage() {
   const { t } = useTranslation('notifications');
   const bt = useBadgeText();
+  const qc = useQueryClient();
   const q = useQuery({
     queryKey: ['notifications'],
     queryFn: () => api.get<{ notifications: AppNotification[]; unread: number }>('/notifications'),
+  });
+  const markRead = useMutation({
+    mutationFn: (id: string) => api.post(`/notifications/${id}/read`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['notifications'] }),
   });
   const readAll = useAction({
     fn: () => api.post('/notifications/read-all'),
@@ -96,7 +101,7 @@ export default function NotificationsPage() {
     const badgeKey = str(d, 'badgeKey', 'key', 'badge.key');
     const km = d.distanceKm;
     const vars = {
-      name: str(d, 'name', 'fromName', 'displayName', 'actorName', 'actor.displayName', 'from.displayName', 'user.displayName') ?? t('someone'),
+      name: n.actor?.displayName ?? str(d, 'name', 'fromName', 'displayName', 'actorName', 'actor.displayName', 'from.displayName', 'user.displayName') ?? t('someone'),
       group: str(d, 'groupName', 'group.name') ?? t('aGroup'),
       walk: str(d, 'walkTitle', 'walk.title', 'title') ?? t('aWalk'),
       badge: badgeKey ? bt.name(badgeKey, str(d, 'label', 'badgeLabel')) : t('aBadge'),
@@ -146,7 +151,7 @@ export default function NotificationsPage() {
                         {link ? (
                           <>
                             {' · '}
-                            <Link to={link}>{t(`open.${n.type}`, { defaultValue: t('open.default') })}</Link>
+                            <Link to={link} onClick={() => isNew && markRead.mutate(n.id)}>{t(`open.${n.type}`, { defaultValue: t('open.default') })}</Link>
                           </>
                         ) : null}
                       </p>

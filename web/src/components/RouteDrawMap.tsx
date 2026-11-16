@@ -1,3 +1,4 @@
+import '../styles/pages-e.css';
 import 'leaflet/dist/leaflet.css';
 import type { LatLngBoundsExpression, LatLngTuple, Map as LeafletMap } from 'leaflet';
 import { useEffect, useState } from 'react';

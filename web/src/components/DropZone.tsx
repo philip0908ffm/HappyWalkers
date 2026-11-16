@@ -1,3 +1,4 @@
+import '../styles/pages-e.css';
 import { useId, useRef, useState, type DragEvent, type ReactNode } from 'react';
 import { Icon } from './Icon';
 

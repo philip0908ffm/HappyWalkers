@@ -41,7 +41,11 @@
     "places_10": "Für Walks an 10 verschiedenen Orten.",
     "region": "Für mindestens einen Walk im Landkreis {{label}}."
   },
-  "tier": { "1": "Bronze", "2": "Silber", "3": "Gold" },
+  "tier": {
+    "1": "Bronze",
+    "2": "Silber",
+    "3": "Gold"
+  },
   "page": {
     "title": "Meine Vitrine",
     "lead": "Hier sammeln Sie Ihre Abzeichen. Jedes Abzeichen erzählt von einem Schritt, den Sie geschafft haben.",
@@ -149,7 +153,7 @@
     "rank": "{{rank}}.",
     "you": "(Sie)",
     "anonymousHint": "Sie möchten lieber ohne Namen erscheinen? Dann wählen Sie in den Einstellungen bei „Name in Ranglisten“ die Möglichkeit „Anonym“.",
-    "anonymousOn": "Sie erscheinen in Ranglisten anonym als „Teilnehmerin“.",
+    "anonymousOn": "Sie erscheinen in Ranglisten ohne Namen als „Teilnehmende Person“.",
     "toSettings": "Zu den Einstellungen"
   },
   "shared": {

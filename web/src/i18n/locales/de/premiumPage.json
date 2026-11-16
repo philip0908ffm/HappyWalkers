@@ -78,10 +78,10 @@
   },
   "stats": {
     "title": "Statistik",
-    "range": "Zeitraum",
-    "range_week": "Diese Woche",
-    "range_month": "Dieser Monat",
-    "range_year": "Dieses Jahr",
+    "range": "Ansicht",
+    "range_week": "Nach Wochen",
+    "range_month": "Nach Monaten",
+    "range_year": "Nach Jahren",
     "walks_one": "Walk",
     "walks_other": "Walks",
     "walksValue_one": "1 Walk",
@@ -90,14 +90,19 @@
     "time": "unterwegs",
     "avgSpeed": "km pro Stunde im Schnitt",
     "colPeriod": "Zeitraum",
-    "kmChart_week": "Kilometer pro Tag",
-    "kmChart_month": "Kilometer pro Woche",
-    "kmChart_year": "Kilometer pro Monat",
-    "walksChart_week": "Walks pro Tag",
-    "walksChart_month": "Walks pro Woche",
-    "walksChart_year": "Walks pro Monat",
+    "kmChart_week": "Kilometer pro Woche",
+    "kmChart_month": "Kilometer pro Monat",
+    "kmChart_year": "Kilometer pro Jahr",
+    "walksChart_week": "Walks pro Woche",
+    "walksChart_month": "Walks pro Monat",
+    "walksChart_year": "Walks pro Jahr",
     "kmSummary": "Am meisten: {{label}} mit {{km}} km. Zusammen {{total}} km.",
-    "noWalks": "In diesem Zeitraum gibt es noch keine Walks."
+    "noWalks": "In diesem Zeitraum gibt es noch keine Walks.",
+    "rangeHint_week": "Die letzten 12 Wochen, die neueste unten.",
+    "rangeHint_month": "Die letzten 12 Monate, der neueste unten.",
+    "rangeHint_year": "Die letzten 5 Jahre, das neueste unten.",
+    "weekShort": "Woche",
+    "totalsHint": "Zusammen im ganzen Zeitraum:"
   },
   "tempo": {
     "title": "Ihr Tempo",
@@ -105,7 +110,7 @@
     "trend_up": "Sie sind schneller geworden. Prima!",
     "trend_down": "Sie gehen etwas ruhiger als am Anfang – das ist völlig in Ordnung.",
     "trend_same": "Ihr Tempo ist gleich geblieben.",
-    "trend_few": "",
+    "trend_few": "Für eine Entwicklung braucht es Walks in mindestens zwei Abschnitten.",
     "chart": "Tempo im Verlauf (km pro Stunde)",
     "colSpeed": "km pro Stunde",
     "kmh": "{{kmh}} km/h",
@@ -161,6 +166,7 @@
   },
   "errors": {
     "premium_required": "Diese Funktion gehört zu Premium.",
-    "already_premium": "Sie haben Premium bereits."
+    "already_premium": "Sie haben Premium bereits.",
+    "billing_unavailable": "Premium kann gerade nicht abgeschlossen werden. Bitte versuchen Sie es später noch einmal."
   }
 }

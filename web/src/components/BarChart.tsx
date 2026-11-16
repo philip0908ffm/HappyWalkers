@@ -1,3 +1,4 @@
+import '../styles/pages-e.css';
 import { useEffect, useRef, useState } from 'react';
 
 /**

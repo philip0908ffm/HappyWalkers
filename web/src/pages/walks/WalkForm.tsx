@@ -62,15 +62,23 @@ function WalkFormInner({ walk }: { walk: WalkDetail | null }) {
   const groupQ = useQuery({ queryKey: qk.group(groupId ?? ''), queryFn: () => groupsApi.get(groupId!), enabled: !!groupId });
 
   const tomorrow = new Date(Date.now() + 86400000);
-  const [title, setTitle] = useState(walk?.title ?? '');
+  // Vorbelegung aus einer Gruppenvorlage (?wochentag=…&uhrzeit=…&dauer=…&tempo=…&titel=…)
+  const pre = {
+    weekday: params.get('wochentag'),
+    time: params.get('uhrzeit'),
+    duration: Number(params.get('dauer')) || null,
+    tempo: params.get('tempo') as Tempo | null,
+    title: params.get('titel'),
+  };
+  const [title, setTitle] = useState(walk?.title ?? pre.title ?? '');
   const [description, setDescription] = useState(walk?.description ?? '');
-  const [recurring, setRecurring] = useState(false);
-  const [weekday, setWeekday] = useState<number>(walk ? new Date(walk.startsAt).getDay() : tomorrow.getDay());
+  const [recurring, setRecurring] = useState(!walk && pre.weekday != null);
+  const [weekday, setWeekday] = useState<number>(walk ? new Date(walk.startsAt).getDay() : pre.weekday != null ? Number(pre.weekday) : tomorrow.getDay());
   const [date, setDate] = useState(walk ? berlinDayKey(walk.startsAt) : toDateInput(tomorrow));
-  const [time, setTime] = useState(walk ? berlinTimeInput(walk.startsAt) : '10:00');
-  const [duration, setDuration] = useState(walk?.durationMinutes ?? 60);
+  const [time, setTime] = useState(walk ? berlinTimeInput(walk.startsAt) : (pre.time ?? '10:00'));
+  const [duration, setDuration] = useState(walk?.durationMinutes ?? pre.duration ?? 60);
   const [km, setKm] = useState(walk?.distanceKm != null ? String(walk.distanceKm).replace('.', ',') : '');
-  const [tempo, setTempo] = useState<Tempo | ''>(walk?.tempo ?? '');
+  const [tempo, setTempo] = useState<Tempo | ''>(walk?.tempo ?? pre.tempo ?? '');
   const [maxP, setMaxP] = useState(walk?.maxParticipants != null ? String(walk.maxParticipants) : '');
   const [mpName, setMpName] = useState(walk?.meetingPoint?.name ?? '');
   const [mpAddress, setMpAddress] = useState(walk?.meetingPoint?.address ?? '');
@@ -119,6 +127,10 @@ function WalkFormInner({ walk }: { walk: WalkDetail | null }) {
     const maxNum = maxP.trim() ? Number(maxP) : null;
     if (maxNum != null && !(Number.isInteger(maxNum) && maxNum >= 2)) errs.maxParticipants = t('form.maxInvalid');
     if (!tempo) errs.tempo = t('form.tempoRequired');
+    if (kind?.kind === 'group') {
+      if (!mpName.trim()) errs.meetingPointName = t('form.mpNameRequired');
+      if (!mpAddress.trim()) errs.meetingAddress = t('form.mpAddressRequired');
+    }
     setErrors(errs);
     if (Object.keys(errs).length) {
       setTimeout(() => errorSummaryRef.current?.focus(), 0);
@@ -264,7 +276,7 @@ function WalkFormInner({ walk }: { walk: WalkDetail | null }) {
           {recurring ? (
             <fieldset className="field">
               <legend>{t('form.weekday')}</legend>
-              <div className="choice-list choice-list--row choice-list--compact">
+              <div className="choice-list weekday-list">
                 {WEEKDAYS.map((w) => (
                   <label key={w} className="choice">
                     <input type="radio" name="weekday" checked={weekday === w} onChange={() => setWeekday(w)} />
@@ -326,10 +338,10 @@ function WalkFormInner({ walk }: { walk: WalkDetail | null }) {
               <Icon name="lock" />
               <p>{t('form.whereInfo')}</p>
             </div>
-            <Field label={t('form.mpName')} hint={t('form.mpNameHint')} optional error={errors.meetingPointName}>
+            <Field label={t('form.mpName')} hint={t('form.mpNameHint')} optional={!isGroupKind} error={errors.meetingPointName}>
               <input className="input" value={mpName} maxLength={120} onChange={(e) => setMpName(e.target.value)} />
             </Field>
-            <Field label={t('form.mpAddress')} hint={t('form.mpAddressHint')} optional error={errors.meetingAddress}>
+            <Field label={t('form.mpAddress')} hint={t('form.mpAddressHint')} optional={!isGroupKind} error={errors.meetingAddress}>
               <input className="input" value={mpAddress} maxLength={200} autoComplete="street-address" onChange={(e) => setMpAddress(e.target.value)} />
             </Field>
             <Field label={t('form.mpDesc')} hint={t('form.mpDescHint')} optional error={errors.meetingDescription}>

@@ -1,5 +1,5 @@
 import { JOIN_POLICIES, type JoinPolicy, type Tempo } from '@gehmeinsam/shared';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -15,9 +15,9 @@ import { PageHeader } from '../../components/PageHeader';
 import { TempoBadge, TempoPicker } from '../../components/Tempo';
 import { useToast } from '../../components/Toast';
 import { useAction } from '../../hooks/useAction';
-import { useErrorMessage, useFieldErrors } from '../../hooks/useErrorMessage';
+import { useFieldErrors } from '../../hooks/useErrorMessage';
 import { useMe } from '../../hooks/useMe';
-import { localToIso, nextWeekdayDate, timeOfDayLabel, weekdayName } from '../../lib/dates';
+import { timeOfDayLabel, weekdayName } from '../../lib/dates';
 import { formatDuration } from '../../lib/format';
 
 export default function GroupForm() {
@@ -106,9 +106,7 @@ function GroupFormInner({ group, template, onBack }: { group: GroupDetail | null
   const { t } = useTranslation('groups');
   const navigate = useNavigate();
   const toast = useToast();
-  const errMsg = useErrorMessage();
   const fieldErrors = useFieldErrors();
-  const qc = useQueryClient();
   const { data: me } = useMe();
   const editing = !!group;
 
@@ -116,7 +114,7 @@ function GroupFormInner({ group, template, onBack }: { group: GroupDetail | null
   const [description, setDescription] = useState(group?.description ?? template?.description ?? '');
   const [rules, setRules] = useState(group?.rules ?? template?.rules ?? '');
   const [joinPolicy, setJoinPolicy] = useState<JoinPolicy>(group?.joinPolicy ?? template?.joinPolicy ?? 'open');
-  const [womenOnly, setWomenOnly] = useState(group?.womenOnly ?? false);
+  const [womenOnly, setWomenOnly] = useState(group?.womenOnly ?? (!!template?.womenOnly && me?.gender === 'woman'));
   const [postalCode, setPostalCode] = useState(me?.postalCode ?? '');
   const [place, setPlace] = useState<Place | null>(null);
   const [tempo, setTempo] = useState<Tempo | ''>(group?.defaultTempo ?? template?.defaultTempo ?? 'zuegig');
@@ -145,23 +143,21 @@ function GroupFormInner({ group, template, onBack }: { group: GroupDetail | null
     fn: (body: Record<string, unknown>) =>
       editing ? api.patch<{ group: GroupDetail }>(`/groups/${group!.id}`, body) : api.post<{ group: GroupDetail }>('/groups', body),
     invalidate: [qk.groups, qk.myGroups],
-    onSuccess: async (r) => {
+    onSuccess: (r) => {
       if (!editing && createSeries && template?.series) {
-        const s = template.series;
-        try {
-          await api.post('/walks', {
-            kind: 'group',
-            groupId: r.group.id,
-            title: template.name,
-            startsAt: localToIso(nextWeekdayDate(s.weekday, new Date(Date.now() + 86400000)), s.timeOfDay),
-            durationMinutes: s.durationMinutes,
-            tempo: s.tempo,
-            recurring: { weekday: s.weekday, timeOfDay: s.timeOfDay },
-          });
-          await qc.invalidateQueries({ queryKey: qk.walks });
-        } catch (e) {
-          toast.error(`${t('form.seriesFailed')} ${errMsg(e)}`);
-        }
+        // Der regelmäßige Termin braucht noch einen Treffpunkt → Terminformular mit Vorlage öffnen
+        const ser = template.series;
+        toast.success(t('form.createdNextSeries', { name: r.group.name }));
+        const p = new URLSearchParams({
+          gruppe: r.group.id,
+          wochentag: String(ser.weekday),
+          uhrzeit: ser.timeOfDay,
+          dauer: String(ser.durationMinutes),
+          tempo: ser.tempo,
+          titel: template.name,
+        });
+        navigate(`/walks/neu?${p}`);
+        return;
       }
       toast.success(editing ? t('form.saved') : t('form.created', { name: r.group.name }));
       navigate(`/gruppen/${r.group.id}`);
