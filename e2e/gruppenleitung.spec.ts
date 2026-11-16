@@ -60,6 +60,8 @@ test('Gruppenleitung: gründen, Termin, einladen, bestätigen, entfernen, Aushan
   await signUpFromLoginPage(member, { name: 'Hannelore', postalCode: '34121' });
   await expect(member).toHaveURL(new RegExp(`${invitePath}$`));
   await expect(member.getByText('Schön, dass Sie da sind, Hannelore! Mit einem Klick sind Sie dabei.')).toBeVisible();
+  // Nach der Rückkehr: Knopf groß oben, Fokus liegt darauf – Beitritt bleibt ein bewusster Klick
+  await expect(member.getByRole('button', { name: 'Gruppe beitreten' })).toBeFocused();
   await member.getByRole('button', { name: 'Gruppe beitreten' }).click();
   await expect(member).toHaveURL(new RegExp(`${groupUrl}$`));
   await expect(member.getByRole('status').filter({ hasText: 'Willkommen in der Gruppe!' }).first()).toBeVisible();
@@ -86,7 +88,7 @@ test('Gruppenleitung: gründen, Termin, einladen, bestätigen, entfernen, Aushan
 
   // … und der Walk zählt für die Teilnehmerin
   await member.goto('/abzeichen');
-  const groupBadge = member.getByRole('article', { name: 'Erster Walk in der Gruppe' });
+  const groupBadge = member.getByRole('article', { name: 'Erster Gruppen-Walk' });
   await expect(groupBadge.getByText('Bronze · erreicht')).toBeVisible();
   await expect(member.getByRole('region', { name: 'Mein Stand' }).getByRole('listitem').filter({ hasText: /^1\s*Walk in der Gruppe$/ })).toBeVisible();
 

@@ -5,12 +5,14 @@ import { Link } from 'react-router-dom';
 import { api } from '../api/client';
 import type { Comment, Post } from '../api/types-walks';
 import { useAction } from '../hooks/useAction';
+import { useMe } from '../hooks/useMe';
 import { formatDateShort, formatDuration, formatKm, formatTime } from '../lib/format';
 import { Avatar } from './Avatar';
 import { ConfirmDialog } from './ConfirmDialog';
 import { Field } from './Field';
 import { Icon } from './Icon';
 import { LoadError, Loading } from './Loading';
+import { ReportDialog } from './ReportDialog';
 import { VisibilityHint } from './VisibilityHint';
 
 /**
@@ -22,7 +24,10 @@ export function PostCard({ post, headingLevel = 3 }: { post: Post; headingLevel?
   const H = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
   const [showComments, setShowComments] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [reporting, setReporting] = useState(false);
   const commentsId = useId();
+  const { data: me } = useMe();
+  const isOwn = me?.id === post.author.id;
 
   const like = useAction({
     fn: (liked: boolean) =>
@@ -54,7 +59,7 @@ export function PostCard({ post, headingLevel = 3 }: { post: Post; headingLevel?
                 <Icon name="group" className="inline-icon" /> <Link to={`/gruppen/${post.group.id}`}>{post.group.name}</Link>
               </span>
             ) : null}
-            <VisibilityHint visibility={post.visibility} />
+            <VisibilityHint visibility={post.walk?.kind === 'distance' ? 'walkParticipants' : post.visibility} />
           </p>
         </div>
       </header>
@@ -74,7 +79,7 @@ export function PostCard({ post, headingLevel = 3 }: { post: Post; headingLevel?
       {post.photos.length ? (
         <div className="post-card__photos">
           {post.photos.map((p) => (
-            <img key={p.id} src={p.url} alt={p.altText ?? t('feed.photoNoAlt')} width={p.width} height={p.height} loading="lazy" />
+            <img key={p.id} src={p.url} alt={p.altText || t('feed.photoNoAlt')} width={p.width} height={p.height} loading="lazy" />
           ))}
         </div>
       ) : null}
@@ -104,6 +109,11 @@ export function PostCard({ post, headingLevel = 3 }: { post: Post; headingLevel?
             <Icon name="trash" /> {t('common:actions.delete')}
           </button>
         ) : null}
+        {me && !isOwn ? (
+          <button type="button" className="btn btn--ghost" aria-haspopup="dialog" onClick={() => setReporting(true)}>
+            <Icon name="flag" /> {t('feed.report')}
+          </button>
+        ) : null}
       </div>
 
       <div id={commentsId} hidden={!showComments}>
@@ -121,6 +131,13 @@ export function PostCard({ post, headingLevel = 3 }: { post: Post; headingLevel?
       >
         <p>{t('feed.deleteText')}</p>
       </ConfirmDialog>
+      <ReportDialog
+        open={reporting}
+        onClose={() => setReporting(false)}
+        targetType="post"
+        targetId={post.id}
+        name={t('feed.reportPostName', { name: post.author.displayName })}
+      />
     </article>
   );
 }
@@ -132,6 +149,8 @@ function Comments({ postId }: { postId: string }) {
   const [text, setText] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [toDelete, setToDelete] = useState<string | null>(null);
+  const [toReport, setToReport] = useState<Comment | null>(null);
+  const { data: me } = useMe();
 
   const add = useAction({
     fn: (body: string) => api.post(`/posts/${postId}/comments`, { text: body }),
@@ -176,6 +195,11 @@ function Comments({ postId }: { postId: string }) {
                     <Icon name="trash" /> {t('feed.commentDelete')}
                   </button>
                 ) : null}
+                {me && me.id !== c.author.id ? (
+                  <button type="button" className="btn btn--ghost" aria-haspopup="dialog" onClick={() => setToReport(c)}>
+                    <Icon name="flag" /> {t('feed.commentReport')}
+                  </button>
+                ) : null}
               </div>
             </li>
           ))}
@@ -197,6 +221,13 @@ function Comments({ postId }: { postId: string }) {
         busy={del.isPending}
         onConfirm={() => toDelete && del.mutate(toDelete)}
         onCancel={() => setToDelete(null)}
+      />
+      <ReportDialog
+        open={toReport != null}
+        onClose={() => setToReport(null)}
+        targetType="comment"
+        targetId={toReport?.id ?? ''}
+        name={t('feed.reportCommentName', { name: toReport?.author.displayName ?? '' })}
       />
     </div>
   );

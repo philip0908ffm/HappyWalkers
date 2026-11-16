@@ -9,7 +9,7 @@
   },
   "promise": {
     "free": "Walks, Gruppen und das Eintragen von Walks bleiben immer kostenlos.",
-    "cancel": "Monatlich mit einem Klick kündbar.",
+    "cancel": "Jederzeit monatlich kündbar – mit einem Klick auf „Premium kündigen“.",
     "noTrial": "Kein Probeabo – es kostet erst etwas, wenn Sie es selbst abschließen.",
     "noAds": "Keine Werbung und keine Weitergabe Ihrer Daten."
   },
@@ -28,7 +28,7 @@
   },
   "action": {
     "title": "Mein Premium",
-    "intro": "Sie können Premium jederzeit abschließen und mit einem Klick wieder kündigen.",
+    "intro": "Sie können Premium jederzeit abschließen. Es ist jederzeit monatlich kündbar – mit einem Klick auf „Premium kündigen“.",
     "signInFirst": "Bitte melden Sie sich zuerst an, um Premium abzuschließen.",
     "signIn": "Anmelden",
     "toProgress": "Zu meinem Fortschritt"
@@ -42,7 +42,7 @@
     "button": "Premium abschließen – {{price}}",
     "title": "Premium abschließen?",
     "point1": "Premium kostet {{price}}. Der Betrag wird jeden Monat abgebucht.",
-    "point2": "Sie können jederzeit mit einem Klick kündigen. Dann läuft Premium bis zum Monatsende und endet von selbst.",
+    "point2": "Sie können jederzeit monatlich kündigen – mit einem Klick auf „Premium kündigen“ und einer kurzen Bestätigung. Dann läuft Premium bis zum Monatsende und endet von selbst.",
     "point3": "Es gibt kein Probeabo und keine versteckten Kosten.",
     "devHint": "Testbetrieb: Im Moment wird nichts abgebucht.",
     "confirm": "Ja, kostenpflichtig abschließen ({{price}})",
@@ -50,7 +50,7 @@
   },
   "cancel": {
     "title": "Premium kündigen",
-    "intro": "Ein Klick genügt. Vorher zeigen wir Ihnen, was danach passiert.",
+    "intro": "Ein Klick auf „Premium kündigen“ genügt. Danach zeigen wir Ihnen, was passiert, und Sie bestätigen noch einmal mit „Ja, kündigen“.",
     "button": "Premium kündigen",
     "dialogTitle": "Premium wirklich kündigen?",
     "whatHappens": "Das passiert nach der Kündigung:",

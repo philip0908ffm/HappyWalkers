@@ -183,7 +183,7 @@ export interface Post {
   id: string;
   author: PersonRef;
   group: { id: string; name: string } | null;
-  walk: { id: string; title: string; startsAt: string } | null;
+  walk: { id: string; title: string; startsAt: string; kind?: string } | null;
   activity: { id: string; distanceKm: number; durationMinutes: number; startedAt: string; route: RoutePoint[] | null } | null;
   text: string;
   visibility: Visibility;

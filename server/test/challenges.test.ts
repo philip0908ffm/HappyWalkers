@@ -2,6 +2,7 @@ import { and, eq, like } from 'drizzle-orm';
 import { describe, expect, it } from 'vitest';
 import { db } from '../src/db/index.js';
 import * as s from '../src/db/schema.js';
+import { challengePeriods } from '../src/db/seed.js';
 import { signUp } from './helpers.js';
 import { hoursAgo, makeGroup } from './fixtures/paket-b.js';
 
@@ -11,6 +12,26 @@ async function seeded(prefix: string) {
 }
 
 const DAY = 86400_000;
+
+describe('Zeiträume der allgemeinen Challenges (Berliner Zeit)', () => {
+  it('Monats- und Jahresgrenzen liegen auf Mitternacht in Berlin (Winter- und Sommerzeit)', () => {
+    const nov = challengePeriods(new Date('2026-11-16T10:00:00Z'));
+    expect(nov.monthKey).toBe('2026-11');
+    expect(nov.monthStart.toISOString()).toBe('2026-10-31T23:00:00.000Z');
+    expect(nov.monthEnd.toISOString()).toBe('2026-11-30T23:00:00.000Z');
+    expect(nov.yearStart.toISOString()).toBe('2025-12-31T23:00:00.000Z');
+    expect(nov.yearEnd.toISOString()).toBe('2026-12-31T23:00:00.000Z');
+    const jun = challengePeriods(new Date('2026-06-10T10:00:00Z'));
+    expect(jun.monthStart.toISOString()).toBe('2026-05-31T22:00:00.000Z');
+    expect(jun.monthEnd.toISOString()).toBe('2026-06-30T22:00:00.000Z');
+    // 30.11. 23:30 UTC ist in Berlin schon der 1. Dezember
+    const dec = challengePeriods(new Date('2026-11-30T23:30:00Z'));
+    expect(dec.monthKey).toBe('2026-12');
+    expect(dec.monthEnd.toISOString()).toBe('2026-12-31T23:00:00.000Z');
+    // Silvester 23:30 UTC → schon das neue Jahr
+    expect(challengePeriods(new Date('2026-12-31T23:30:00Z')).year).toBe(2027);
+  });
+});
 
 describe('Challenges', () => {
   it('listet allgemeine Challenges mit Einheit und Ein-Satz-Erklärung', async () => {

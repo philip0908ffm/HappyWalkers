@@ -63,7 +63,7 @@ function DistanceWalk({ walk: w }: { walk: WalkSummaryE }) {
     invalidate: [['rural', 'overview']],
   });
   const post = useAction({
-    fn: () => api.post('/posts', { text: text.trim(), visibility: 'public', walkId: w.id }),
+    fn: () => api.post('/posts', { text: text.trim(), visibility: 'group', walkId: w.id }),
     success: t('distance.posted'),
     onSuccess: () => {
       setText('');
@@ -126,7 +126,7 @@ function DistanceWalk({ walk: w }: { walk: WalkSummaryE }) {
             <h4>{t('distance.newsTitle')}</h4>
             {going ? (
               <form onSubmit={submit} noValidate>
-                <Field label={t('distance.postLabel')} hint={<VisibilityHint visibility="public" />} error={error}>
+                <Field label={t('distance.postLabel')} hint={<VisibilityHint visibility="walkParticipants" />} error={error}>
                   <textarea className="textarea" maxLength={LIMITS.maxTextLength} value={text} onChange={(e) => setText(e.target.value)} />
                 </Field>
                 <button type="submit" className="btn" disabled={post.isPending}>

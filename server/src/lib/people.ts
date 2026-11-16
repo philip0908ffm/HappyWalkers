@@ -1,7 +1,7 @@
-import { and, eq, inArray, or } from 'drizzle-orm';
+import { and, eq, inArray, isNotNull, or } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 import { db } from '../db/index.js';
-import { blocks, follows, groupMembers, profile, user } from '../db/schema.js';
+import { blocks, follows, groupMembers, profile, user, walkRsvps, walks } from '../db/schema.js';
 
 /**
  * Hilfsfunktionen rund um Personen (Paket C). Andere Module dürfen sie nutzen.
@@ -156,10 +156,12 @@ export interface ViewerContext {
   following: Set<string>;
   /** in beide Richtungen blockiert */
   blocked: Set<string>;
+  /** „Gemeinsam auf Distanz“-Termine, bei denen die Person mitmacht (erstellt oder zugesagt) – siehe canSeePost */
+  distanceWalks: Set<string>;
 }
 
 export async function loadViewerContext(userId: string): Promise<ViewerContext> {
-  const [memberships, followingRows, blocked] = await Promise.all([
+  const [memberships, followingRows, blocked, distanceRows] = await Promise.all([
     db
       .select({ groupId: groupMembers.groupId, role: groupMembers.role })
       .from(groupMembers)
@@ -169,6 +171,11 @@ export async function loadViewerContext(userId: string): Promise<ViewerContext> 
       .from(follows)
       .where(and(eq(follows.followerId, userId), eq(follows.status, 'accepted'))),
     blockedIds(userId),
+    db
+      .selectDistinct({ id: walks.id })
+      .from(walks)
+      .leftJoin(walkRsvps, and(eq(walkRsvps.walkId, walks.id), eq(walkRsvps.userId, userId), eq(walkRsvps.status, 'yes')))
+      .where(and(eq(walks.kind, 'distance'), or(eq(walks.createdBy, userId), isNotNull(walkRsvps.userId)))),
   ]);
   return {
     userId,
@@ -176,7 +183,20 @@ export async function loadViewerContext(userId: string): Promise<ViewerContext> 
     leadGroups: new Set(memberships.filter((m) => m.role === 'founder' || m.role === 'moderator').map((m) => m.groupId)),
     following: new Set(followingRows.map((f) => f.id)),
     blocked,
+    distanceWalks: new Set(distanceRows.map((r) => r.id)),
   };
+}
+
+/** Wie `canSeePost` (lib/access.ts), gesammelt: `isDistance` = Beitrag gehört zu einem Distanz-Termin. */
+export function canSeePostWith(
+  ctx: ViewerContext,
+  post: { authorId: string; visibility: string; groupId: string | null; walkId: string | null },
+  isDistance: boolean,
+): boolean {
+  if (post.authorId === ctx.userId) return true;
+  if (ctx.blocked.has(post.authorId)) return false;
+  if (isDistance) return !!post.walkId && ctx.distanceWalks.has(post.walkId);
+  return canSeeWith(ctx, { ownerId: post.authorId, visibility: post.visibility, groupId: post.groupId });
 }
 
 export function canSeeWith(ctx: ViewerContext, item: { ownerId: string; visibility: string; groupId: string | null }): boolean {

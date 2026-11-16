@@ -78,7 +78,7 @@ function PostItem({ post, queryKey, headingLevel }: { post: Post; queryKey: unkn
               </>
             ) : null}
             {' · '}
-            <VisibilityHint visibility={post.visibility} />
+            <VisibilityHint visibility={post.walk?.kind === 'distance' ? 'walkParticipants' : post.visibility} />
           </p>
         </div>
       </header>

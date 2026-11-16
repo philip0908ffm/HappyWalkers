@@ -1,9 +1,11 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { useState, type FormEvent } from 'react';
+import { LIMITS } from '@gehmeinsam/shared';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api, ApiError } from '../api/client';
 import type { Post, Visibility } from '../api/types-walks';
 import { useAction } from '../hooks/useAction';
+import { DropZone } from './DropZone';
 import { Field } from './Field';
 import { Icon } from './Icon';
 import { LoadError, Loading } from './Loading';
@@ -21,6 +23,7 @@ export function GroupFeed({
   userId,
   canPost = false,
   postVisibility = 'group',
+  hintVisibility,
   headingLevel = 3,
   emptyText,
 }: {
@@ -29,6 +32,8 @@ export function GroupFeed({
   userId?: string;
   canPost?: boolean;
   postVisibility?: Visibility;
+  /** abweichender Sichtbarkeits-Hinweis, z. B. 'walkParticipants' bei „Gemeinsam auf Distanz“ */
+  hintVisibility?: string;
   headingLevel?: 2 | 3 | 4;
   emptyText?: string;
 }) {
@@ -55,7 +60,7 @@ export function GroupFeed({
 
   return (
     <div className="feed">
-      {canPost && !notReady ? <Composer groupId={groupId} walkId={walkId} visibility={postVisibility} /> : null}
+      {canPost && !notReady ? <Composer groupId={groupId} walkId={walkId} visibility={postVisibility} hintVisibility={hintVisibility} /> : null}
       {q.isLoading ? <Loading /> : null}
       {notReady ? (
         <div className="empty-state">
@@ -89,30 +94,148 @@ export function GroupFeed({
   );
 }
 
-function Composer({ groupId, walkId, visibility }: { groupId?: string; walkId?: string; visibility: Visibility }) {
+const PHOTO_TYPES = /^image\/(jpeg|png|webp|heic|heif)$/i;
+const PHOTO_EXT = /\.(jpe?g|png|webp|heic|heif)$/i;
+
+/**
+ * Eingabe für einen neuen Beitrag – mit freiwilligem Foto (Klick ODER Ziehen und Ablegen).
+ * Ablauf laut API: erst `POST /photos` (ohne postId) → Foto-ID, dann `POST /posts` mit `photoIds`.
+ * Die Bildbeschreibung ist Pflicht (wird für blinde und sehbehinderte Menschen vorgelesen).
+ */
+function Composer({
+  groupId,
+  walkId,
+  visibility,
+  hintVisibility,
+}: {
+  groupId?: string;
+  walkId?: string;
+  visibility: Visibility;
+  hintVisibility?: string;
+}) {
   const { t } = useTranslation('groups');
   const [text, setText] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const send = useAction({
-    fn: (body: string) => api.post<{ post: Post }>('/posts', { text: body, visibility, groupId, walkId }),
-    success: t('feed.posted'),
-    invalidate: [['feed']],
-    onSuccess: () => setText(''),
-  });
-  function onSubmit(e: FormEvent) {
-    e.preventDefault();
-    if (!text.trim()) {
-      setError(t('feed.postRequired'));
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [alt, setAlt] = useState('');
+  const [errors, setErrors] = useState<{ text?: string; photo?: string; alt?: string }>({});
+  const textRef = useRef<HTMLTextAreaElement>(null);
+  const altRef = useRef<HTMLTextAreaElement>(null);
+  // bereits hochgeladenes Foto merken – falls nur das Speichern des Beitrags scheitert, nicht doppelt hochladen
+  const uploaded = useRef<{ file: File; alt: string; id: string } | null>(null);
+  const hint = <VisibilityHint visibility={hintVisibility ?? visibility} />;
+
+  // Vorschau-Adresse freigeben, wenn das Foto wechselt oder die Seite verlassen wird
+  useEffect(() => {
+    if (!file) {
+      setPreview(null);
       return;
     }
-    setError(null);
-    if (!send.isPending) send.mutate(text.trim());
+    const url = URL.createObjectURL(file);
+    setPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
+
+  const send = useAction({
+    fn: async (v: { text: string; file: File | null; alt: string }) => {
+      let photoIds: string[] | undefined;
+      if (v.file) {
+        const u = uploaded.current;
+        if (u && u.file === v.file && u.alt === v.alt) {
+          photoIds = [u.id];
+        } else {
+          const form = new FormData();
+          form.append('photo', v.file);
+          form.append('altText', v.alt);
+          form.append('visibility', visibility);
+          if (groupId) form.append('groupId', groupId);
+          const r = await api.upload<{ photo: { id: string } }>('/photos', form);
+          uploaded.current = { file: v.file, alt: v.alt, id: r.photo.id };
+          photoIds = [r.photo.id];
+        }
+      }
+      return api.post<{ post: Post }>('/posts', { text: v.text, visibility, groupId, walkId, photoIds });
+    },
+    success: (_r, v) => (v.file ? t('feed.postedWithPhoto') : t('feed.posted')),
+    invalidate: [['feed']],
+    onSuccess: () => {
+      setText('');
+      setFile(null);
+      setAlt('');
+      uploaded.current = null;
+    },
+  });
+
+  function onFile(f: File) {
+    if (!PHOTO_TYPES.test(f.type) && !PHOTO_EXT.test(f.name)) {
+      setErrors((e) => ({ ...e, photo: t('feed.photoWrongType') }));
+      return;
+    }
+    if (f.size > LIMITS.maxUploadBytes) {
+      setErrors((e) => ({ ...e, photo: t('common:errors.file_too_large') }));
+      return;
+    }
+    setErrors((e) => ({ ...e, photo: undefined }));
+    setFile(f);
   }
+
+  function onSubmit(e: FormEvent) {
+    e.preventDefault();
+    const errs: typeof errors = {};
+    if (!text.trim() && !file) errs.text = t('feed.postRequired');
+    if (file && !alt.trim()) errs.alt = t('feed.photoAltRequired');
+    setErrors(errs);
+    if (errs.text) return textRef.current?.focus();
+    if (errs.alt) return altRef.current?.focus();
+    if (!send.isPending) send.mutate({ text: text.trim(), file, alt: alt.trim() });
+  }
+
   return (
     <form onSubmit={onSubmit} noValidate className="card feed__composer">
-      <Field label={t('feed.postLabel')} hint={<VisibilityHint visibility={visibility} />} error={error}>
-        <textarea className="textarea textarea--short" value={text} maxLength={2000} onChange={(e) => setText(e.target.value)} />
+      <Field label={t('feed.postLabel')} hint={hint} error={errors.text}>
+        <textarea ref={textRef} className="textarea textarea--short" value={text} maxLength={2000} onChange={(e) => setText(e.target.value)} />
       </Field>
+
+      {file && preview ? (
+        <div className="feed__photo stack">
+          <img className="photo-preview" src={preview} alt={t('feed.photoPreviewAlt')} />
+          <p className="feed__photo-name">
+            <Icon name="check" className="inline-icon" /> {t('feed.photoSelected', { name: file.name })}
+          </p>
+          <Field label={t('feed.photoAltLabel')} hint={t('feed.photoAltHint')} error={errors.alt}>
+            <textarea ref={altRef} className="textarea textarea--short" maxLength={300} value={alt} onChange={(e) => setAlt(e.target.value)} />
+          </Field>
+          <p className="field__hint">
+            {t('feed.photoVisibility')} {hint}
+          </p>
+          <div className="btn-row">
+            <button
+              type="button"
+              className="btn btn--ghost"
+              disabled={send.isPending}
+              onClick={() => {
+                setFile(null);
+                setAlt('');
+                setErrors((x) => ({ ...x, alt: undefined }));
+              }}
+            >
+              <Icon name="trash" /> {t('feed.photoRemove')}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <DropZone
+          label={t('feed.photoLabel')}
+          buttonLabel={t('feed.photoAdd')}
+          dropHint={t('feed.photoDrop')}
+          hint={t('feed.photoHint')}
+          accept="image/jpeg,image/png,image/webp,image/heic"
+          disabled={send.isPending}
+          error={errors.photo}
+          onFile={onFile}
+        />
+      )}
+
       <button type="submit" className="btn" disabled={send.isPending}>
         <Icon name="share" /> {send.isPending ? t('common:status.sending') : t('feed.postSend')}
       </button>

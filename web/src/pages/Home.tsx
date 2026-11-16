@@ -1,7 +1,6 @@
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
-import type { WalkSummary } from '../api/types-walks';
 import { groupsApi, isLead, qk, walksApi } from '../api/walks';
 import { Icon, type IconName } from '../components/Icon';
 import { LoadError, Loading } from '../components/Loading';
@@ -106,28 +105,13 @@ function HomeSignedIn() {
   const { t } = useTranslation('home');
   const { data: me } = useMe();
   const myGroupsQ = useQuery({ queryKey: qk.myGroups, queryFn: groupsApi.mine });
-  const activeGroups = (myGroupsQ.data ?? []).filter((g) => g.status === 'active');
 
-  // Zugesagte Walks: aus den eigenen Gruppen, „Gemeinsam auf Distanz“ und der Umgebung zusammengetragen
-  const sources = [
-    ...activeGroups.slice(0, 10).map((g) => `groupId=${g.id}`),
-    'kind=distance',
-    'radiusKm=50',
-  ];
-  const walkQs = useQueries({
-    queries: sources.map((src) => ({
-      queryKey: [...qk.walks, 'home', src],
-      queryFn: () => walksApi.search(new URLSearchParams(src)),
-      enabled: !!myGroupsQ.data,
-    })),
+  // Eigene nächste Walks (zugesagt oder selbst erstellt, alle Arten) – eine Abfrage: GET /walks?mine=1
+  const mineQ = useQuery({
+    queryKey: [...qk.walks, 'mine'],
+    queryFn: () => walksApi.search(new URLSearchParams({ mine: '1' })),
   });
-  const loadingWalks = !myGroupsQ.data || walkQs.some((q) => q.isLoading);
-  const now = Date.now();
-  const going = new Map<string, WalkSummary>();
-  for (const q of walkQs)
-    for (const w of q.data?.walks ?? [])
-      if (w.myRsvp === 'yes' && w.status === 'planned' && new Date(w.startsAt).getTime() > now - 3 * 3600000) going.set(w.id, w);
-  const nextWalks = [...going.values()].sort((a, b) => a.startsAt.localeCompare(b.startsAt)).slice(0, 3);
+  const nextWalks = (mineQ.data?.walks ?? []).filter((w) => w.status === 'planned').slice(0, 3);
 
   const nearbyQ = useQuery({
     queryKey: [...qk.groups, 'search', 'home'],
@@ -165,8 +149,10 @@ function HomeSignedIn() {
           <h2 id="next-title">
             <Icon name="calendar" className="inline-icon" /> {t('home.nextTitle')}
           </h2>
-          {loadingWalks ? (
+          {mineQ.isLoading ? (
             <Loading />
+          ) : mineQ.error ? (
+            <LoadError error={mineQ.error} onRetry={() => mineQ.refetch()} />
           ) : nextWalks.length ? (
             <WalkList walks={nextWalks} />
           ) : (

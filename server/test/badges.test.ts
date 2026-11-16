@@ -3,11 +3,24 @@ import { and, eq } from 'drizzle-orm';
 import { describe, expect, it } from 'vitest';
 import { db } from '../src/db/index.js';
 import * as s from '../src/db/schema.js';
+import { BADGES, BADGE_NAMES } from '@gehmeinsam/shared';
+import { badgeName } from '../src/modules/badges.js';
 import { awardBadge, onActivityRecorded } from '../src/services/gamification.js';
 import { getApp, signUp } from './helpers.js';
 import { hoursAgo, insertActivity } from './fixtures/paket-b.js';
 
 const DAY = 86400_000;
+
+describe('Abzeichen-Namen (eine Quelle)', () => {
+  it('jedes Abzeichen hat einen Namen; Urkunde nutzt dieselben Namen wie die Oberfläche', () => {
+    for (const b of BADGES) {
+      expect(BADGE_NAMES.de[b.key as keyof typeof BADGE_NAMES.de]).toBeTruthy();
+      expect(badgeName(b.key, null)).toBe(BADGE_NAMES.de[b.key as keyof typeof BADGE_NAMES.de]);
+    }
+    expect(badgeName('first_5k', null)).toBe('Erster 5-km-Walk');
+    expect(badgeName('region:Landkreis Kassel', 'Landkreis Kassel')).toBe('Wappen Landkreis Kassel');
+  });
+});
 
 describe('Punkte und Abzeichen', () => {
   it('vergibt bei doppeltem Aufruf nichts doppelt (idempotent)', async () => {

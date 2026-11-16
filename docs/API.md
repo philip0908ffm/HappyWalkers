@@ -133,8 +133,9 @@ Ablauf Einladungslink: `/einladung/:code` → nicht angemeldet → Anmeldung mit
 | Methode | Pfad | Beschreibung |
 |---|---|---|
 | GET | `/walks?postalCode&lat&lon&radiusKm&from&to&tempo&groupId&kind` | `{ walks: WalkSummary[], center: Place\|null, nearest: (WalkSummary)[] }` – Standard `from`=jetzt, `to`=+30 Tage, sortiert nach Zeit. Walks von Einladungsgruppen nur für Mitglieder. `kind=distance` liefert „Gemeinsam auf Distanz“-Termine (ohne Ortsfilter). `groupId` ohne Ortsfilter (für Gruppenkalender, auch vergangene mit `from`). `nearest` wie bei Gruppen. |
+| GET | `/walks?mine=1` | **Eigene nächste Walks** (Startseite „Meine nächsten Walks“), nur angemeldet (sonst 401): alle Arten (`group`, `partner`, `distance`), **ohne Ortsfilter**, denen ich zugesagt habe (`walk_rsvps.status = 'yes'`) oder die ich erstellt habe; sortiert nach Zeit, höchstens 200. Standard `from` = jetzt − 3 Stunden (laufende Walks bleiben sichtbar), kein Standard-`to`; `kind`/`tempo`/`from`/`to` filtern zusätzlich. Gruppen-Walks nur bei aktiver Mitgliedschaft; Walks blockierter Personen entfallen. Abgesagte Walks sind enthalten (`status: 'cancelled'`), die Startseite blendet sie aus. → `{ walks: WalkSummary[], center: null, nearest: [] }` |
 | GET | `/walks/:id` | `{ walk: WalkDetail }` |
-| POST | `/walks` | Gruppen-Walk (Leitung) oder „Gemeinsam auf Distanz“ (jede Person): `{ kind: 'group'\|'distance', groupId?, title, description?, startsAt, durationMinutes, distanceKm?, tempo, meetingPointName?, meetingAddress?, meetingDescription?, meetingLat?, meetingLon?, maxParticipants?, recurring?: { weekday, timeOfDay } }` → `{ walk: WalkDetail, seriesId? }`. Mit `recurring` (Schalter „Wiederkehrender Termin“) wird eine Serie angelegt und die nächsten 8 Wochen erzeugt; ein Hintergrund-Job erzeugt laufend nach. Löst Interessen-Benachrichtigung aus. |
+| POST | `/walks` | Gruppen-Walk (Leitung) oder „Gemeinsam auf Distanz“ (jede Person): `{ kind: 'group'\|'distance', groupId?, title, description?, startsAt, durationMinutes, distanceKm?, tempo, meetingPointName?, meetingAddress?, meetingDescription?, meetingLat?, meetingLon?, maxParticipants?, recurring?: { weekday, timeOfDay } }` → `{ walk: WalkDetail, seriesId? }`. **Bei Gruppen-Walks (`kind: 'group'`) sind `groupId`, `meetingPointName` und `meetingAddress` Pflicht** (leer/fehlend → 400 `invalid_input`, `details[0].field` = `meetingPointName` bzw. `meetingAddress`); bei „Gemeinsam auf Distanz“ gibt es keinen Treffpunkt. Mit `recurring` (Schalter „Wiederkehrender Termin“) wird eine Serie angelegt und die nächsten 8 Wochen erzeugt; ein Hintergrund-Job erzeugt laufend nach. Löst Interessen-Benachrichtigung aus. |
 | PATCH | `/walks/:id` | Leitung/Erstellerin, Felder wie POST → `{ walk }` (Gruppen-Walk: nur die aktuelle Gruppenleitung – eine gesperrte/entfernte Erstellerin nicht mehr; gilt auch für DELETE, Bestätigen, Treffpunkt und Teilnehmerliste) |
 | DELETE | `/walks/:id` | absagen (status `cancelled`), Zusagende werden benachrichtigt (in-App + E-Mail) → `{ ok }` |
 | PATCH | `/walks/series/:id` | Leitung, Felder der Serie; ändert künftige Termine ohne Zusagen |
@@ -214,6 +215,10 @@ BadgeEarned = { key, label: string | null, kind, tier, awardedAt, shareUrl: stri
 Challenge = { id, slug, title, summary, type, target, unit: 'km'|'walks', scope, group: {id,name}|null, city,
               startsAt, endsAt, points, participantCount, joined: boolean, progress: number, completedAt: string|null }
 ```
+`endsAt` ist **exklusiv**. Allgemeine Challenges (`db/seed.ts`) laufen von Mitternacht **Berliner Zeit** am Monats-/Jahresanfang
+bis Mitternacht Berliner Zeit am Folgemonat/-jahr (z. B. November 2026: `startsAt` 2026-10-31T23:00Z, `endsAt` 2026-11-30T23:00Z);
+die Oberfläche zeigt `endsAt − 1 ms` als letzten Tag („bis 30. November 2026“). Slugs bleiben `…-JJJJ` bzw. `…-JJJJ-MM`;
+der Seed korrigiert bei vorhandenem Slug nur `startsAt`/`endsAt`.
 
 ### Eingetragene Walks – `server/src/modules/activities.ts`
 
@@ -241,8 +246,10 @@ Punkte nach `shared/src/points.ts`; Abzeichen nach `shared/src/badges.ts`; regio
 `week_streak_4`: 4 Kalenderwochen (Mo–So, Europe/Berlin) in Folge mind. 1 Walk. Neues Abzeichen → Punkte
 (`POINTS.badge`) + Benachrichtigung `badge` `{ key, label }`. Abgeschlossene Challenge → Punkte der Challenge,
 Abzeichen `challenge_done`, Benachrichtigung `challenge_done` `{ challengeId, title }`. Beigetretene Challenges
-berücksichtigen nachgetragene Walks noch 3 Tage nach Ende. Urkunde/Teil-Bild nutzen deutsche Namen aus
-`BADGE_NAMES` in `modules/badges.ts` (z. B. „Erster 5-km-Walk“, „Wappen Landkreis Göttingen“).
+berücksichtigen nachgetragene Walks noch 3 Tage nach Ende. Abzeichen-Namen haben **eine Quelle**:
+`BADGE_NAMES` in `shared/src/badge-names.ts` (je Sprache, derzeit `de`; z. B. „Erster 5-km-Walk“, „Erster Gruppen-Walk“,
+„10 Gruppen-Walks“, „Wappen {{label}}“ → „Wappen Landkreis Göttingen“). Urkunde/Teil-Bild nutzen `badgeNameFor`,
+die Oberfläche bekommt dieselben Texte als i18n `badges:names` (eingespielt in `web/src/i18n/index.ts`).
 
 ### Challenges – `server/src/modules/challenges.ts`
 
@@ -281,7 +288,8 @@ Fehlercodes Paket B: `invalid_gpx`, `activity_not_found`, `implausible_activity`
 
 ```ts
 Post = {
-  id, author: PersonRef, group: { id, name } | null, walk: { id, title, startsAt } | null,
+  id, author: PersonRef, group: { id, name } | null,
+  walk: { id, title, startsAt, kind: 'group'|'partner'|'distance' } | null,   // kind 'distance' → Hinweis „Sichtbar für alle, die bei diesem Termin mitmachen“
   activity: { id, distanceKm, durationMinutes, startedAt, route: [lon,lat][] | null } | null,
   text, visibility, photos: Photo[], likeCount, likedByMe, commentCount, createdAt,
   canDelete: boolean   // Autorin oder Gruppenleitung
@@ -296,9 +304,9 @@ PublicProfile = { id, displayName, avatarUrl, city: string | null, bio: string |
 
 ### Feed & Beiträge – `server/src/modules/social.ts`
 
-| GET | `/feed?groupId&walkId&userId&limit&cursor` | sichtbare Beiträge, neueste zuerst → `{ posts: Post[], nextCursor }` (`limit` 1–50, Standard 20). Ohne Filter: eigene Gruppen + bestätigte Kontakte (Sichtbarkeit `followers`/`public`) + eigene. `groupId`: nur aktive Mitglieder (sonst 403 `not_group_member`). `walkId`: Feed eines „Gemeinsam auf Distanz“-Termins (alle, die den Walk sehen dürfen; sonst 404 `walk_not_found`). `userId`: sichtbare Beiträge dieser Person (blockiert → 404 `user_not_found`). |
+| GET | `/feed?groupId&walkId&userId&limit&cursor` | sichtbare Beiträge, neueste zuerst → `{ posts: Post[], nextCursor }` (`limit` 1–50, Standard 20). Ohne Filter: eigene Gruppen + bestätigte Kontakte (Sichtbarkeit `followers`/`public`) + eigene. `groupId`: nur aktive Mitglieder (sonst 403 `not_group_member`). `walkId`: Feed eines Walks (wer den Walk nicht sehen darf → 404 `walk_not_found`). **Beiträge zu „Gemeinsam auf Distanz“-Terminen** sehen – unabhängig von `visibility` – nur die Autorin, die Erstellerin des Termins und Personen mit Zusage (`walk_rsvps.status = 'yes'`); das gilt für alle Feeds, einzelne Beiträge, Kommentare, Herzen und Fotos dazu (sonst leer bzw. 404). Ohne Filter erscheinen sie für Teilnehmende auch im Standard-Feed. `userId`: sichtbare Beiträge dieser Person (blockiert → 404 `user_not_found`). |
 |---|---|---|
-| POST | `/posts` | `{ text, visibility?, groupId?, walkId?, activityId?, photoIds? }` → 201 `{ post }`. `visibility` Standard `group`. Gruppe: nur aktive Mitglieder (403 `not_group_member`). `activityId`: nur eigene (sonst 404 `activity_not_found`). `photoIds`: zuvor per `POST /photos` hochgeladene eigene Fotos ohne Beitrag anhängen (max. 10). Text darf leer sein, wenn Aktivität oder Fotos dabei sind. Gruppen-Walk (`walkId`) setzt `groupId` automatisch. |
+| POST | `/posts` | `{ text, visibility?, groupId?, walkId?, activityId?, photoIds? }` → 201 `{ post }`. `visibility` Standard `group`. Gruppe: nur aktive Mitglieder (403 `not_group_member`). `activityId`: nur eigene (sonst 404 `activity_not_found`). `photoIds`: zuvor per `POST /photos` hochgeladene eigene Fotos ohne Beitrag anhängen (max. 10). Text darf leer sein, wenn Aktivität oder Fotos dabei sind. Gruppen-Walk (`walkId`) setzt `groupId` automatisch. „Gemeinsam auf Distanz“ (`walkId`): nur Erstellerin und Zusagende dürfen schreiben (sonst 403 `not_walk_participant`), ohne `groupId` (sonst 400); die Oberfläche sendet einheitlich `visibility: 'group'`. **Foto anhängen (Oberfläche):** erst `POST /photos` (multipart `photo`, `altText` – Pflicht in der Oberfläche –, `visibility` wie der Beitrag, `groupId?`) → `photo.id`, dann `POST /posts` mit `photoIds: [id]`. |
 | DELETE | `/posts/:id` | Autorin oder Gruppenleitung → `{ ok }` |
 | PUT / DELETE | `/posts/:id/like` | Herz setzen/entfernen, idempotent → `{ likeCount, likedByMe }` |
 | GET | `/posts/:id/comments` | `{ comments: Comment[] }` |
@@ -322,7 +330,7 @@ PublicProfile = { id, displayName, avatarUrl, city: string | null, bio: string |
 
 | POST | `/photos` | multipart: `photo` (≤ 10 MB, JPG/PNG/WebP/HEIC), `altText` (≤ 300), `visibility` (Standard `group`), `postId?` (eigener Beitrag; übernimmt dessen Gruppe), `groupId?` (nur aktive Mitglieder) → 201 `{ photo }`. EXIF/GPS wird entfernt (Neu-Kodierung). Fehler: falscher Typ/kein Bild → 400 `invalid_image`, zu groß → 413 `file_too_large`. |
 |---|---|---|
-| GET | `/photos/:id` | Bild (`image/jpeg`, `Cache-Control: private, max-age=3600`, `nosniff`), nur mit Sichtrecht (`canSeeContent`), sonst 404 `photo_not_found` |
+| GET | `/photos/:id` | Bild (`image/jpeg`, `Cache-Control: private, max-age=3600`, `nosniff`), nur mit Sichtrecht (`canSeePhoto`: eigene Sichtbarkeit des Fotos; Fotos zu Distanz-Beiträgen nur für Teilnehmende des Termins), sonst 404 `photo_not_found` |
 | PATCH | `/photos/:id` | `{ altText?, visibility? }` (Eigentümerin) |
 | DELETE | `/photos/:id` | Eigentümerin oder Gruppenleitung |
 | POST | `/photos/avatar` | multipart `photo` → `{ avatarUrl }` (`/api/v1/photos/avatar/<userId>?v=<version>`); DELETE `/photos/avatar` |

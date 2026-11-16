@@ -1,3 +1,4 @@
+import { BADGE_NAMES } from '@gehmeinsam/shared';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
@@ -16,6 +17,12 @@ for (const [path, mod] of Object.entries(files)) {
   if (!m) continue;
   const [, lng, ns] = m;
   (resources[lng] ??= {})[ns] = mod.default;
+}
+
+// Abzeichen-Namen kommen aus EINER Quelle (shared/src/badge-names.ts) – dieselben wie auf Urkunde und Teil-Bild.
+for (const [lng, names] of Object.entries(BADGE_NAMES)) {
+  const badges = ((resources[lng] ??= {}).badges ??= {});
+  badges.names = names;
 }
 
 export const SUPPORTED_LOCALES = ['de'] as const;

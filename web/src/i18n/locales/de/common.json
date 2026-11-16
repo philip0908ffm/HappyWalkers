@@ -54,7 +54,8 @@
     "private": "Nur ich",
     "group": "Nur meine Gruppe",
     "followers": "Meine Kontakte",
-    "public": "Alle angemeldeten Personen"
+    "public": "Alle angemeldeten Personen",
+    "walkParticipants": "Sichtbar für alle, die bei diesem Termin mitmachen"
   },
   "tempo": {
     "label": "Tempo",

@@ -1,4 +1,4 @@
-import { BADGES, REGION_BADGE_PREFIX, badgeDefinition } from '@gehmeinsam/shared';
+import { BADGES, REGION_BADGE_PREFIX, badgeDefinition, badgeNameFor } from '@gehmeinsam/shared';
 import { and, asc, eq } from 'drizzle-orm';
 import { Router } from 'express';
 import { randomBytes } from 'node:crypto';
@@ -15,34 +15,9 @@ import { badgeProgress, totalPoints, userStats } from '../services/gamification.
 /** Modul „badges“ – Abzeichen-Vitrine, Urkunde, Teilen (Paket B, siehe docs/API.md). */
 export const router = Router();
 
-/**
- * Deutsche Namen für Urkunde und Teil-Bild (die Oberfläche nutzt i18n `badges.<key>`).
- * Kurz und stolz; regionale Wappen: „Wappen <Landkreis>“.
- */
-export const BADGE_NAMES: Record<string, string> = {
-  first_walk: 'Erster Walk',
-  first_5k: 'Erster 5-km-Walk',
-  first_10k: 'Erster 10-km-Walk',
-  total_50k: '50 Kilometer gesamt',
-  total_100k: '100 Kilometer gesamt',
-  total_500k: '500 Kilometer gesamt',
-  walks_10: '10 Walks',
-  walks_50: '50 Walks',
-  walks_100: '100 Walks',
-  first_group_walk: 'Erster Gruppen-Walk',
-  group_walks_10: '10 Gruppen-Walks',
-  group_walks_50: '50 Gruppen-Walks',
-  group_founder: 'Gruppe gegründet',
-  inviter: 'Erste Einladung',
-  week_streak_4: '4 Wochen in Folge',
-  challenge_done: 'Challenge geschafft',
-  places_3: '3 verschiedene Orte',
-  places_10: '10 verschiedene Orte',
-};
-
+/** Name für Urkunde und Teil-Bild – dieselben Namen wie in der Oberfläche (shared/src/badge-names.ts). */
 export function badgeName(key: string, label: string | null): string {
-  if (key.startsWith(REGION_BADGE_PREFIX)) return `Wappen ${label ?? key.slice(REGION_BADGE_PREFIX.length)}`;
-  return BADGE_NAMES[key] ?? key;
+  return badgeNameFor(key, label, 'de');
 }
 
 const TIER_COLORS: Record<number, { fill: string; dark: string; name: string }> = {

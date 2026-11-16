@@ -6,7 +6,7 @@ import fs from 'node:fs/promises';
 import { z } from 'zod';
 import { db } from '../db/index.js';
 import * as s from '../db/schema.js';
-import { canSeeContent, getMembership, isGroupLead, requireActiveMember, requireGroup } from '../lib/access.js';
+import { canSeePhoto, getMembership, isGroupLead, requireActiveMember, requireGroup } from '../lib/access.js';
 import { ApiError, badRequest, forbidden, notFound, parse, zId } from '../lib/http.js';
 import { avatarUrlFor, canSeeAvatar } from '../lib/people.js';
 import { me, requireUser } from '../middleware/auth.js';
@@ -136,7 +136,7 @@ router.post('/', upload.single('photo'), async (req, res) => {
 
 async function requireVisiblePhoto(id: string, viewerId: string) {
   const [p] = await db.select().from(s.photos).where(eq(s.photos.id, id)).limit(1);
-  if (!p || !(await canSeeContent({ ownerId: p.ownerId, visibility: p.visibility, groupId: p.groupId }, viewerId))) {
+  if (!p || !(await canSeePhoto(p, viewerId))) {
     throw notFound('photo_not_found');
   }
   return p;

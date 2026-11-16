@@ -17,7 +17,7 @@ import {
 } from '../lib/access.js';
 import { boundingBox, distanceKm } from '../lib/geo.js';
 import { buildIcs } from '../lib/ics.js';
-import { badRequest, conflict, forbidden, notFound, parse, zId, zText } from '../lib/http.js';
+import { badRequest, conflict, forbidden, notFound, parse, unauthorized, zId, zText } from '../lib/http.js';
 import { me, requireUser } from '../middleware/auth.js';
 import { onActivityRecorded } from '../services/gamification.js';
 import { notifyInterest } from '../services/interest.js';
@@ -337,11 +337,56 @@ const listQuery = locationQuery.extend({
   tempo: z.enum(TEMPOS).optional(),
   groupId: zId.optional(),
   kind: z.enum(WALK_KINDS).optional(),
+  /** `mine=1`: eigene kommende Walks (zugesagt oder selbst erstellt), alle Arten, ohne Ortsfilter */
+  mine: z.enum(['1', 'true']).optional(),
 });
+
+/** Laufende Walks bleiben noch so lange in „Meine nächsten Walks“. */
+const MINE_RUNNING_MS = 3 * 3600_000;
 
 router.get('/', async (req, res) => {
   const q = parse(listQuery, req.query);
   const viewerId = req.user?.id;
+
+  // Eigene nächste Walks (Startseite): zugesagt oder selbst erstellt, alle Arten, ohne Ortsfilter
+  if (q.mine) {
+    if (!viewerId) throw unauthorized();
+    const from = q.from ?? new Date(Date.now() - MINE_RUNNING_MS);
+    const conds: SQL[] = [gte(s.walks.startsAt, from)];
+    if (q.to) conds.push(lte(s.walks.startsAt, q.to));
+    if (q.kind) conds.push(eq(s.walks.kind, q.kind));
+    if (q.tempo) conds.push(eq(s.walks.tempo, q.tempo));
+    const mineRsvp = db
+      .select({ id: s.walkRsvps.walkId })
+      .from(s.walkRsvps)
+      .where(and(eq(s.walkRsvps.userId, viewerId), eq(s.walkRsvps.status, 'yes')));
+    const rows = await db
+      .select()
+      .from(s.walks)
+      .where(and(...conds, or(eq(s.walks.createdBy, viewerId), inArray(s.walks.id, mineRsvp))))
+      .orderBy(asc(s.walks.startsAt), asc(s.walks.id))
+      .limit(200);
+    // Gruppen-Walks nur, solange die Person dort aktives Mitglied ist (gesperrt/ausgetreten → nicht mehr „meine“)
+    const groupIds = [...new Set(rows.filter((w) => w.kind === 'group' && w.groupId).map((w) => w.groupId!))];
+    const active = new Set(
+      groupIds.length
+        ? (
+            await db
+              .select({ id: s.groupMembers.groupId })
+              .from(s.groupMembers)
+              .where(and(inArray(s.groupMembers.groupId, groupIds), eq(s.groupMembers.userId, viewerId), eq(s.groupMembers.status, 'active')))
+          ).map((m) => m.id)
+        : [],
+    );
+    const blocked = await blockedIds(viewerId);
+    const visible = rows.filter(
+      (w) =>
+        (w.kind !== 'group' || (w.groupId && active.has(w.groupId))) &&
+        (!w.createdBy || w.createdBy === viewerId || w.kind === 'group' || !blocked.has(w.createdBy)),
+    );
+    res.json({ walks: await walkSummaries(visible, viewerId, null), center: null, nearest: [] });
+    return;
+  }
   const from = q.from ?? new Date();
   const maxTo = new Date(from.getTime() + 366 * 86_400_000);
   let to = q.to ?? new Date(from.getTime() + 30 * 86_400_000);

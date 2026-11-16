@@ -16,7 +16,7 @@ test('Premium: Preis sichtbar, kein Probeabo, abschließen, Fortschritt, kündig
   const price = page.getByRole('region', { name: 'Preis' });
   await expect(price.getByText('3,99 € pro Monat')).toBeVisible();
   await expect(price.getByText('Kein Probeabo – es kostet erst etwas, wenn Sie es selbst abschließen.')).toBeVisible();
-  await expect(price.getByText('Monatlich mit einem Klick kündbar.')).toBeVisible();
+  await expect(price.getByText('Jederzeit monatlich kündbar – mit einem Klick auf „Premium kündigen“.')).toBeVisible();
   await expectNoA11yViolations(page);
 
   // Abschließen – mit klarer Rückfrage

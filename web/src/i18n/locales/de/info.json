@@ -99,7 +99,7 @@
       },
       {
         "what": "Beiträge, Kommentare und Herzen",
-        "who": "Beiträge nach der gewählten Sichtbarkeit. Kommentare und Herzen sehen alle, die den Beitrag sehen.",
+        "who": "Beiträge nach der gewählten Sichtbarkeit. Ausnahme „Gemeinsam auf Distanz“: Beiträge zu so einem Termin sehen nur alle, die bei diesem Termin mitmachen. Kommentare, Herzen und Fotos sehen alle, die den Beitrag sehen.",
         "change": "Ja. Eigene Beiträge und Kommentare können Sie löschen."
       },
       {
@@ -130,7 +130,7 @@
       {
         "what": "Premium und Zahlungen",
         "who": "Nur Sie. Kartendaten oder Kontodaten speichert Gehmeinsam nicht.",
-        "change": "Ja. Premium können Sie mit einem Klick kündigen."
+        "change": "Ja. Premium ist jederzeit monatlich kündbar – mit einem Klick auf „Premium kündigen“ (Seite „Premium“)."
       }
     ],
     "doTitle": "Selbst einstellen",
@@ -376,7 +376,7 @@
         "paras": [
           "Gruppen, Walks, Eintragen und Abzeichen sind und bleiben kostenlos.",
           "Premium kostet {{price}} im Monat und bietet zusätzlich ausführliche Statistiken, eigene Ziele und einen Jahresrückblick. Es gibt kein Probeabo, das sich heimlich verlängert.",
-          "Kündigen: Öffnen Sie die Seite „Premium“ und tippen Sie auf „Kündigen“. Ein Klick genügt. Premium bleibt bis zum Ende des bezahlten Monats aktiv."
+          "Kündigen: jederzeit monatlich. Öffnen Sie die Seite „Premium“ und tippen Sie auf „Premium kündigen“, dann bestätigen Sie mit „Ja, kündigen“. Premium bleibt bis zum Ende des bezahlten Monats aktiv."
         ]
       },
       {

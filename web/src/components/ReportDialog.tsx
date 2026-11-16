@@ -1,13 +1,16 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { api } from '../../../api/client';
-import { Field } from '../../../components/Field';
-import { useAction } from '../../../hooks/useAction';
-import { ConfirmDialogE } from './ConfirmDialogE';
+import { api } from '../api/client';
+import { Field } from './Field';
+import { useAction } from '../hooks/useAction';
+import { ConfirmDialogE } from '../pages/profile/parts/ConfirmDialogE';
 
 const REASONS = ['harassment', 'spam', 'inappropriate', 'fake', 'other'] as const;
 
-/** „Melden“: Grund wählen, freiwillig beschreiben, deutlich bestätigen. Die gemeldete Person erfährt nicht, wer gemeldet hat. */
+/**
+ * „Melden“ (Personen, Beiträge, Kommentare, …): Grund wählen, freiwillig beschreiben, deutlich bestätigen. Die gemeldete Person erfährt nicht, wer gemeldet hat.
+ * Wird in PersonPage und PostCard genutzt.
+ */
 export function ReportDialog({
   open,
   onClose,
@@ -25,6 +28,7 @@ export function ReportDialog({
   const [reason, setReason] = useState<(typeof REASONS)[number] | ''>('');
   const [text, setText] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const radioName = useId();
   const report = useAction({
     fn: () =>
       api.post('/reports', {
@@ -58,7 +62,7 @@ export function ReportDialog({
         <div className="choice-list">
           {REASONS.map((r) => (
             <label key={r} className="choice">
-              <input type="radio" name="report-reason" checked={reason === r} onChange={() => setReason(r)} />
+              <input type="radio" name={radioName} checked={reason === r} onChange={() => setReason(r)} />
               {t(`report.reason_${r}`)}
             </label>
           ))}

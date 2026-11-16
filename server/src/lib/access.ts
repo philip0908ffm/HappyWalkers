@@ -1,6 +1,6 @@
 import { and, eq, or } from 'drizzle-orm';
 import { db } from '../db/index.js';
-import { blocks, follows, groupMembers, groups, profile, walkRsvps } from '../db/schema.js';
+import { blocks, follows, groupMembers, groups, posts, profile, walkRsvps, walks } from '../db/schema.js';
 import { forbidden, notFound } from './http.js';
 
 /**
@@ -118,4 +118,71 @@ export async function canSeeContent(
     default:
       return false;
   }
+}
+
+/* ------------------------------------------------------------------ */
+/* „Gemeinsam auf Distanz“: Beiträge nur für Teilnehmende (S2-15)       */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Liefert den Walk, wenn er ein „Gemeinsam auf Distanz“-Termin ist – sonst null.
+ * Beiträge zu solchen Terminen folgen NICHT dem visibility-Feld, sondern nur `isDistanceParticipant`.
+ */
+export async function distanceWalkOf(walkId: string | null | undefined): Promise<{ id: string; createdBy: string | null } | null> {
+  if (!walkId) return null;
+  const [w] = await db
+    .select({ id: walks.id, kind: walks.kind, createdBy: walks.createdBy })
+    .from(walks)
+    .where(eq(walks.id, walkId))
+    .limit(1);
+  return w?.kind === 'distance' ? { id: w.id, createdBy: w.createdBy } : null;
+}
+
+/** Macht die Person bei diesem Distanz-Termin mit? (Erstellerin oder Zusage „ja“) */
+export async function isDistanceParticipant(walk: { id: string; createdBy: string | null }, userId: string | undefined): Promise<boolean> {
+  if (!userId) return false;
+  if (walk.createdBy === userId) return true;
+  const [r] = await db
+    .select({ s: walkRsvps.status })
+    .from(walkRsvps)
+    .where(and(eq(walkRsvps.walkId, walk.id), eq(walkRsvps.userId, userId), eq(walkRsvps.status, 'yes')))
+    .limit(1);
+  return !!r;
+}
+
+/**
+ * Sichtbarkeit eines Beitrags (und seiner Kommentare, Herzen, Fotos).
+ * Beiträge zu „Gemeinsam auf Distanz“-Terminen: nur Autorin, Erstellerin des Termins und Personen mit
+ * Zusage – unabhängig vom visibility-Feld. Alle anderen Beiträge: `canSeeContent`. Blockieren gilt immer.
+ */
+export async function canSeePost(
+  post: { authorId: string; visibility: string; groupId: string | null; walkId: string | null },
+  viewerId: string | undefined,
+): Promise<boolean> {
+  if (!viewerId) return false;
+  if (post.authorId === viewerId) return true;
+  const dw = await distanceWalkOf(post.walkId);
+  if (dw) {
+    if (await isBlockedEitherWay(post.authorId, viewerId)) return false;
+    return isDistanceParticipant(dw, viewerId);
+  }
+  return canSeeContent({ ownerId: post.authorId, visibility: post.visibility, groupId: post.groupId }, viewerId);
+}
+
+/** Sichtbarkeit eines Fotos: eigene Regel des Fotos, bei Fotos zu Distanz-Beiträgen die Regel des Beitrags. */
+export async function canSeePhoto(
+  photo: { ownerId: string; visibility: string; groupId: string | null; postId: string | null },
+  viewerId: string | undefined,
+): Promise<boolean> {
+  if (!viewerId) return false;
+  if (photo.ownerId === viewerId) return true;
+  if (photo.postId) {
+    const [p] = await db.select({ walkId: posts.walkId }).from(posts).where(eq(posts.id, photo.postId)).limit(1);
+    const dw = await distanceWalkOf(p?.walkId);
+    if (dw) {
+      if (await isBlockedEitherWay(photo.ownerId, viewerId)) return false;
+      return isDistanceParticipant(dw, viewerId);
+    }
+  }
+  return canSeeContent(photo, viewerId);
 }

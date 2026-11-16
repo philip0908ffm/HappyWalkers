@@ -118,8 +118,11 @@ describe('Beiträge und Feed', () => {
       .insert(s.walks)
       .values({ kind: 'distance', title: 'Gemeinsam auf Distanz', startsAt: new Date(), createdBy: ella.userId })
       .returning();
-    const wp = await ella.agent.post(`${api}/posts`).send({ text: 'Bin dabei', visibility: 'public', walkId: walk.id }).expect(201);
+    const wp = await ella.agent.post(`${api}/posts`).send({ text: 'Bin dabei', visibility: 'group', walkId: walk.id }).expect(201);
     expect(wp.body.post.walk).toMatchObject({ id: walk.id, title: 'Gemeinsam auf Distanz' });
+    // Distanz-Termin: nur wer mitmacht, sieht die Beiträge (S2-15)
+    expect((await other.agent.get(`${api}/feed?walkId=${walk.id}`).expect(200)).body.posts).toEqual([]);
+    await db.insert(s.walkRsvps).values({ walkId: walk.id, userId: other.userId, status: 'yes' });
     const wfeed = await other.agent.get(`${api}/feed?walkId=${walk.id}`).expect(200);
     expect(wfeed.body.posts.map((p: { id: string }) => p.id)).toEqual([wp.body.post.id]);
     const missing = await other.agent.get(`${api}/feed?walkId=gibtsnicht`).expect(404);
@@ -141,6 +144,81 @@ describe('Beiträge und Feed', () => {
     await mem.agent.delete(`${api}/posts/${post.id}`).expect(404);
     const notes = await db.select().from(s.notifications).where(eq(s.notifications.userId, mem.userId));
     expect(notes).toHaveLength(0);
+  });
+});
+
+describe('Beiträge zu „Gemeinsam auf Distanz“ (S2-15)', () => {
+  it('nur Erstellerin, Zusagende und Autorin sehen Beitrag, Kommentare, Herzen und Fotos – unabhängig von visibility', async () => {
+    const host = await signUp({ name: 'Gastgeberin' });
+    const yes = await signUp({ name: 'Zusage' });
+    const no = await signUp({ name: 'Abgesagt' });
+    const fan = await signUp({ name: 'Kontakt' });
+    const groupMate = await signUp({ name: 'Gruppenmitglied' });
+    // Termin mit Gruppenbezug: Gruppenmitgliedschaft allein reicht trotzdem nicht
+    const g = await createGroup([{ userId: host.userId, role: 'founder' }, { userId: yes.userId }, { userId: groupMate.userId }]);
+    const walk = (
+      await host.agent
+        .post(`${api}/walks`)
+        .send({ kind: 'distance', groupId: g.id, title: 'Sonntag auf Distanz', startsAt: new Date(Date.now() + 86_400_000).toISOString(), durationMinutes: 45, tempo: 'zuegig' })
+        .expect(201)
+    ).body.walk;
+    await yes.agent.put(`${api}/walks/${walk.id}/rsvp`).send({ status: 'yes' }).expect(200);
+    await no.agent.put(`${api}/walks/${walk.id}/rsvp`).send({ status: 'yes' }).expect(200);
+    await no.agent.put(`${api}/walks/${walk.id}/rsvp`).send({ status: 'no' }).expect(200);
+    await follow(fan, yes);
+
+    // Nicht-Teilnehmende dürfen nicht schreiben
+    const denied = await fan.agent.post(`${api}/posts`).send({ text: 'Hallo', visibility: 'public', walkId: walk.id }).expect(403);
+    expect(denied.body.error.code).toBe('not_walk_participant');
+
+    // Zusagende schreibt – selbst mit visibility 'public' bleibt es bei den Teilnehmenden
+    const photo = await yes.agent
+      .post(`${api}/photos`)
+      .field('altText', 'Blick über das Feld')
+      .field('visibility', 'public')
+      .attach('photo', Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64'), 'a.png')
+      .expect(201);
+    const post = (
+      await yes.agent
+        .post(`${api}/posts`)
+        .send({ text: 'Bin unterwegs!', visibility: 'public', walkId: walk.id, photoIds: [photo.body.photo.id] })
+        .expect(201)
+    ).body.post;
+    expect(post.group).toBeNull();
+    expect(post.photos).toHaveLength(1);
+    await yes.agent.post(`${api}/posts/${post.id}/comments`).send({ text: 'Schön war es' }).expect(201);
+
+    // Erstellerin sieht alles (Walk-Feed und Standard-Feed)
+    const hostFeed = await host.agent.get(`${api}/feed?walkId=${walk.id}`).expect(200);
+    expect(hostFeed.body.posts.map((p: { id: string }) => p.id)).toEqual([post.id]);
+    expect(hostFeed.body.posts[0].photos).toHaveLength(1);
+    expect((await host.agent.get(`${api}/feed`).expect(200)).body.posts.map((p: { id: string }) => p.id)).toContain(post.id);
+    await host.agent.get(`${api}/posts/${post.id}/comments`).expect(200);
+    await host.agent.put(`${api}/posts/${post.id}/like`).expect(200);
+    await host.agent.get(`${api}/photos/${photo.body.photo.id}`).expect(200);
+
+    // Abgesagte, Kontakt der Autorin, Gruppenmitglied ohne Zusage: nichts
+    for (const outsider of [no, fan, groupMate]) {
+      expect((await outsider.agent.get(`${api}/feed?walkId=${walk.id}`).expect(200)).body.posts).toEqual([]);
+      expect((await outsider.agent.get(`${api}/feed`).expect(200)).body.posts.map((p: { id: string }) => p.id)).not.toContain(post.id);
+      expect((await outsider.agent.get(`${api}/feed?userId=${yes.userId}`).expect(200)).body.posts).toEqual([]);
+      await outsider.agent.get(`${api}/posts/${post.id}/comments`).expect(404);
+      await outsider.agent.post(`${api}/posts/${post.id}/comments`).send({ text: 'x' }).expect(404);
+      await outsider.agent.put(`${api}/posts/${post.id}/like`).expect(404);
+      await outsider.agent.get(`${api}/photos/${photo.body.photo.id}`).expect(404);
+    }
+
+    // Wer später zusagt, sieht den Beitrag; wer absagt, nicht mehr
+    await fan.agent.put(`${api}/walks/${walk.id}/rsvp`).send({ status: 'yes' }).expect(200);
+    expect((await fan.agent.get(`${api}/feed?walkId=${walk.id}`).expect(200)).body.posts).toHaveLength(1);
+    await fan.agent.get(`${api}/photos/${photo.body.photo.id}`).expect(200);
+    await fan.agent.put(`${api}/walks/${walk.id}/rsvp`).send({ status: 'no' }).expect(200);
+    expect((await fan.agent.get(`${api}/feed?walkId=${walk.id}`).expect(200)).body.posts).toEqual([]);
+
+    // Blockieren gilt auch hier
+    await host.agent.post(`${api}/users/${yes.userId}/block`).expect(200);
+    expect((await host.agent.get(`${api}/feed?walkId=${walk.id}`).expect(200)).body.posts).toEqual([]);
+    await host.agent.get(`${api}/posts/${post.id}/comments`).expect(404);
   });
 });
 

@@ -112,13 +112,54 @@ test('Soziales: Profilbild, Beitrag, Herz, Kommentar, Folgen mit Bestätigung, p
   await b.context().close();
 });
 
-// GEMELDET (offen): Es gibt in der Oberfläche keine Möglichkeit, ein Foto zu einem Beitrag hinzuzufügen,
-// obwohl die API (`POST /photos` mit `postId`/`groupId`) es anbietet. Fotos lassen sich nur als Profil-
-// und Gruppenbild hochladen. Erwartet: Datei-Auswahl „Foto hinzufügen“ beim Beitrag in der Gruppe.
-test('Foto zu einem Gruppen-Beitrag hinzufügen (Datei-Auswahl)', async ({ browser }) => {
-  test.fail();
-  const a = await personInKarlsaue(browser, 'Fotofreundin');
+// Foto zu einem Beitrag: Datei-Auswahl „Foto hinzufügen“, Pflicht-Bildbeschreibung, Vorschau, danach im Beitrag mit alt-Text.
+test('Foto zu einem Gruppen-Beitrag hinzufügen (Datei-Auswahl) und Beitrag melden', async ({ browser }) => {
+  test.setTimeout(90_000);
+  const suffix = Date.now() % 100000;
+  const a = await personInKarlsaue(browser, `Fotofreundin${suffix}`);
   const feed = a.getByRole('region', { name: 'Neuigkeiten aus der Gruppe' });
-  await expect(feed.getByRole('button', { name: /Foto/ })).toBeVisible({ timeout: 2000 });
+  const chooser = a.waitForEvent('filechooser');
+  await feed.getByRole('button', { name: 'Foto hinzufügen' }).click();
+  await (await chooser).setFiles({ name: 'teich.png', mimeType: 'image/png', buffer: PNG });
+  await expect(feed.getByRole('img', { name: 'Vorschau des ausgewählten Fotos' })).toBeVisible();
+  await expect(feed.getByText('Foto ausgewählt: teich.png')).toBeVisible();
+
+  // Ohne Bildbeschreibung geht es nicht – Fehler am Feld, Fokus dort
+  await feed.getByRole('button', { name: 'Teilen' }).click();
+  const alt = feed.getByLabel('Was ist auf dem Foto zu sehen?');
+  await expect(feed.getByText('Bitte beschreiben Sie kurz, was auf dem Foto zu sehen ist.')).toBeVisible();
+  await expect(alt).toBeFocused();
+  await expectNoA11yViolations(a);
+
+  const altText = `Enten auf dem Teich ${suffix}`;
+  await alt.fill(altText);
+  await feed.getByLabel('Etwas mit der Gruppe teilen').fill(`Heute mit Enten! ${suffix}`);
+  await feed.getByRole('button', { name: 'Teilen' }).click();
+  await expect(a.getByRole('status').filter({ hasText: 'Ihr Beitrag mit Foto ist jetzt sichtbar.' }).first()).toBeVisible();
+  const post = feed.getByRole('article').filter({ hasText: `Heute mit Enten! ${suffix}` });
+  const img = post.getByRole('img', { name: altText });
+  await expect(img).toBeVisible();
+  expect(await img.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true);
+  // Eingabe ist wieder leer, Knopf wieder da
+  await expect(feed.getByRole('button', { name: 'Foto hinzufügen' })).toBeVisible();
+  // eigener Beitrag: kein „Melden“
+  await expect(post.getByRole('button', { name: 'Melden' })).toHaveCount(0);
+
+  // Eine andere Person meldet den Beitrag – mit Grund und deutlicher Bestätigung
+  const b = await personInKarlsaue(browser, `Melderin${suffix}`);
+  const postB = b.getByRole('article').filter({ hasText: `Heute mit Enten! ${suffix}` });
+  await postB.getByRole('button', { name: 'Melden' }).click();
+  const dialog = b.getByRole('dialog', { name: /Beitrag von Fotofreundin\d+ melden/ });
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole('button', { name: 'Meldung absenden' }).click();
+  await expect(dialog.getByText('Bitte wählen Sie einen Grund.')).toBeVisible();
+  await dialog.getByLabel('Werbung oder Massennachrichten').check();
+  await dialog.getByLabel('Was ist passiert?').fill('Test');
+  await expectNoA11yViolations(b);
+  await dialog.getByRole('button', { name: 'Meldung absenden' }).click();
+  await expect(b.getByRole('status').filter({ hasText: 'Danke! Ihre Meldung ist bei uns angekommen.' }).first()).toBeVisible();
+  await expect(dialog).toBeHidden();
+
   await a.context().close();
+  await b.context().close();
 });

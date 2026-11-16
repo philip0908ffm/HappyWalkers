@@ -22,7 +22,7 @@ test('Vitrine, Urkunde als PDF, öffentlicher Teilen-Link und Teilen beenden', a
   const badge = page.getByRole('article', { name: 'Erster Walk' });
   await expect(badge.getByText('Bronze · erreicht')).toBeVisible();
   // Noch nicht erreichte Abzeichen zeigen den Fortschritt
-  await expect(page.getByRole('article', { name: 'Erste 10 Kilometer' }).getByRole('progressbar', { name: 'Fortschritt' })).toBeVisible();
+  await expect(page.getByRole('article', { name: 'Erster 10-km-Walk' }).getByRole('progressbar', { name: 'Fortschritt' })).toBeVisible();
   await expectNoA11yViolations(page);
 
   // Urkunde

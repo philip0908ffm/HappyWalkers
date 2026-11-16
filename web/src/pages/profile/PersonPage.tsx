@@ -18,7 +18,7 @@ import { useBadgeText } from '../badges/badgeText';
 import { ConfirmDialogE } from './parts/ConfirmDialogE';
 import { PersonAvatar } from './parts/PersonAvatar';
 import { PostListE } from './parts/PostListE';
-import { ReportDialog } from './parts/ReportDialog';
+import { ReportDialog } from '../../components/ReportDialog';
 
 export default function PersonPage() {
   const { id = '' } = useParams();

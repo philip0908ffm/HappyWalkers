@@ -1,17 +1,18 @@
 import { maskRouteForOthers } from '../lib/geo.js';
 import { badgeDefinition, LIMITS, REPORT_TARGETS, VISIBILITIES } from '@gehmeinsam/shared';
-import { and, asc, count, desc, eq, inArray, isNull, notInArray, or, sql, sum, type SQL } from 'drizzle-orm';
+import { and, asc, count, desc, eq, inArray, isNull, not, notInArray, or, sql, sum, type SQL } from 'drizzle-orm';
 import { Router } from 'express';
 import { z } from 'zod';
 import { config } from '../config.js';
 import { db } from '../db/index.js';
 import * as s from '../db/schema.js';
 import {
-  canSeeContent,
   canSeeMeetingPoint,
+  canSeePost,
   getMembership,
   isActiveMember,
   isBlockedEitherWay,
+  isDistanceParticipant,
   isGroupLead,
   requireActiveMember,
   requireGroup,
@@ -20,6 +21,7 @@ import { badRequest, conflict, forbidden, notFound, parse, zId, zText } from '..
 import {
   avatarUrlFor,
   canSeeAvatar,
+  canSeePostWith,
   canSeeWith,
   loadViewerContext,
   personRefs,
@@ -49,8 +51,6 @@ export function photoDto(p: typeof s.photos.$inferSelect) {
   return { id: p.id, url: `/api/v1/photos/${p.id}`, width: p.width, height: p.height, altText: p.altText, visibility: p.visibility };
 }
 
-const postItem = (p: PostRow) => ({ ownerId: p.authorId, visibility: p.visibility, groupId: p.groupId });
-
 /**
  * Beiträge für die Ausgabe aufbereiten. Alle Zusatzdaten (Personen, Gruppen, Walks, Aktivitäten,
  * Fotos, Herzen, Kommentar-Zähler) werden gesammelt geladen – keine Abfrage je Beitrag.
@@ -70,7 +70,10 @@ async function serializePosts(rows: PostRow[], ctx: ViewerContext) {
     ),
     groupIds.length ? db.select({ id: s.groups.id, name: s.groups.name }).from(s.groups).where(inArray(s.groups.id, groupIds)) : [],
     walkIds.length
-      ? db.select({ id: s.walks.id, title: s.walks.title, startsAt: s.walks.startsAt }).from(s.walks).where(inArray(s.walks.id, walkIds))
+      ? db
+          .select({ id: s.walks.id, title: s.walks.title, startsAt: s.walks.startsAt, kind: s.walks.kind })
+          .from(s.walks)
+          .where(inArray(s.walks.id, walkIds))
       : [],
     activityIds.length
       ? db
@@ -112,9 +115,16 @@ async function serializePosts(rows: PostRow[], ctx: ViewerContext) {
   const liked = new Set(myLikes.map((l) => l.postId));
   const commentMap = new Map(commentCounts.map((c) => [c.postId, Number(c.n)]));
   const photosByPost = new Map<string, ReturnType<typeof photoDto>[]>();
+  const postWalk = new Map(rows.map((p) => [p.id, p.walkId]));
   for (const ph of photoRows) {
-    // Fotos haben eine eigene Sichtbarkeit – nur zeigen, was die Person sehen darf
-    if (!canSeeWith(ctx, { ownerId: ph.ownerId, visibility: ph.visibility, groupId: ph.groupId })) continue;
+    // Fotos haben eine eigene Sichtbarkeit – nur zeigen, was die Person sehen darf.
+    // Fotos zu Distanz-Beiträgen: Regel des Beitrags (nur Teilnehmende, S2-15).
+    const walkId = postWalk.get(ph.postId!) ?? null;
+    const distance = !!walkId && walkMap.get(walkId)?.kind === 'distance';
+    const visible = distance
+      ? canSeePostWith(ctx, { authorId: ph.ownerId, visibility: ph.visibility, groupId: ph.groupId, walkId }, true)
+      : canSeeWith(ctx, { ownerId: ph.ownerId, visibility: ph.visibility, groupId: ph.groupId });
+    if (!visible) continue;
     const list = photosByPost.get(ph.postId!) ?? [];
     list.push(photoDto(ph));
     photosByPost.set(ph.postId!, list);
@@ -130,7 +140,7 @@ async function serializePosts(rows: PostRow[], ctx: ViewerContext) {
       id: p.id,
       author: people.get(p.authorId)!,
       group: g ? { id: g.id, name: g.name } : null,
-      walk: w ? { id: w.id, title: w.title, startsAt: w.startsAt } : null,
+      walk: w ? { id: w.id, title: w.title, startsAt: w.startsAt, kind: w.kind } : null,
       activity: a
         ? { id: a.id, distanceKm: a.distanceKm, durationMinutes: a.durationMinutes, startedAt: a.startedAt, route: showRoute ? (a.userId === ctx.userId ? (a.route ?? null) : maskRouteForOthers(a.route)) : null }
         : null,
@@ -146,7 +156,13 @@ async function serializePosts(rows: PostRow[], ctx: ViewerContext) {
   });
 }
 
-/** SQL-Bedingung „Beitrag ist für ctx sichtbar“ – entspricht canSeeContent (lib/access.ts). */
+/** Beitrag gehört zu einem „Gemeinsam auf Distanz“-Termin (SQL). */
+const isDistancePost = sql`exists (select 1 from ${s.walks} where ${s.walks.id} = ${s.posts.walkId} and ${s.walks.kind} = 'distance')`;
+
+/**
+ * SQL-Bedingung „Beitrag ist für ctx sichtbar“ – entspricht canSeePost (lib/access.ts):
+ * Distanz-Beiträge nur für Teilnehmende des Termins, alle anderen nach canSeeContent.
+ */
 function visiblePostSql(ctx: ViewerContext): SQL {
   const following = [...ctx.following];
   const groups = [...ctx.activeGroups];
@@ -157,7 +173,9 @@ function visiblePostSql(ctx: ViewerContext): SQL {
     allowed.push(and(eq(s.posts.visibility, 'group'), isNull(s.posts.groupId), inArray(s.posts.authorId, following))!);
   }
   if (groups.length) allowed.push(and(eq(s.posts.visibility, 'group'), inArray(s.posts.groupId, groups))!);
-  const others = blocked.length ? and(notInArray(s.posts.authorId, blocked), or(...allowed))! : or(...allowed)!;
+  const distance = [...ctx.distanceWalks];
+  const byRule = or(and(not(isDistancePost), or(...allowed)), distance.length ? inArray(s.posts.walkId, distance) : undefined)!;
+  const others = blocked.length ? and(notInArray(s.posts.authorId, blocked), byRule)! : byRule;
   return or(eq(s.posts.authorId, ctx.userId), others)!;
 }
 
@@ -196,7 +214,7 @@ async function requireVisibleWalk(walkId: string, userId: string) {
 /** Beitrag laden, den die Person sehen darf – sonst 404 (kein Hinweis, ob es ihn gibt). */
 async function requireVisiblePost(postId: string, userId: string) {
   const [p] = await db.select().from(s.posts).where(eq(s.posts.id, postId)).limit(1);
-  if (!p || !(await canSeeContent(postItem(p), userId))) throw notFound('post_not_found');
+  if (!p || !(await canSeePost(p, userId))) throw notFound('post_not_found');
   return p;
 }
 
@@ -258,6 +276,8 @@ router.get('/feed', async (req, res) => {
     if (ctx.activeGroups.size) scope.push(inArray(s.posts.groupId, [...ctx.activeGroups]));
     if (ctx.following.size)
       scope.push(and(inArray(s.posts.authorId, [...ctx.following]), inArray(s.posts.visibility, ['followers', 'public']))!);
+    // Distanz-Termine, bei denen ich mitmache
+    if (ctx.distanceWalks.size) scope.push(inArray(s.posts.walkId, [...ctx.distanceWalks]));
     conds.push(or(...scope));
   }
   if (q.cursor) {
@@ -302,7 +322,11 @@ router.post('/posts', async (req, res) => {
   let groupId = body.groupId ?? null;
   if (body.walkId) {
     const w = await requireVisibleWalk(body.walkId, userId);
-    if (w.groupId) {
+    if (w.kind === 'distance') {
+      // Distanz-Termin: nur wer mitmacht, schreibt; sichtbar nur für Teilnehmende (canSeePost) – ohne Gruppenbezug
+      if (!(await isDistanceParticipant(w, userId))) throw forbidden('not_walk_participant');
+      if (groupId) throw badRequest('invalid_input', [{ field: 'groupId', code: 'not_allowed', message: 'groupId' }]);
+    } else if (w.groupId) {
       if (groupId && groupId !== w.groupId) throw badRequest('invalid_input', [{ field: 'groupId', code: 'mismatch', message: 'groupId' }]);
       groupId = w.groupId;
     }
@@ -469,7 +493,7 @@ router.delete('/comments/:id', async (req, res) => {
     .innerJoin(s.posts, eq(s.posts.id, s.comments.postId))
     .where(and(eq(s.comments.id, id), isNull(s.comments.deletedAt)))
     .limit(1);
-  if (!row || !(await canSeeContent(postItem(row.post), userId))) throw notFound('comment_not_found');
+  if (!row || !(await canSeePost(row.post, userId))) throw notFound('comment_not_found');
   if (row.comment.authorId !== userId && (await isBlockedEitherWay(row.comment.authorId, userId))) throw notFound('comment_not_found');
   const allowed =
     row.comment.authorId === userId || (row.post.groupId && isGroupLead(await getMembership(row.post.groupId, userId)));

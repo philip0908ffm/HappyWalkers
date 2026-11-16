@@ -44,7 +44,10 @@
     "unliked": "Du hast dein Herz zurückgenommen.",
     "commentLabel": "Dein Kommentar",
     "commentRequired": "Bitte schreib zuerst einen Kommentar.",
-    "commentSent": "Dein Kommentar ist gesendet."
+    "commentSent": "Dein Kommentar ist gesendet.",
+    "postedWithPhoto": "Dein Beitrag mit Foto ist jetzt sichtbar.",
+    "photoWrongType": "Diese Datei ist kein Foto. Bitte wähl ein JPG-, PNG- oder HEIC-Bild.",
+    "photoAltRequired": "Bitte beschreib kurz, was auf dem Foto zu sehen ist."
   },
   "form": {
     "photoHint": "JPG, PNG oder HEIC, höchstens 10 MB. Ort und Kameradaten werden automatisch entfernt. Das Gruppenfoto ist für alle sichtbar, auch ohne Anmeldung – zeig darauf am besten keine erkennbaren Personen.",

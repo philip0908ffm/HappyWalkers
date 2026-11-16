@@ -33,15 +33,16 @@ für Personen/Profilbilder) statt eigener Regeln. Neue Regeln dort ergänzen, ni
 | Genauer Treffpunkt | Gruppen-Walk: **nur** aktive Mitglieder (auch die Erstellerin nur, solange sie aktives Mitglied ist – gesperrt/entfernt → kein Treffpunkt, auch nicht für künftige Serientermine); Partner-Walk: Personen mit RSVP-Zeile und Erstellerin; Distanz-Termin: Erstellerin; sonst `meetingPoint: null`, Liste/Karte nur `lat/lon` des Gruppen-/PLZ-Mittelpunkts. Gilt auch für ICS-Datei, Aushang (kein Treffpunkt), Serien (`SeriesSummary` ohne Treffpunkt), Benachrichtigungen und E-Mails (nie Treffpunkt) | `canSeeMeetingPoint` |
 | Teilnehmerliste eines Walks | Gruppen-Walk: aktive Mitglieder; sonst Teilnehmende/Erstellerin; sonst `participants: null` | `modules/walks.ts` |
 | Walk ändern/absagen/bestätigen | Gruppen-Walk: aktuelle Gruppenleitung (nicht mehr eine gesperrte/entfernte Erstellerin); Partner-/Distanz-Termin: Erstellerin (Distanz mit Gruppe zusätzlich Leitung) | `canManageWalk` |
-| Beiträge, Fotos, Einträge | `private` selbst; `group` aktive Mitglieder der Gruppe (ohne Gruppe: wie `followers`; eingetragene Walks: Mitglieder gemeinsamer Gruppen); `followers` bestätigte Folgende; `public` alle Angemeldeten. Achtung: Beiträge zu „Gemeinsam auf Distanz“ aus der Übersicht werden `public` gepostet (Hinweis wird angezeigt). Routen eingetragener Walks sind vollständig sichtbar, wer den Eintrag sehen darf (Start/Ende oft an der Wohnung – Empfehlung S2-13) | `canSeeContent` |
-| Kommentare, Herzen | wer den Beitrag sehen darf | `canSeeContent` des Beitrags |
+| Beiträge, Fotos, Einträge | `private` selbst; `group` aktive Mitglieder der Gruppe (ohne Gruppe: wie `followers`; eingetragene Walks: Mitglieder gemeinsamer Gruppen); `followers` bestätigte Folgende; `public` alle Angemeldeten. Routen eingetragener Walks sind vollständig sichtbar, wer den Eintrag sehen darf (Start/Ende oft an der Wohnung – Empfehlung S2-13) | `canSeeContent` |
+| Beiträge zu „Gemeinsam auf Distanz“-Terminen (`posts.walkId` → `walks.kind = 'distance'`) | **unabhängig von `visibility`**: Autorin, Erstellerin des Termins und Personen mit Zusage (`walk_rsvps.status = 'yes'`); Absage → nicht mehr sichtbar. Gruppenmitgliedschaft oder Folgen allein reicht nicht. Schreiben nur für Teilnehmende. Gilt auch für Kommentare, Herzen und Fotos dazu. Oberfläche: Hinweis „Sichtbar für alle, die bei diesem Termin mitmachen“, sendet `visibility: 'group'` (Entscheidung Lena, S2-15) | `canSeePost` / `canSeePhoto` (`lib/access.ts`), gesammelt `canSeePostWith` + `ViewerContext.distanceWalks` (`lib/people.ts`), SQL `visiblePostSql` (`modules/social.ts`) |
+| Kommentare, Herzen | wer den Beitrag sehen darf | `canSeePost` des Beitrags |
 | Folgen | nur nach Bestätigung (`status = 'accepted'`) | `isAcceptedFollower` |
 | Blockierungen, Meldungen | nur die Person selbst (Meldungen zusätzlich Betreiber-Team) | `modules/social.ts` |
 | Gehpartner-Gesuch | angemeldete Personen im Umkreis: `PersonRef`, Stadt, gerundete Entfernung, Tempo, Zeiten, Notiz – keine Kontaktdaten. Anfragen blockierter Personen: unsichtbar und nicht annehmbar | `modules/rural.ts` |
 | Geteiltes Abzeichen | öffentlich nur per zufälligem Token, nur `displayName` + Abzeichen; Teilen beenden löscht Token | `modules/badges.ts` |
 | Browser-Standort | nur als Suchparameter `lat/lon` einer Anfrage; **nie speichern, nie protokollieren** | `modules/groups.ts`, `walks.ts` |
 | E-Mail/Telefon | nur selbst; Benachrichtigungen laufen über Gehmeinsam | `services/notify.ts` |
-| Fotos (Dateien) | nur über Routen mit Zugriffsprüfung, nie statisch; EXIF/GPS beim Speichern entfernt | `services/storage.ts` |
+| Fotos (Dateien) | nur über Routen mit Zugriffsprüfung, nie statisch; EXIF/GPS beim Speichern entfernt; Fotos zu Distanz-Beiträgen nach der Regel des Beitrags | `services/storage.ts`, `canSeePhoto` |
 | Gruppen „nur auf Einladung“ | erscheinen nicht in Suchen (Gruppen, Walks, `nearest`, `rural/overview`, Distanz-Termine mit dieser Gruppe); Details, Walks und Beitrittsversuch nur für Mitglieder/Eingeladene (sonst 404). Ausnahme: das Gruppenbild (`/groups/:id/photo`) ist wie bei allen Gruppen ohne Anmeldung abrufbar, wenn man die ID kennt (Einladungsseite) | `modules/groups.ts` |
 | Gruppenbild | öffentlich (wie Name und Ort der Gruppe) – keine Personen erkennbar zeigen | `modules/groups.ts` |
 | „Nur Frauen“-Gruppen | Beitritt (direkt, per Code, per Einladung) und Freigabe einer Anfrage nur mit `gender = 'woman'`; Geschlecht wird nie angezeigt | `canJoinWomenOnly` |
@@ -68,7 +69,7 @@ für Personen/Profilbilder) statt eigener Regeln. Neue Regeln dort ergänzen, ni
 ## Checkliste für neue Endpunkte
 
 - [ ] Liefert der Endpunkt Personen? → nur `PersonRef`.
-- [ ] Inhalte einer Person? → `canSeeContent` (inkl. Blockieren).
+- [ ] Inhalte einer Person? → `canSeeContent` (inkl. Blockieren); Beiträge/Fotos → `canSeePost` / `canSeePhoto` (Distanz-Termine!).
 - [ ] Treffpunkt/Koordinaten? → `canSeeMeetingPoint`, sonst nur ungefährer Ort.
 - [ ] Gruppenbezug? → `getMembership` + `isActiveMember` / `isGroupLead`, gesperrte ausschließen.
 - [ ] Datei? → `resolveKey` + Zugriffsprüfung, `Cache-Control: private`.

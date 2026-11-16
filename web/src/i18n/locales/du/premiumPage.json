@@ -9,18 +9,18 @@
     "yearReview_hint": " – deine Walks, Orte und Abzeichen des Jahres."
   },
   "action": {
-    "intro": "Du kannst Premium jederzeit abschließen und mit einem Klick wieder kündigen.",
+    "intro": "Du kannst Premium jederzeit abschließen. Es ist jederzeit monatlich kündbar – mit einem Klick auf „Premium kündigen“.",
     "signInFirst": "Bitte melde dich zuerst an, um Premium abzuschließen."
   },
   "status": {
     "cancelled": "Du hast gekündigt. Premium läuft noch bis zum {{date}}. Danach endet es von selbst und es wird nichts mehr abgebucht."
   },
   "subscribe": {
-    "point2": "Du kannst jederzeit mit einem Klick kündigen. Dann läuft Premium bis zum Monatsende und endet von selbst.",
+    "point2": "Du kannst jederzeit monatlich kündigen – mit einem Klick auf „Premium kündigen“ und einer kurzen Bestätigung. Dann läuft Premium bis zum Monatsende und endet von selbst.",
     "done": "Willkommen bei Premium! Dein Fortschritt wartet auf dich."
   },
   "cancel": {
-    "intro": "Ein Klick genügt. Vorher zeigen wir dir, was danach passiert.",
+    "intro": "Ein Klick auf „Premium kündigen“ genügt. Danach zeigen wir dir, was passiert, und du bestätigst noch einmal mit „Ja, kündigen“.",
     "point3": "Deine Walks, Abzeichen, Gruppen und Ziele bleiben erhalten.",
     "point4": "Du kannst die Kündigung bis dahin jederzeit zurücknehmen."
   },

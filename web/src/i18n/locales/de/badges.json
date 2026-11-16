@@ -1,25 +1,4 @@
 {
-  "names": {
-    "first_walk": "Erster Walk",
-    "first_5k": "Erste 5 Kilometer",
-    "first_10k": "Erste 10 Kilometer",
-    "total_50k": "50 Kilometer insgesamt",
-    "total_100k": "100 Kilometer insgesamt",
-    "total_500k": "500 Kilometer insgesamt",
-    "walks_10": "10 Walks",
-    "walks_50": "50 Walks",
-    "walks_100": "100 Walks",
-    "first_group_walk": "Erster Walk in der Gruppe",
-    "group_walks_10": "10 Walks in der Gruppe",
-    "group_walks_50": "50 Walks in der Gruppe",
-    "group_founder": "Gruppe gegründet",
-    "inviter": "Herzliche Einladung",
-    "week_streak_4": "Vier Wochen dabei",
-    "challenge_done": "Mitmach-Aktion geschafft",
-    "places_3": "Unterwegs an 3 Orten",
-    "places_10": "Unterwegs an 10 Orten",
-    "region": "Wappen {{label}}"
-  },
   "descriptions": {
     "first_walk": "Für den ersten eingetragenen Walk – der wichtigste Schritt.",
     "first_5k": "Für einen Walk mit mindestens 5 km am Stück.",

@@ -177,7 +177,7 @@ function WalkView({ walk }: { walk: Walk }) {
             <section className="card" aria-labelledby="dist-feed-title">
               <h2 id="dist-feed-title">{t('detail.distanceFeedTitle')}</h2>
               <p>{t('detail.distanceFeedText')}</p>
-              <GroupFeed walkId={walk.id} canPost postVisibility="followers" headingLevel={3} />
+              <GroupFeed walkId={walk.id} canPost postVisibility="group" hintVisibility="walkParticipants" headingLevel={3} />
             </section>
           ) : null}
         </div>

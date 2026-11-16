@@ -286,4 +286,47 @@ describe('Walks', () => {
     expect(ok.body.walk).toMatchObject({ title: 'Neuer Titel', tempo: 'flott', durationMinutes: 60 });
     expect((await lead.agent.get('/api/v1/walks/unbekannt')).body.error.code).toBe('walk_not_found');
   });
+
+  it('mine=1: eigene kommende Walks aller Arten (zugesagt oder erstellt), ohne Ortsfilter, nach Zeit sortiert', async () => {
+    const p = await signUp({ name: 'Planerin', postalCode: '17509' });
+    // fremde Gruppe in Kassel, Person wohnt weit weg → trotzdem dabei (kein Ortsfilter)
+    await p.agent.post(`/api/v1/groups/${group.id}/join`).send({}).expect(200);
+    const g1 = await lead.agent.post('/api/v1/walks').send(walkBody(group.id, { startsAt: inDays(5), title: 'Gruppe später' })).expect(201);
+    const g2 = await lead.agent.post('/api/v1/walks').send(walkBody(group.id, { startsAt: inDays(1), title: 'Gruppe ohne Zusage' })).expect(201);
+    await p.agent.put(`/api/v1/walks/${g1.body.walk.id}/rsvp`).send({ status: 'yes' }).expect(200);
+    // eigener Distanz-Termin (Erstellerin)
+    const d = await p.agent
+      .post('/api/v1/walks')
+      .send({ kind: 'distance', title: 'Distanz morgen', startsAt: inDays(2), durationMinutes: 45, tempo: 'zuegig' })
+      .expect(201);
+    // Gehpartner-Walk (nur per Datenbank anlegbar) mit Zusage
+    const [pw] = await db
+      .insert(s.walks)
+      .values({ kind: 'partner', title: 'Mit Bernd', startsAt: new Date(inDays(3)), createdBy: member.userId })
+      .returning();
+    await db.insert(s.walkRsvps).values({ walkId: pw.id, userId: p.userId, status: 'yes' });
+    // abgesagte Zusage zählt nicht; vergangener Walk zählt nicht
+    const g3 = await lead.agent.post('/api/v1/walks').send(walkBody(group.id, { startsAt: inDays(4), title: 'Abgemeldet' })).expect(201);
+    await p.agent.put(`/api/v1/walks/${g3.body.walk.id}/rsvp`).send({ status: 'yes' }).expect(200);
+    await p.agent.put(`/api/v1/walks/${g3.body.walk.id}/rsvp`).send({ status: 'no' }).expect(200);
+    const [old] = await db
+      .insert(s.walks)
+      .values({ kind: 'distance', title: 'Vorbei', startsAt: new Date(inDays(-2)), createdBy: p.userId })
+      .returning();
+
+    const res = await p.agent.get('/api/v1/walks?mine=1').expect(200);
+    const ids = res.body.walks.map((w: { id: string }) => w.id);
+    expect(ids).toEqual([d.body.walk.id, pw.id, g1.body.walk.id]);
+    expect(ids).not.toContain(g2.body.walk.id);
+    expect(ids).not.toContain(old.id);
+    expect(res.body.walks.map((w: { kind: string }) => w.kind)).toEqual(['distance', 'partner', 'group']);
+    expect(res.body.walks.every((w: { myRsvp: string }) => w.myRsvp === 'yes')).toBe(true);
+
+    // nach Austritt aus der Gruppe: Gruppen-Walk nicht mehr „meiner“
+    await p.agent.post(`/api/v1/groups/${group.id}/leave`).send({}).expect(200);
+    const after = await p.agent.get('/api/v1/walks?mine=1').expect(200);
+    expect(after.body.walks.map((w: { id: string }) => w.id)).toEqual([d.body.walk.id, pw.id]);
+    // ohne Anmeldung: 401
+    expect((await request(getApp()).get('/api/v1/walks?mine=1')).status).toBe(401);
+  });
 });
