@@ -1,0 +1,31 @@
+{
+  "page": {
+    "lead": "Hier sammelst du deine Abzeichen. Jedes Abzeichen erzählt von einem Schritt, den du geschafft hast.",
+    "pointsExplain": "Punkte zeigen, wie aktiv du bist: {{activity}} Punkte für jeden eingetragenen Walk, dazu {{perKm}} Punkte je angefangenem Kilometer, {{group}} Punkte für einen gemeinsamen Walk mit der Gruppe und {{badge}} Punkte für jedes neue Abzeichen. Punkte kann man nicht verlieren.",
+    "startHint": "Noch keine Walks eingetragen? Dein erstes Abzeichen gibt es schon für den ersten Walk.",
+    "badgesIntro": "Erreichte Abzeichen sind farbig. Graue Abzeichen kannst du noch bekommen – darunter steht, wie viel noch fehlt. Bronze hat einen Stern, Silber zwei, Gold drei.",
+    "regionsIntro": "Für jeden Landkreis, in dem du mindestens einmal gegangen bist, gibt es ein eigenes Wappen.",
+    "regionsEmpty": "Noch keine Ortswappen. Das erste bekommst du mit deinem ersten Walk."
+  },
+  "progress": { "single": "Dein längster Walk bisher: {{current}} km. Ziel: {{target}} km am Stück." },
+  "share": {
+    "publicWarning": "Achtung, öffentlich: Wer den Link hat, sieht deinen Namen und das Abzeichen „{{name}}“ – auch ohne Anmeldung. Sonst nichts von dir. Du kannst das Teilen jederzeit beenden.",
+    "created": "Der Link wurde erstellt. Du kannst ihn jetzt kopieren und weitergeben.",
+    "linkLabel": "Dein Link zum Weitergeben",
+    "copied": "Der Link wurde kopiert. Du kannst ihn jetzt z. B. in eine E-Mail einfügen.",
+    "copyFailed": "Kopieren hat nicht geklappt. Bitte markier den Link und kopier ihn selbst."
+  },
+  "challenge": {
+    "explain": "Eine Mitmach-Aktion ist ein gemeinsames Ziel für eine bestimmte Zeit, zum Beispiel „50 km im November“. Wer mitmacht, sieht den eigenen Fortschritt und bekommt am Ziel Punkte und ein Abzeichen. Es zählen alle Walks, die du im Zeitraum einträgst.",
+    "none": "Gerade gibt es keine Mitmach-Aktion. Schau bald wieder vorbei!",
+    "joined": "Du machst jetzt bei „{{title}}“ mit. Deine Walks aus dem Zeitraum zählen schon.",
+    "leaveText": "Du verschwindest aus der Rangliste. Deine Walks bleiben natürlich erhalten. Du kannst jederzeit wieder mitmachen.",
+    "left": "Du machst nicht mehr mit.",
+    "rankingIntro": "Hier siehst du, wie weit die anderen sind. Es werden nur Vor- oder Spitznamen gezeigt.",
+    "rankingEmpty": "Noch niemand in der Rangliste. Mach als Erste mit!",
+    "you": "(du)",
+    "anonymousHint": "Du möchtest lieber ohne Namen erscheinen? Dann wähl in den Einstellungen bei „Name in Ranglisten“ die Möglichkeit „Anonym“.",
+    "anonymousOn": "Du erscheinst in Ranglisten anonym als „Teilnehmerin“."
+  },
+  "errors": { "badge_not_found": "Dieses Abzeichen gibt es nicht oder du hast es noch nicht erreicht." }
+}

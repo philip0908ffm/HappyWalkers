@@ -1,0 +1,174 @@
+/* Info-Seiten (Wer sieht was?, Datenschutz, Impressum, Hilfe) – Aylin Demir, Gestaltung nach Miriams Regeln */
+
+.info-page {
+  max-width: 52rem;
+}
+.info-page section + section {
+  margin-top: var(--space-6);
+}
+
+/* Platzhalter in Mustertexten: deutlich sichtbar, nicht nur durch Farbe (gestrichelter Rahmen) */
+.info-placeholder {
+  background: var(--color-warning-soft);
+  color: var(--color-text);
+  border: 2px dashed #8a6400;
+  border-radius: var(--radius-sm);
+  padding: 0 0.2em;
+}
+
+.info-check-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.info-check-list li {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  margin-bottom: var(--space-3);
+}
+.info-check-list svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  color: var(--color-primary);
+}
+
+.info-legend {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.info-legend li {
+  margin-bottom: var(--space-2);
+}
+.info-legend .visibility-hint {
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.info-table caption {
+  text-align: left;
+  font-weight: 700;
+  padding-bottom: var(--space-2);
+}
+.info-table th[scope='row'] {
+  background: var(--color-surface);
+  min-width: 10rem;
+}
+
+/* Schmale Bildschirme und starke Vergrößerung: Tabelle wird zu Karten (kein waagerechtes Scrollen) */
+@media (max-width: 44em) {
+  .info-table,
+  .info-table tbody,
+  .info-table tr,
+  .info-table th,
+  .info-table td {
+    display: block;
+    width: 100%;
+  }
+  .info-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .info-table tr {
+    border: 2px solid var(--color-border-soft);
+    border-radius: var(--radius);
+    margin-bottom: var(--space-4);
+    overflow: hidden;
+  }
+  .info-table th[scope='row'] {
+    background: var(--color-surface-2);
+    font-size: var(--font-size-lg);
+  }
+  .info-table td::before {
+    content: attr(data-label);
+    display: block;
+    font-weight: 700;
+    color: var(--color-text-muted);
+  }
+  .info-table td {
+    border-bottom: 0;
+  }
+}
+
+.info-toc ol {
+  padding-left: 1.5em;
+  margin: 0;
+}
+.info-toc li {
+  margin-bottom: var(--space-2);
+}
+
+.info-sources {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.info-sources li + li {
+  margin-top: var(--space-4);
+}
+
+/* Aufklappbare Fragen (Hilfe): native <details>/<summary> → per Tastatur bedienbar (Eingabe/Leertaste) */
+.faq {
+  background: var(--color-surface);
+  border: 2px solid var(--color-border-soft);
+  border-radius: var(--radius);
+  margin-bottom: var(--space-3);
+}
+.faq[open] {
+  border-color: var(--color-primary);
+}
+.faq > summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--tap-min);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+  border-radius: var(--radius);
+}
+.faq > summary::-webkit-details-marker {
+  display: none;
+}
+.faq > summary::before {
+  content: '+';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.8rem;
+  height: 1.8rem;
+  border: 2px solid var(--color-primary);
+  border-radius: 50%;
+  color: var(--color-primary);
+  font-weight: 700;
+  line-height: 1;
+}
+.faq[open] > summary::before {
+  content: '−';
+}
+.faq__answer {
+  padding: 0 var(--space-4) var(--space-4) calc(var(--space-4) + 1.8rem + var(--space-3));
+}
+@media (max-width: 30em) {
+  .faq__answer {
+    padding-left: var(--space-4);
+  }
+}
+.faq__answer ol,
+.faq__answer ul {
+  padding-left: 1.4em;
+}
+.faq__answer li {
+  margin-bottom: var(--space-2);
+}

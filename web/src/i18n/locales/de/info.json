@@ -1,0 +1,412 @@
+{
+  "placeholderNote": "Muster: Angaben in [eckigen Klammern] sind Platzhalter und müssen vor dem Start vom Betreiber ausgefüllt werden.",
+  "placeholderLabel": "Platzhalter",
+  "updated": "Stand: [Datum einsetzen]",
+  "related": "Mehr dazu",
+  "links": {
+    "settings": "Einstellungen öffnen",
+    "export": "Alle meine Daten herunterladen",
+    "delete": "Konto löschen",
+    "whoSeesWhat": "Wer sieht was?",
+    "privacy": "Datenschutzerklärung",
+    "help": "Hilfe",
+    "imprint": "Impressum",
+    "premium": "Premium",
+    "logWalk": "Walk eintragen",
+    "groups": "Gruppen finden"
+  },
+
+  "who": {
+    "title": "Wer sieht was?",
+    "lead": "Hier sehen Sie auf einen Blick, wer welche Angaben von Ihnen sehen kann. Grundsatz: So wenig wie möglich – und Sie entscheiden.",
+    "shortTitle": "Das Wichtigste in Kürze",
+    "short": [
+      "Ihr Profil ist am Anfang privat. Andere sehen nur Ihren Vor- oder Spitznamen in gemeinsamen Gruppen.",
+      "Ihr Alter, Ihr Geburtsjahr, Ihre E-Mail-Adresse und Ihre Telefonnummer sieht niemand.",
+      "Den genauen Treffpunkt eines Walks sehen nur bestätigte Mitglieder der Gruppe.",
+      "Fotos sieht zuerst nur Ihre Gruppe. Ein Symbol zeigt immer, wer etwas sehen kann.",
+      "Niemand kann Ihnen einfach folgen: Sie bestätigen jede Anfrage selbst.",
+      "Sie können Personen blockieren und melden. Die Person wird darüber nicht benachrichtigt."
+    ],
+    "legendTitle": "So erkennen Sie, wer etwas sehen kann",
+    "legendText": "Bei Fotos, Beiträgen und eingetragenen Walks steht immer eines dieser Zeichen:",
+    "legend": {
+      "private": "nur Sie selbst",
+      "group": "die bestätigten Mitglieder der Gruppe",
+      "followers": "Personen, deren Kontakt-Anfrage Sie bestätigt haben",
+      "public": "alle, die bei Gehmeinsam angemeldet sind – nicht das ganze Internet"
+    },
+    "tableTitle": "Übersicht",
+    "tableCaption": "Welche Angabe wer sehen kann und ob Sie das ändern können",
+    "colWhat": "Was",
+    "colWho": "Wer kann es sehen?",
+    "colChange": "Kann ich das ändern?",
+    "rows": [
+      {
+        "what": "Ihr Profil (Ort, Abzeichen, Anzahl Walks, Text über Sie)",
+        "who": "Am Anfang nur Sie (privat).",
+        "change": "Ja. In den Einstellungen: „Nur ich“, „Meine bestätigten Kontakte“ oder „Alle angemeldeten Personen“."
+      },
+      {
+        "what": "Ihr Vor- oder Spitzname",
+        "who": "Mitglieder Ihrer Gruppen, Teilnehmende eines Walks und – bei Challenges – die Rangliste.",
+        "change": "Ja. Den Namen ändern Sie im Profil. In Ranglisten können Sie anonym als „Teilnehmerin“ erscheinen."
+      },
+      {
+        "what": "Ihr Profilbild",
+        "who": "Personen aus gemeinsamen Gruppen und bestätigte Kontakte. Bei öffentlichem Profil alle angemeldeten Personen.",
+        "change": "Ja. Sie können das Bild jederzeit ändern oder löschen. Ein Profilbild ist freiwillig."
+      },
+      {
+        "what": "Geburtsjahr und Alter",
+        "who": "Niemand außer Ihnen. Das Alter wird nie angezeigt.",
+        "change": "Die Angabe ist freiwillig. Sie können sie im Profil jederzeit löschen."
+      },
+      {
+        "what": "Geschlecht",
+        "who": "Niemand. Es wird nie angezeigt. Wir nutzen es nur, damit Sie Gruppen „nur für Frauen“ beitreten können.",
+        "change": "Die Angabe ist freiwillig und jederzeit löschbar."
+      },
+      {
+        "what": "Wohnort",
+        "who": "Wir speichern nur Ihre Postleitzahl, nie Ihre Adresse. Andere sehen höchstens den Ortsnamen – und nur, wenn Ihr Profil das erlaubt. Entfernungen werden gerundet.",
+        "change": "Ja. Die Postleitzahl ändern Sie im Profil."
+      },
+      {
+        "what": "E-Mail-Adresse und Telefonnummer",
+        "who": "Niemand – auch nicht die Gruppenleitung. Anfragen von anderen erreichen Sie über Gehmeinsam, ohne dass Ihre Kontaktdaten weitergegeben werden.",
+        "change": "Sie werden nie angezeigt."
+      },
+      {
+        "what": "Genauer Treffpunkt eines Walks",
+        "who": "Nur bestätigte Mitglieder der Gruppe. Bei einem Gehpartner-Walk nur die beiden Beteiligten. Alle anderen sehen nur den ungefähren Ort.",
+        "change": "Den Treffpunkt legt die Gruppenleitung fest."
+      },
+      {
+        "what": "Ihre Zusage zu einem Walk",
+        "who": "Mitglieder der Gruppe und andere Teilnehmende sehen Ihren Namen in der Teilnehmerliste.",
+        "change": "Ja. Sie können Ihre Zusage jederzeit zurücknehmen."
+      },
+      {
+        "what": "Fotos",
+        "who": "Zuerst nur Ihre Gruppe. Das Symbol am Foto zeigt, wer es sehen kann. Standortdaten im Foto (GPS) entfernen wir automatisch.",
+        "change": "Ja, für jedes Foto einzeln. Sie können Fotos auch löschen."
+      },
+      {
+        "what": "Eingetragene Walks (Strecke, Kilometer, Dauer)",
+        "who": "So, wie Sie es beim Eintragen auswählen: nur Sie, Ihre Gruppe, Ihre Kontakte oder alle angemeldeten Personen.",
+        "change": "Ja, für jeden Eintrag einzeln – auch nachträglich."
+      },
+      {
+        "what": "Beiträge, Kommentare und Herzen",
+        "who": "Beiträge nach der gewählten Sichtbarkeit. Kommentare und Herzen sehen alle, die den Beitrag sehen.",
+        "change": "Ja. Eigene Beiträge und Kommentare können Sie löschen."
+      },
+      {
+        "what": "Kontakte (Folgen)",
+        "who": "Niemand kann Ihnen ohne Ihre Zustimmung folgen. Sie bestätigen jede Anfrage selbst.",
+        "change": "Ja. Anfragen annehmen oder ablehnen, Kontakte jederzeit entfernen."
+      },
+      {
+        "what": "Gehpartner-Gesuch",
+        "who": "Angemeldete Personen in der Nähe sehen Ihren Namen, den Ort, die gerundete Entfernung, Ihr Tempo und Ihren Hinweis.",
+        "change": "Ja. Sie können das Gesuch pausieren oder löschen."
+      },
+      {
+        "what": "Blockieren und Melden",
+        "who": "Nur Sie sehen, wen Sie blockiert haben. Die Person wird nicht benachrichtigt. Meldungen prüft nur das Team von Gehmeinsam – vertraulich.",
+        "change": "Ja. Eine Blockierung können Sie jederzeit aufheben."
+      },
+      {
+        "what": "Ihr Standort im Browser",
+        "who": "Niemand. Er wird nur genutzt, wenn Sie selbst „Meinen Standort verwenden“ wählen – nur für diese eine Suche. Wir speichern ihn nicht.",
+        "change": "Ja. Sie können stattdessen immer eine Postleitzahl eingeben."
+      },
+      {
+        "what": "Abzeichen teilen",
+        "who": "Nur wer den Link hat, den Sie selbst erzeugt haben. Er zeigt Ihren Namen und das Abzeichen – sonst nichts.",
+        "change": "Ja. Sie können das Teilen jederzeit beenden. Der Link funktioniert dann nicht mehr."
+      },
+      {
+        "what": "Premium und Zahlungen",
+        "who": "Nur Sie. Kartendaten oder Kontodaten speichert Gehmeinsam nicht.",
+        "change": "Ja. Premium können Sie mit einem Klick kündigen."
+      }
+    ],
+    "doTitle": "Selbst einstellen",
+    "doText": "In den Einstellungen bestimmen Sie, wer Ihr Profil sieht und wie Ihr Name in Ranglisten erscheint. Dort können Sie auch alle Ihre Daten herunterladen oder Ihr Konto endgültig löschen."
+  },
+
+  "privacy": {
+    "title": "Datenschutz",
+    "lead": "Diese Erklärung sagt in einfachen Worten, welche Daten Gehmeinsam speichert, wofür und welche Rechte Sie haben.",
+    "shortTitle": "Kurz gesagt",
+    "short": [
+      "Wir speichern nur, was für Gehmeinsam nötig ist.",
+      "Keine Werbung, kein Verkauf von Daten, keine Tracking-Cookies.",
+      "Alter, E-Mail-Adresse und Telefonnummer sieht niemand außer Ihnen.",
+      "Sie können alle Ihre Daten jederzeit herunterladen oder Ihr Konto löschen."
+    ],
+    "sections": [
+      {
+        "id": "verantwortlich",
+        "title": "1. Wer ist verantwortlich?",
+        "paras": [
+          "Verantwortlich für die Datenverarbeitung ist:",
+          "[Name bzw. Firma des Betreibers]\n[Straße und Hausnummer]\n[Postleitzahl und Ort]\nE-Mail: [datenschutz@ihre-domain.de]\nTelefon: [Telefonnummer]",
+          "[Falls benannt: Datenschutzbeauftragte/r mit Kontaktadresse]"
+        ]
+      },
+      {
+        "id": "daten",
+        "title": "2. Welche Daten wir verarbeiten und wofür",
+        "paras": [
+          "In Klammern steht jeweils die Rechtsgrundlage nach der Datenschutz-Grundverordnung (DSGVO). „Vertrag“ bedeutet: Wir brauchen die Daten, damit Sie Gehmeinsam nutzen können (Art. 6 Abs. 1 Buchst. b DSGVO)."
+        ],
+        "items": [
+          "Anmeldung: Ihre E-Mail-Adresse oder Telefonnummer. Damit schicken wir Ihnen einen Anmelde-Link oder einen Code. Ein Passwort gibt es nicht. (Vertrag)",
+          "Profil: Vor- oder Spitzname und Postleitzahl. Freiwillig: Geburtsjahr, Geschlecht, Profilbild und ein kurzer Text über Sie. Das Geschlecht nutzen wir nur für Gruppen „nur für Frauen“. (Vertrag; freiwillige Angaben: Ihre Einwilligung, Art. 6 Abs. 1 Buchst. a DSGVO)",
+          "Gruppen und Walks: Mitgliedschaften, Zusagen, angelegte Termine und Treffpunkte. (Vertrag)",
+          "Eingetragene Walks: Datum, Dauer, Kilometer und – nur wenn Sie eine Datei hochladen – die Strecke. Daraus berechnen wir Punkte und Abzeichen. (Vertrag)",
+          "Beiträge, Kommentare, Herzen und Fotos. Bei Fotos entfernen wir automatisch alle versteckten Zusatzdaten wie den Aufnahmeort (GPS). (Vertrag)",
+          "Kontakte, Blockierungen und Meldungen. Meldungen prüfen wir, um Gehmeinsam sicher zu halten. (Vertrag und berechtigtes Interesse, Art. 6 Abs. 1 Buchst. f DSGVO)",
+          "Standort im Browser: nur, wenn Sie auf „Meinen Standort verwenden“ tippen. Er wird nur für diese Suche genutzt und nicht gespeichert. (Einwilligung)",
+          "E-Mail-Benachrichtigungen, z. B. wenn ein Walk abgesagt wird. Hinweise auf neue Gruppen in Ihrer Nähe können Sie in den Einstellungen abschalten. (Vertrag)",
+          "Technische Daten: Bei der Anmeldung speichern wir IP-Adresse und Browser-Typ zu Ihrer Sitzung. Das schützt Ihr Konto und hilft uns, Missbrauch abzuwehren, z. B. massenhafte Anmeldeversuche. (berechtigtes Interesse)",
+          "Premium: Abo-Status, Laufzeit und Preis. (Vertrag) Rechnungsdaten bewahren wir so lange auf, wie es das Steuerrecht verlangt. (rechtliche Pflicht, Art. 6 Abs. 1 Buchst. c DSGVO)"
+        ]
+      },
+      {
+        "id": "empfaenger",
+        "title": "3. Wer uns hilft (Auftragsverarbeiter)",
+        "paras": [
+          "Wir geben Ihre Daten nicht weiter und verkaufen sie nicht. Für den Betrieb nutzen wir diese Dienstleister. Sie dürfen die Daten nur in unserem Auftrag und nach unseren Weisungen verarbeiten (Art. 28 DSGVO):"
+        ],
+        "items": [
+          "Railway (Railway Corporation, USA) – Server und Speicher für Fotos. [Serverregion eintragen, z. B. EU West]",
+          "Neon (Neon Inc., USA) – Datenbank. [Region eintragen, z. B. Frankfurt am Main]",
+          "Resend (Resend Inc., USA) – Versand von E-Mails, z. B. Anmelde-Links.",
+          "[Nur falls die SMS-Anmeldung aktiv ist: Name und Sitz des SMS-Anbieters] – Versand der Anmelde-Codes per SMS.",
+          "[Nur falls Premium mit Zahlung aktiv ist: Name und Sitz des Zahlungsanbieters] – Abwicklung der Zahlung. Ihre Karten- oder Kontodaten gibt es nur dort, nicht bei Gehmeinsam."
+        ],
+        "after": [
+          "Bei Anbietern in den USA stützt sich die Übermittlung auf [das EU-US Data Privacy Framework bzw. die EU-Standardvertragsklauseln – bitte je Anbieter prüfen und eintragen].",
+          "Karten: Wenn eine Seite eine Karte zeigt, lädt Ihr Browser die Kartenbilder direkt vom Kartendienst von OpenStreetMap (OpenStreetMap Foundation, Vereinigtes Königreich). Dabei wird Ihre IP-Adresse an diesen Server übertragen – das ist technisch nötig, um die Bilder zu laden. Wir geben keine weiteren Daten weiter. (berechtigtes Interesse an einer Karte ohne eigenen Kartenserver; für das Vereinigte Königreich gilt ein Angemessenheitsbeschluss der EU)"
+        ]
+      },
+      {
+        "id": "cookies",
+        "title": "4. Cookies und Speicher im Browser – warum es keinen Cookie-Hinweis gibt",
+        "paras": [
+          "Gehmeinsam setzt genau ein Cookie: das Anmelde-Cookie. Es sorgt dafür, dass Sie auf Ihrem Gerät angemeldet bleiben (bis zu 90 Tage, bei Nutzung verlängert es sich). Ohne dieses Cookie könnten Sie sich nicht anmelden.",
+          "Außerdem merkt sich Ihr Browser zwei Geräteeinstellungen: die Schriftgröße und die Anrede („Sie“ oder „Du“). Diese bleiben auf Ihrem Gerät und werden nicht ausgewertet.",
+          "Es gibt keine Werbe-, Statistik- oder Tracking-Cookies und keine Dienste, die Ihr Verhalten verfolgen. Alles, was wir speichern, ist für den von Ihnen gewünschten Dienst unbedingt erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG). Dafür ist keine Einwilligung nötig – deshalb gibt es keinen Cookie-Hinweis."
+        ]
+      },
+      {
+        "id": "dauer",
+        "title": "5. Wie lange wir Daten speichern",
+        "items": [
+          "Ihr Konto und Ihre Inhalte: bis Sie das Konto löschen. Dann löschen wir alles sofort – Profil, Einträge, Beiträge, Kommentare und Fotos.",
+          "Gruppen, die Sie gegründet haben, gehen an eine Moderatorin oder das älteste Mitglied. Gruppen ohne weitere Mitglieder werden gelöscht.",
+          "Anmelde-Links sind 20 Minuten gültig, SMS-Codes 10 Minuten.",
+          "Sitzungen (angemeldete Geräte) enden nach 90 Tagen ohne Nutzung oder sofort, wenn Sie sich abmelden.",
+          "Sicherungskopien der Datenbank: [Aufbewahrungsdauer eintragen, z. B. 7 Tage]. Danach sind gelöschte Daten auch dort verschwunden.",
+          "Server-Protokolle: [Aufbewahrungsdauer eintragen, z. B. 14 Tage].",
+          "Rechnungsdaten bei Premium: 10 Jahre (gesetzliche Aufbewahrungspflicht)."
+        ]
+      },
+      {
+        "id": "rechte",
+        "title": "6. Ihre Rechte",
+        "paras": ["Sie haben jederzeit diese Rechte. Vieles können Sie direkt in den Einstellungen selbst erledigen:"],
+        "items": [
+          "Auskunft (Art. 15 DSGVO) und Datenübertragbarkeit (Art. 20 DSGVO): Mit „Alle meine Daten herunterladen“ erhalten Sie alle gespeicherten Daten als Datei.",
+          "Berichtigung (Art. 16 DSGVO): Ändern Sie Ihre Angaben im Profil.",
+          "Löschung (Art. 17 DSGVO): Mit „Konto löschen“ wird alles endgültig gelöscht.",
+          "Einschränkung der Verarbeitung (Art. 18 DSGVO).",
+          "Widerspruch (Art. 21 DSGVO) gegen Verarbeitungen aus berechtigtem Interesse.",
+          "Widerruf einer Einwilligung (Art. 7 Abs. 3 DSGVO), z. B. indem Sie freiwillige Angaben löschen.",
+          "Beschwerde bei einer Datenschutz-Aufsichtsbehörde (Art. 77 DSGVO), z. B. [zuständige Landesbehörde am Sitz des Betreibers eintragen]."
+        ],
+        "after": ["Schreiben Sie uns gern: [datenschutz@ihre-domain.de]. Wir antworten innerhalb eines Monats."]
+      },
+      {
+        "id": "sicherheit",
+        "title": "7. So schützen wir Ihre Daten",
+        "items": [
+          "Verschlüsselte Verbindung (HTTPS) für alle Seiten.",
+          "Anmeldung ohne Passwort – es gibt kein Passwort, das gestohlen werden kann.",
+          "Fotos werden neu gespeichert; versteckte Zusatzdaten wie der Aufnahmeort werden dabei entfernt.",
+          "Fotos und Treffpunkte gibt es nur nach einer Prüfung, wer sie sehen darf – nie über offene Internet-Adressen."
+        ]
+      },
+      {
+        "id": "alter",
+        "title": "8. Mindestalter",
+        "paras": ["Gehmeinsam richtet sich an Erwachsene. Die Nutzung ist ab 16 Jahren möglich."]
+      }
+    ]
+  },
+
+  "imprint": {
+    "title": "Impressum und Quellen",
+    "lead": "Wer Gehmeinsam betreibt und welche freien Daten und Werke wir nutzen.",
+    "sections": [
+      {
+        "id": "anbieter",
+        "title": "Angaben gemäß § 5 DDG",
+        "paras": [
+          "[Name bzw. Firma des Betreibers]\n[Rechtsform, z. B. e. V., GmbH, Einzelunternehmen]\n[Straße und Hausnummer]\n[Postleitzahl und Ort]",
+          "Vertreten durch: [vertretungsberechtigte Person(en)]"
+        ]
+      },
+      {
+        "id": "kontakt",
+        "title": "Kontakt",
+        "paras": ["E-Mail: [hallo@ihre-domain.de]\nTelefon: [Telefonnummer]"]
+      },
+      {
+        "id": "register",
+        "title": "Register und Steuer",
+        "paras": [
+          "[Falls vorhanden: Registergericht und Registernummer, z. B. Amtsgericht Kassel, VR 1234]",
+          "[Falls vorhanden: Umsatzsteuer-Identifikationsnummer nach § 27a UStG]"
+        ]
+      },
+      {
+        "id": "inhalt",
+        "title": "Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV",
+        "paras": ["[Name]\n[Anschrift]"]
+      },
+      {
+        "id": "streit",
+        "title": "Verbraucherstreitbeilegung",
+        "paras": ["[Bitte zutreffend wählen:] Wir sind nicht bereit und nicht verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen."]
+      }
+    ],
+    "sourcesTitle": "Quellen",
+    "sourcesLead": "Gehmeinsam nutzt diese freien Daten und Werke. Vielen Dank an alle, die sie erstellen.",
+    "sources": [
+      { "name": "Postleitzahlen und Orte", "credit": "© GeoNames", "license": "Creative Commons Namensnennung 4.0 (CC BY 4.0)", "url": "https://www.geonames.org/" },
+      { "name": "Karten", "credit": "© OpenStreetMap-Mitwirkende", "license": "Open Database License (ODbL)", "url": "https://www.openstreetmap.org/copyright" },
+      { "name": "Schrift Atkinson Hyperlegible", "credit": "© Braille Institute of America", "license": "SIL Open Font License 1.1", "url": "https://www.brailleinstitute.org/freefont/" },
+      { "name": "Kartenanzeige Leaflet", "credit": "© Volodymyr Agafonkin und Mitwirkende", "license": "BSD-2-Clause-Lizenz", "url": "https://leafletjs.com/" }
+    ],
+    "licenseLabel": "Lizenz",
+    "openLink": "Webseite öffnen"
+  },
+
+  "help": {
+    "title": "Hilfe",
+    "lead": "Antworten auf häufige Fragen. Tippen oder klicken Sie auf eine Frage, um die Antwort zu sehen.",
+    "contactTitle": "Noch Fragen?",
+    "contactText": "Schreiben Sie uns: [hallo@ihre-domain.de]. Wir helfen gern weiter.",
+    "items": [
+      {
+        "id": "anmelden",
+        "q": "Wie melde ich mich an?",
+        "paras": ["Sie brauchen kein Passwort. Es gibt zwei Wege:"],
+        "steps": [
+          "Mit E-Mail: Geben Sie Ihre E-Mail-Adresse ein und tippen Sie auf „Anmelde-Link senden“. Öffnen Sie die E-Mail von Gehmeinsam und tippen Sie auf „Jetzt anmelden“. Der Link ist 20 Minuten gültig und funktioniert nur einmal.",
+          "Mit SMS (falls angeboten): Geben Sie Ihre Handynummer ein. Sie erhalten einen 6-stelligen Code per SMS. Tippen Sie ihn ein. Der Code ist 10 Minuten gültig."
+        ],
+        "after": [
+          "Keine E-Mail bekommen? Schauen Sie bitte auch im Spam-Ordner nach.",
+          "Sie bleiben auf Ihrem Gerät angemeldet. Auf einem fremden Computer melden Sie sich danach bitte in den Einstellungen ab."
+        ]
+      },
+      {
+        "id": "walk",
+        "q": "Was ist ein Walk?",
+        "paras": [
+          "Ein Walk ist ein verabredeter Spaziergang in flottem Schritt – meistens 45 bis 90 Minuten, gemeinsam mit einer Gruppe aus Ihrer Nähe. Niemand wird zurückgelassen.",
+          "Es gibt auch Walks zu zweit mit einem Gehpartner und „Gemeinsam auf Distanz“: Alle gehen zur gleichen Zeit, jede an ihrem Ort, und erzählen danach davon."
+        ]
+      },
+      {
+        "id": "tempo",
+        "q": "Was bedeuten „gemütlich“, „zügig“ und „flott“?",
+        "paras": ["Das Tempo sagt, wie schnell ungefähr gegangen wird:"],
+        "items": [
+          "Gemütlich: etwa 4 km pro Stunde – man kann sich gut unterhalten.",
+          "Zügig: etwa 5 km pro Stunde – man kommt leicht ins Schwitzen.",
+          "Flott: etwa 6 km pro Stunde und mehr – für Geübte."
+        ],
+        "after": ["Unsicher? Probieren Sie zuerst einen gemütlichen Walk aus."]
+      },
+      {
+        "id": "zusagen",
+        "q": "Wie sage ich zu einem Walk zu?",
+        "steps": [
+          "Öffnen Sie den Walk (unter „Walks“ oder in Ihrer Gruppe).",
+          "Tippen Sie auf den Knopf zum Zusagen. Bei Gruppen-Walks müssen Sie zuerst Mitglied der Gruppe sein.",
+          "Sie sehen eine Bestätigung. Jetzt sehen Sie auch den genauen Treffpunkt und können den Termin in Ihren Kalender übernehmen."
+        ],
+        "after": ["Sie können doch nicht? Nehmen Sie die Zusage an derselben Stelle zurück – so weiß die Gruppe Bescheid."]
+      },
+      {
+        "id": "eintragen",
+        "q": "Wie trage ich einen Walk ein – auch von meiner Uhr oder meinem Handy?",
+        "paras": ["Unter „Walk eintragen“ geben Sie Datum, Dauer und Kilometer ein. Dafür bekommen Sie Punkte und Abzeichen."],
+        "steps": [
+          "Von der Uhr oder einer Handy-App: Speichern Sie die Strecke dort als GPX-Datei („Exportieren“ oder „Teilen“ → GPX).",
+          "Wählen Sie bei „Walk eintragen“ die GPX-Datei aus (höchstens 5 MB).",
+          "Prüfen Sie Datum, Dauer und Kilometer und tippen Sie auf Speichern."
+        ],
+        "after": [
+          "Walks mit Ihrer Gruppe trägt die Gruppenleitung für alle ein – Sie müssen nichts tun.",
+          "Sie wählen beim Eintragen, wer den Walk und die Strecke sehen darf."
+        ]
+      },
+      {
+        "id": "einladen",
+        "q": "Wie lade ich jemanden ein?",
+        "steps": [
+          "Öffnen Sie Ihre Gruppe und tippen Sie auf „Einladen“.",
+          "Schicken Sie den Link per WhatsApp oder E-Mail – oder lesen Sie den Einladungscode am Telefon vor.",
+          "Für den Aushang im Gemeindehaus oder beim Bäcker können Sie ein Blatt mit QR-Code ausdrucken."
+        ],
+        "after": ["Wer den Link öffnet, kommt nach der Anmeldung direkt in Ihre Gruppe."]
+      },
+      {
+        "id": "premium",
+        "q": "Was kostet Premium – und wie kündige ich?",
+        "paras": [
+          "Gruppen, Walks, Eintragen und Abzeichen sind und bleiben kostenlos.",
+          "Premium kostet {{price}} im Monat und bietet zusätzlich ausführliche Statistiken, eigene Ziele und einen Jahresrückblick. Es gibt kein Probeabo, das sich heimlich verlängert.",
+          "Kündigen: Öffnen Sie die Seite „Premium“ und tippen Sie auf „Kündigen“. Ein Klick genügt. Premium bleibt bis zum Ende des bezahlten Monats aktiv."
+        ]
+      },
+      {
+        "id": "schrift",
+        "q": "Wie stelle ich die Schrift größer?",
+        "steps": [
+          "In Gehmeinsam: Profil → Einstellungen → Schriftgröße. Wählen Sie „Groß“ oder „Sehr groß“.",
+          "Im Browser am Computer: Halten Sie die Taste Strg (am Mac: cmd) gedrückt und drücken Sie die Plus-Taste (+). Mit Strg und Minus (−) wird es wieder kleiner, mit Strg und 0 normal.",
+          "Am Tablet oder Handy: Ziehen Sie zwei Finger auf dem Bildschirm auseinander."
+        ]
+      },
+      {
+        "id": "melden",
+        "q": "Wie melde oder blockiere ich jemanden?",
+        "paras": [
+          "Auf der Seite einer Person und bei jedem Beitrag finden Sie „Melden“ und „Blockieren“.",
+          "Blockieren: Sie sehen sich gegenseitig nicht mehr, und die Person kann Ihnen nicht folgen. Sie wird nicht benachrichtigt.",
+          "Melden: Unser Team prüft die Meldung vertraulich. Die gemeldete Person erfährt nicht, wer gemeldet hat.",
+          "Bei Gefahr rufen Sie bitte sofort die Polizei: 110."
+        ]
+      },
+      {
+        "id": "loeschen",
+        "q": "Wie lösche ich mein Konto?",
+        "steps": [
+          "Öffnen Sie Profil → Einstellungen → „Ihre Daten“.",
+          "Wenn Sie möchten, laden Sie vorher alle Ihre Daten herunter.",
+          "Tippen Sie zur Bestätigung LÖSCHEN in das Feld und dann auf „Konto endgültig löschen“."
+        ],
+        "after": ["Alles wird sofort gelöscht. Gruppen, die Sie gegründet haben, gehen an eine Moderatorin oder das älteste Mitglied."]
+      }
+    ]
+  }
+}

@@ -11,8 +11,18 @@ import { useQueryClient } from '@tanstack/react-query';
 
 /** Nur interne Pfade als Rücksprungziel erlauben (kein Weiterleiten auf fremde Seiten). */
 export function safeNext(next: string | null): string {
-  if (!next || !next.startsWith('/') || next.startsWith('//')) return '/';
-  return next;
+  if (!next || next.length > 2000 || !next.startsWith('/') || next.startsWith('//')) return '/';
+  // Browser lesen „\“ wie „/“ und ignorieren Tabs/Zeilenumbrüche: „/\evil.com“ oder „/\t/evil.com“
+  // würden sonst zu „//evil.com“ (fremde Seite).
+  if (/[\\\u0000-\u001f\u007f]/.test(next)) return '/';
+  try {
+    const base = 'https://gehmeinsam.invalid';
+    const url = new URL(next, base);
+    if (url.origin !== base) return '/';
+    return url.pathname + url.search + url.hash;
+  } catch {
+    return '/';
+  }
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;

@@ -1,0 +1,50 @@
+{
+  "log": {
+    "lead": "Trag ein, wie weit und wie lange du gegangen bist. Dafür gibt es Punkte und Abzeichen.",
+    "howQuestion": "Wie möchtest du deinen Walk eintragen?",
+    "mode_gpx_hint": "Datei von deiner Sportuhr oder deinem Handy übernehmen.",
+    "detailsTitle": "Angaben zu deinem Walk"
+  },
+  "gpx": {
+    "intro": "Eine GPX-Datei speichert deinen Weg. Viele Sportuhren und Handy-Apps können sie erstellen („Exportieren“ oder „Als GPX speichern“).",
+    "read": "Die Datei wurde gelesen. Bitte prüf die Angaben.",
+    "wrongType": "Das ist keine GPX-Datei. Bitte wähl eine Datei, deren Name auf .gpx endet.",
+    "accepted": "Die Angaben aus der Datei sind unten eingetragen. Du kannst sie noch ändern und dann speichern."
+  },
+  "fields": {
+    "dateHint": "An welchem Tag bist du gegangen?",
+    "durationHint": "Wie lange warst du unterwegs? Zum Beispiel 1 Stunde und 5 Minuten oder nur 65 Minuten.",
+    "visibilityHint": "Du kannst das später jederzeit ändern.",
+    "shareHint": "Deine Gruppe sieht dann Strecke und Dauer bei den Neuigkeiten der Gruppe."
+  },
+  "errors": {
+    "dateRequired": "Bitte gib das Datum an.",
+    "dateFuture": "Das Datum liegt in der Zukunft. Bitte trag nur Walks ein, die schon stattgefunden haben.",
+    "durationRequired": "Bitte gib an, wie lange du unterwegs warst (Stunden und/oder Minuten).",
+    "durationInvalid": "Bitte gib die Dauer nur mit Ziffern an.",
+    "kmRequired": "Bitte gib die Strecke in Kilometern an, zum Beispiel 5,2.",
+    "kmInvalid": "Bitte gib die Strecke als Zahl an, zum Beispiel 5,2.",
+    "kmTooLong": "Bitte trag höchstens {{max}} km pro Walk ein.",
+    "tooFast": "Das wären über 15 km pro Stunde. Bitte prüf Strecke und Dauer.",
+    "groupRequired": "Bitte wähl die Gruppe, in der du teilen möchtest.",
+    "implausible_activity": "Diese Angaben passen nicht zusammen. Bitte prüf Datum, Dauer und Strecke."
+  },
+  "map": {
+    "intro": "Klick nacheinander auf die Stellen deines Weges. Ohne Maus: Karte mit den Pfeiltasten verschieben und „Punkt in der Kartenmitte setzen“ wählen."
+  },
+  "success": {
+    "toast": "Dein Walk über {{km}} km ist gespeichert.",
+    "lead": "{{duration}} unterwegs am {{date}}. Schön, dass du gegangen bist!",
+    "newBadges_one": "Neues Abzeichen für deine Vitrine",
+    "newBadges_other": "{{count}} neue Abzeichen für deine Vitrine",
+    "challenges_one": "Du hast eine Mitmach-Aktion geschafft. Herzlichen Glückwunsch!",
+    "challenges_other": "Du hast {{count}} Mitmach-Aktionen geschafft. Herzlichen Glückwunsch!",
+    "shared": "Dein Walk wurde in deiner Gruppe geteilt."
+  },
+  "detail": {
+    "backToProfile": "Zurück zu meinem Profil",
+    "deleteText": "„{{title}}“ wird gelöscht. Deine Punkte und Abzeichen bleiben erhalten. Der Fortschritt in Mitmach-Aktionen wird neu berechnet.",
+    "saved": "Deine Änderungen wurden gespeichert.",
+    "groupLocked": "Strecke und Dauer hat die Gruppenleitung bestätigt. Du kannst sie hier nicht ändern."
+  }
+}

@@ -56,8 +56,13 @@ export const auth = betterAuth({
   },
   advanced: {
     useSecureCookies: isProd,
+    // Better Auth schaltet Origin-/CSRF-Prüfung unter NODE_ENV=test sonst ab. Ausdrücklich an lassen,
+    // damit Tests und End-to-End-Tests dieselben Schutzregeln prüfen wie die Produktion.
+    disableOriginCheck: false,
     database: { generateId: () => crypto.randomUUID() },
-    ipAddress: { ipAddressHeaders: ['x-forwarded-for'] },
+    // Die Client-IP setzt app.ts aus req.ip (trust proxy) – ein vom Browser mitgeschickter
+    // X-Forwarded-For-Kopf kann die Ratenbegrenzung so nicht umgehen.
+    ipAddress: { ipAddressHeaders: ['x-gehmeinsam-client-ip'] },
   },
   databaseHooks: {
     user: {
@@ -71,6 +76,8 @@ export const auth = betterAuth({
   plugins: [
     magicLink({
       expiresIn: 60 * 20,
+      // In der Datenbank nur den Hash speichern: ein Datenbank-Auszug enthält keine gültigen Anmelde-Links.
+      storeToken: 'hashed',
       sendMagicLink: async ({ email, url }) => {
         const du = (await anredeFor(email)) === 'du';
         const text = du
@@ -98,7 +105,8 @@ export const auth = betterAuth({
         getTempName: () => '',
       },
     }),
-    bearer(),
+    // Nur signierte Tokens annehmen: ein roher Sitzungs-Token aus einem Datenbank-Auszug reicht nicht.
+    bearer({ requireSignature: true }),
   ],
 });
 

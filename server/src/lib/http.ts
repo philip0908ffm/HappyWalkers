@@ -38,7 +38,9 @@ export function parse<T extends ZodType>(schema: T, data: unknown): z.infer<T> {
 }
 
 /** Fehlerbehandlung: einheitliches JSON `{ error: { code, details? } }`, keine internen Details. */
-export function errorHandler(err: unknown, _req: Request, res: Response, _next: NextFunction) {
+export function errorHandler(err: unknown, _req: Request, res: Response, next: NextFunction) {
+  // Antwort läuft schon (z. B. Datei-Download abgebrochen): Express beendet die Verbindung.
+  if (res.headersSent) return next(err);
   if (err instanceof ApiError) {
     res.status(err.status).json({ error: { code: err.code, details: err.details } });
     return;
@@ -54,6 +56,16 @@ export function errorHandler(err: unknown, _req: Request, res: Response, _next: 
   }
   if (anyErr?.type === 'entity.parse.failed') {
     res.status(400).json({ error: { code: 'invalid_input' } });
+    return;
+  }
+  // Fehler beim Hochladen (multer: falsches Feld, zu viele Dateien …) sind Eingabefehler, kein Serverfehler.
+  if ((err as { name?: string })?.name === 'MulterError') {
+    res.status(400).json({ error: { code: 'invalid_input' } });
+    return;
+  }
+  // Andere Client-Fehler aus Express/body-parser (z. B. falscher Zeichensatz): Status übernehmen, ohne Details.
+  if (typeof anyErr?.status === 'number' && anyErr.status >= 400 && anyErr.status < 500) {
+    res.status(anyErr.status).json({ error: { code: 'invalid_input' } });
     return;
   }
   console.error(err);

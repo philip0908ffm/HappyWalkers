@@ -211,6 +211,8 @@ export const walkSeries = pgTable('walk_series', {
   meetingDescription: text('meeting_description').notNull().default(''),
   meetingLat: doublePrecision('meeting_lat'),
   meetingLon: doublePrecision('meeting_lon'),
+  /** höchstens so viele Zusagen je Termin (null = unbegrenzt) */
+  maxParticipants: integer('max_participants'),
   active: boolean('active').notNull().default(true),
   createdBy: text('created_by').references(() => user.id, { onDelete: 'set null' }),
   createdAt: createdAt(),
@@ -330,24 +332,33 @@ export const posts = pgTable(
     visibility: text('visibility').notNull().default('group'),
     createdAt: createdAt(),
   },
-  (t) => [index('posts_group_idx').on(t.groupId, t.createdAt), index('posts_author_idx').on(t.authorId)],
+  (t) => [
+    index('posts_group_idx').on(t.groupId, t.createdAt),
+    index('posts_author_idx').on(t.authorId),
+    index('posts_walk_idx').on(t.walkId, t.createdAt),
+    index('posts_created_idx').on(t.createdAt),
+  ],
 );
 
-export const photos = pgTable('photos', {
-  id: id(),
-  ownerId: text('owner_id')
-    .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
-  postId: text('post_id').references(() => posts.id, { onDelete: 'cascade' }),
-  groupId: text('group_id').references(() => groups.id, { onDelete: 'cascade' }),
-  /** relativer Speicherpfad (nie direkt öffentlich) */
-  storageKey: text('storage_key').notNull(),
-  width: integer('width'),
-  height: integer('height'),
-  altText: text('alt_text').notNull().default(''),
-  visibility: text('visibility').notNull().default('group'),
-  createdAt: createdAt(),
-});
+export const photos = pgTable(
+  'photos',
+  {
+    id: id(),
+    ownerId: text('owner_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    postId: text('post_id').references(() => posts.id, { onDelete: 'cascade' }),
+    groupId: text('group_id').references(() => groups.id, { onDelete: 'cascade' }),
+    /** relativer Speicherpfad (nie direkt öffentlich) */
+    storageKey: text('storage_key').notNull(),
+    width: integer('width'),
+    height: integer('height'),
+    altText: text('alt_text').notNull().default(''),
+    visibility: text('visibility').notNull().default('group'),
+    createdAt: createdAt(),
+  },
+  (t) => [index('photos_post_idx').on(t.postId), index('photos_owner_idx').on(t.ownerId)],
+);
 
 export const likes = pgTable(
   'likes',
@@ -363,19 +374,23 @@ export const likes = pgTable(
   (t) => [primaryKey({ columns: [t.postId, t.userId] })],
 );
 
-export const comments = pgTable('comments', {
-  id: id(),
-  postId: text('post_id')
-    .notNull()
-    .references(() => posts.id, { onDelete: 'cascade' }),
-  authorId: text('author_id')
-    .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
-  text: text('text').notNull(),
-  deletedAt: timestamp('deleted_at', { withTimezone: true }),
-  deletedBy: text('deleted_by'),
-  createdAt: createdAt(),
-});
+export const comments = pgTable(
+  'comments',
+  {
+    id: id(),
+    postId: text('post_id')
+      .notNull()
+      .references(() => posts.id, { onDelete: 'cascade' }),
+    authorId: text('author_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    text: text('text').notNull(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true }),
+    deletedBy: text('deleted_by'),
+    createdAt: createdAt(),
+  },
+  (t) => [index('comments_post_idx').on(t.postId, t.createdAt)],
+);
 
 /** Folgen erst nach Bestätigung: status 'pending' | 'accepted'. */
 export const follows = pgTable(
@@ -390,7 +405,7 @@ export const follows = pgTable(
     status: text('status').notNull().default('pending'),
     createdAt: createdAt(),
   },
-  (t) => [primaryKey({ columns: [t.followerId, t.followeeId] })],
+  (t) => [primaryKey({ columns: [t.followerId, t.followeeId] }), index('follows_followee_idx').on(t.followeeId, t.status)],
 );
 
 export const blocks = pgTable(
@@ -404,18 +419,23 @@ export const blocks = pgTable(
       .references(() => user.id, { onDelete: 'cascade' }),
     createdAt: createdAt(),
   },
-  (t) => [primaryKey({ columns: [t.blockerId, t.blockedId] })],
+  (t) => [primaryKey({ columns: [t.blockerId, t.blockedId] }), index('blocks_blocked_idx').on(t.blockedId)],
 );
 
-export const reports = pgTable('reports', {
-  id: id(),
-  reporterId: text('reporter_id').references(() => user.id, { onDelete: 'set null' }),
-  targetType: text('target_type').notNull(),
-  targetId: text('target_id').notNull(),
-  reason: text('reason').notNull(),
-  status: text('status').notNull().default('open'),
-  createdAt: createdAt(),
-});
+/** Meldungen. Je Person und Ziel nur eine Meldung (doppeltes Melden ist idempotent). */
+export const reports = pgTable(
+  'reports',
+  {
+    id: id(),
+    reporterId: text('reporter_id').references(() => user.id, { onDelete: 'set null' }),
+    targetType: text('target_type').notNull(),
+    targetId: text('target_id').notNull(),
+    reason: text('reason').notNull(),
+    status: text('status').notNull().default('open'),
+    createdAt: createdAt(),
+  },
+  (t) => [uniqueIndex('reports_reporter_target_uq').on(t.reporterId, t.targetType, t.targetId)],
+);
 
 /* ------------------------------------------------------------------ */
 /* Spielelemente                                                       */
@@ -526,19 +546,24 @@ export const partnerOffers = pgTable('partner_offers', {
   updatedAt: updatedAt(),
 });
 
-export const partnerRequests = pgTable('partner_requests', {
-  id: id(),
-  offerId: text('offer_id')
-    .notNull()
-    .references(() => partnerOffers.id, { onDelete: 'cascade' }),
-  fromUserId: text('from_user_id')
-    .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
-  message: text('message').notNull().default(''),
-  status: text('status').notNull().default('pending'), // pending | accepted | declined
-  walkId: text('walk_id').references(() => walks.id, { onDelete: 'set null' }),
-  createdAt: createdAt(),
-});
+/** Anfrage an ein Gehpartner-Gesuch. Je Paar (Gesuch, Absenderin) nur eine Anfrage (idempotent). */
+export const partnerRequests = pgTable(
+  'partner_requests',
+  {
+    id: id(),
+    offerId: text('offer_id')
+      .notNull()
+      .references(() => partnerOffers.id, { onDelete: 'cascade' }),
+    fromUserId: text('from_user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    message: text('message').notNull().default(''),
+    status: text('status').notNull().default('pending'), // pending | accepted | declined
+    walkId: text('walk_id').references(() => walks.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+  },
+  (t) => [uniqueIndex('partner_requests_pair_uq').on(t.offerId, t.fromUserId)],
+);
 
 /* ------------------------------------------------------------------ */
 /* Premium                                                             */
@@ -548,7 +573,7 @@ export const subscriptions = pgTable('subscriptions', {
   userId: text('user_id')
     .primaryKey()
     .references(() => user.id, { onDelete: 'cascade' }),
-  status: text('status').notNull(), // active | canceled
+  status: text('status').notNull(), // active (auch gekündigt bis Laufzeitende, siehe cancelAtPeriodEnd) | expired
   provider: text('provider').notNull().default('dev'),
   providerRef: text('provider_ref'),
   priceCents: integer('price_cents').notNull(),

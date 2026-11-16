@@ -27,9 +27,30 @@ export type Config = z.infer<typeof schema>;
 
 export const config: Config = schema.parse(process.env);
 
-if (config.NODE_ENV === 'production' && config.BETTER_AUTH_SECRET.startsWith('dev-secret')) {
-  throw new Error('BETTER_AUTH_SECRET muss in Produktion gesetzt sein.');
-}
-
 export const isProd = config.NODE_ENV === 'production';
 export const isTest = config.NODE_ENV === 'test';
+
+/**
+ * Sicherheitsprüfung beim Start (Aylin Demir, docs/SICHERHEIT.md).
+ * Gibt Fehlermeldungen zurück, die einen Start in Produktion verhindern.
+ */
+export function productionConfigErrors(c: Config): string[] {
+  if (c.NODE_ENV !== 'production') return [];
+  const errors: string[] = [];
+  if (c.BETTER_AUTH_SECRET.startsWith('dev-secret') || c.BETTER_AUTH_SECRET.length < 32) {
+    errors.push('BETTER_AUTH_SECRET muss in Produktion gesetzt sein (mindestens 32 zufällige Zeichen).');
+  }
+  // Ohne Resend landen Anmelde-Links nur im Server-Protokoll – wer das Protokoll lesen kann, könnte sich anmelden.
+  if (!c.RESEND_API_KEY) errors.push('RESEND_API_KEY muss in Produktion gesetzt sein (sonst stehen Anmelde-Links im Protokoll).');
+  // 'console' schreibt SMS-Codes ins Protokoll – nur für die Entwicklung.
+  if (c.SMS_PROVIDER === 'console') errors.push("SMS_PROVIDER 'console' ist in Produktion nicht erlaubt (Codes im Protokoll).");
+  if (!c.APP_URL.startsWith('https://')) errors.push('APP_URL muss in Produktion mit https:// beginnen.');
+  return errors;
+}
+
+const startErrors = productionConfigErrors(config);
+if (startErrors.length) throw new Error(startErrors.join('\n'));
+
+if (isProd && config.BILLING_PROVIDER === 'dev') {
+  console.warn("[Sicherheit] BILLING_PROVIDER 'dev' schaltet Premium ohne Zahlung frei. Für den echten Betrieb einen Zahlungsanbieter anbinden.");
+}

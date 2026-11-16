@@ -181,10 +181,10 @@ Challenge = { id, slug, title, summary, type, target, unit: 'km'|'walks', scope,
 
 | GET | `/activities?limit&cursor&from&to` | eigene: `{ activities: Activity[], nextCursor }` |
 |---|---|---|
-| POST | `/activities` | `{ startedAt, durationMinutes, distanceKm, route?, title?, note?, visibility?, share?: boolean, groupId? }` → `{ activity, award: AwardResult, post: { id } \| null }`. Plausibilität: 0 < km ≤ 100, 1 ≤ min ≤ 1440, Datum nicht in der Zukunft, Tempo ≤ 15 km/h. `route` wird vereinfacht (max. 2000 Punkte). Ort (Stadt/Landkreis) aus Routenstart, sonst aus Profil-PLZ. `share: true` legt einen Beitrag (Feed) an. |
-| POST | `/activities/gpx` | multipart Feld `file` (≤ 5 MB) → `{ preview: { startedAt, durationMinutes, distanceKm, route } }` – nur auslesen, Speichern danach per `POST /activities`. Fehler `invalid_gpx`. |
-| GET | `/activities/:id` | eigene oder sichtbar nach `visibility` → `{ activity, author: PersonRef }` |
-| PATCH | `/activities/:id` | eigene: `{ title?, note?, visibility?, distanceKm?, durationMinutes?, startedAt? }` (nicht bei `source: 'group'` für km/Dauer) |
+| POST | `/activities` | `{ startedAt, durationMinutes, distanceKm, route?, title?, note?, visibility? (Standard `group`), share?: boolean, groupId?, source?: 'manual'\|'gpx' }` → **201** `{ activity, award: AwardResult, post: { id } \| null }`. `award.completedChallenges` enthält die **IDs** der abgeschlossenen Challenges. Plausibilitätsfehler: 400 `implausible_activity` mit `details: [{ field, code: 'out_of_range'\|'in_future'\|'too_old'\|'too_fast' }]` (Typfehler weiterhin `invalid_input`). `share` mit `groupId` ohne aktive Mitgliedschaft → 403 `not_group_member`. Plausibilität: 0 < km ≤ 100, 1 ≤ min ≤ 1440, Datum nicht in der Zukunft, Tempo ≤ 15 km/h. `route` wird vereinfacht (max. 2000 Punkte). Ort (Stadt/Landkreis) aus Routenstart, sonst aus Profil-PLZ. `share: true` legt einen Beitrag (Feed) an. |
+| POST | `/activities/gpx` | multipart Feld `file` (≤ 5 MB) → `{ preview: { startedAt, durationMinutes, distanceKm, route } }` – nur auslesen, Speichern danach per `POST /activities` (mit `source: 'gpx'`). `startedAt`/`durationMinutes` sind `null`, wenn die Datei keine Zeitstempel enthält. Fehler `invalid_gpx` (kaputtes XML, keine Punkte, DTD/Entitäten werden abgelehnt), zu groß → 413 `file_too_large`. |
+| GET | `/activities/:id` | eigene oder sichtbar nach `visibility` → `{ activity, author: PersonRef }`. `group` heißt bei Walks: sichtbar für aktive Mitglieder **gemeinsamer** Gruppen; Blockieren gilt immer; sonst 404 `activity_not_found`. |
+| PATCH | `/activities/:id` | eigene: `{ title?, note?, visibility?, distanceKm?, durationMinutes?, startedAt? }` → `{ activity }`. Bei `source: 'group'` sind km/Dauer/Startzeit fest → 400 `invalid_input` (`details[0].code = 'group_walk_locked'`). Neue `visibility` gilt auch für den zugehörigen Beitrag. |
 | DELETE | `/activities/:id` | eigene → `{ ok }` (Punkte bleiben, Challenge-Fortschritt wird neu berechnet) |
 
 ### Punkte & Abzeichen – `server/src/services/gamification.ts`, `server/src/modules/badges.ts`
@@ -200,32 +200,40 @@ Challenge = { id, slug, title, summary, type, target, unit: 'km'|'walks', scope,
 Regeln (in `gamification.ts`, idempotent über `points_ledger`):
 Punkte nach `shared/src/points.ts`; Abzeichen nach `shared/src/badges.ts`; regionale Wappen
 `region:<Landkreis>` für jeden Landkreis mit mindestens einem Walk; `places_3`/`places_10` für Anzahl Orte;
-`week_streak_4`: 4 Wochen in Folge mind. 1 Walk. Neues Abzeichen → Benachrichtigung `badge`.
+`week_streak_4`: 4 Kalenderwochen (Mo–So, Europe/Berlin) in Folge mind. 1 Walk. Neues Abzeichen → Punkte
+(`POINTS.badge`) + Benachrichtigung `badge` `{ key, label }`. Abgeschlossene Challenge → Punkte der Challenge,
+Abzeichen `challenge_done`, Benachrichtigung `challenge_done` `{ challengeId, title }`. Beigetretene Challenges
+berücksichtigen nachgetragene Walks noch 3 Tage nach Ende. Urkunde/Teil-Bild nutzen deutsche Namen aus
+`BADGE_NAMES` in `modules/badges.ts` (z. B. „Erster 5-km-Walk“, „Wappen Landkreis Göttingen“).
 
 ### Challenges – `server/src/modules/challenges.ts`
 
 | GET | `/challenges` | `{ active: Challenge[], past: Challenge[] }` – allgemeine, Stadt- (eigene Profil-Stadt) und Gruppen-Challenges (eigene Gruppen) |
 |---|---|---|
-| GET | `/challenges/:id` | `{ challenge, leaderboard: [{ rank, name, progress, isMe }] }` – Name = Anzeigename bzw. „Teilnehmerin“ bei `leaderboardMode: hidden`; Top 20 + eigene Zeile |
-| POST | `/challenges/:id/join` | idempotent → `{ challenge }` (Fortschritt wird aus vorhandenen Walks im Zeitraum berechnet) |
+| GET | `/challenges/:id` | `{ challenge, leaderboard: [{ rank, name, progress, isMe }] }` – Name = Anzeigename bzw. **„Teilnehmende Person“** (neutral) bei `leaderboardMode: hidden` oder Blockierung; die eigene Zeile zeigt immer den eigenen Namen. Gleicher Fortschritt → gleicher Rang. Top 20 + eigene Zeile. Keine Personen-IDs. |
+| POST | `/challenges/:id/join` | idempotent → `{ challenge }` (Fortschritt wird aus vorhandenen Walks im Zeitraum berechnet, kann direkt abschließen). Beendet → 409 `challenge_ended`. |
 | DELETE | `/challenges/:id/join` | `{ ok }` |
-| POST | `/challenges` | Gruppenleitung: `{ groupId, title, summary, type, target, startsAt, endsAt }` → `{ challenge }` |
+| POST | `/challenges` | Gruppenleitung: `{ groupId, title, summary, type, target, startsAt, endsAt }` → **201** `{ challenge }` (Ziel-Obergrenzen: single_distance 100 km, walk_count 500, total_distance 5000 km; höchstens 1 Jahr). `GET /challenges` → `past`: die letzten 20 beendeten (sichtbare oder beigetretene). |
 
 ### Premium – `server/src/modules/premium.ts`
 
-| GET | `/premium/status` | `{ premium: boolean, subscription, price: { priceCents, currency, interval }, features: string[] }` |
+| GET | `/premium/status` | `{ premium: boolean, subscription, price: { priceCents, currency, interval }, features: ['stats','goals','year_review','share_card'] }`, `subscription = { status: 'active'\|'expired', active, provider, priceCents, currency, interval, currentPeriodEnd, cancelAtPeriodEnd } \| null`. Beim Lesen wird ein abgelaufenes, nicht gekündigtes `dev`-Abo um je einen Monat verlängert; gekündigt + abgelaufen → `expired`. |
 |---|---|---|
 | POST | `/premium/subscribe` | startet Monatsabo (kein Probeabo). Anbieter `dev`: sofort aktiv, Laufzeit 1 Monat, verlängert sich monatlich bis zur Kündigung → `{ subscription }` |
-| POST | `/premium/cancel` | ein Klick: `cancelAtPeriodEnd = true`, aktiv bis Laufzeitende → `{ subscription }` |
-| POST | `/premium/resume` | Kündigung zurücknehmen |
-| GET | `/premium/stats?range=week\|month\|year` | 402 ohne Premium. `{ totals: { walks, km, minutes, avgSpeedKmh }, series: [{ label, start, walks, km, avgSpeedKmh }], speedTrend: [{ label, avgSpeedKmh }] }` |
-| GET | `/premium/goals` | `{ goals: [{ id, period: 'week'\|'month', metric: 'km'\|'walks', target, progress }] }` |
-| PUT | `/premium/goals` | `{ period, metric, target }` (Upsert) → `{ goals }`; DELETE `/premium/goals/:id` |
-| GET | `/premium/year-review?year` | `{ year, walks, km, minutes, groupWalks, badges: BadgeEarned[], bestMonth, longestWalk, places: string[] }` |
+| POST | `/premium/cancel` | ein Klick: `cancelAtPeriodEnd = true`, aktiv bis Laufzeitende → `{ subscription }` (idempotent; ohne aktives Abo 402 `premium_required`) |
+| POST | `/premium/resume` | Kündigung zurücknehmen → `{ subscription }` (ohne aktives Abo 402) |
+| GET | `/premium/stats?range=week\|month\|year` | 402 ohne Premium. `{ range, totals: { walks, km, minutes, avgSpeedKmh }, series: [{ label, start, walks, km, avgSpeedKmh }], speedTrend: [{ label, avgSpeedKmh }] }`. `week` = letzte 12 Kalenderwochen (label `2026-W47`), `month` = letzte 12 Monate (`2026-11`), `year` = letzte 5 Jahre (`2026`); ältester zuerst, letzter = laufender Abschnitt (Europe/Berlin). `avgSpeedKmh` ist `null` ohne Walks. Standard `month`. |
+| GET | `/premium/goals` | `{ goals: [{ id, period: 'week'\|'month', metric: 'km'\|'walks', target, progress, periodStart, periodEnd }] }` (Fortschritt im laufenden Abschnitt) |
+| PUT | `/premium/goals` | `{ period, metric, target }` (Upsert) → `{ goals }`; DELETE `/premium/goals/:id` → `{ ok }` |
+| GET | `/premium/year-review?year` | `{ year, walks, km, minutes, groupWalks, badges: BadgeEarned[], bestMonth: { month: 'YYYY-MM', km, walks } \| null, longestWalk: { id, distanceKm, durationMinutes, startedAt } \| null, places: string[] }` |
 | GET | `/premium/share-card.png?range=month\|year` | Bild „Mein Fortschritt“ (1080×1080) zum Teilen |
 
+Premium-Routen `stats`, `goals`, `year-review`, `share-card.png` liegen hinter der Middleware `requirePremium`
+(exportiert aus `modules/premium.ts`). Walks eintragen, Gruppen, Abzeichen und Challenges sind immer kostenlos.
+
 Fehlercodes Paket B: `invalid_gpx`, `activity_not_found`, `implausible_activity`, `challenge_not_found`,
-`challenge_ended`, `premium_required`, `badge_not_found`, `already_premium`.
+`challenge_ended`, `premium_required`, `badge_not_found`, `already_premium`, `billing_unavailable`
+(503, `BILLING_PROVIDER=none`).
 
 ---
 
@@ -250,43 +258,52 @@ PublicProfile = { id, displayName, avatarUrl, city: string | null, bio: string |
 
 ### Feed & Beiträge – `server/src/modules/social.ts`
 
-| GET | `/feed?groupId&walkId&userId&cursor` | sichtbare Beiträge, neueste zuerst → `{ posts: Post[], nextCursor }`. Ohne Filter: eigene Gruppen + bestätigte Kontakte + eigene. `walkId`: Feed eines „Gemeinsam auf Distanz“-Termins. |
+| GET | `/feed?groupId&walkId&userId&limit&cursor` | sichtbare Beiträge, neueste zuerst → `{ posts: Post[], nextCursor }` (`limit` 1–50, Standard 20). Ohne Filter: eigene Gruppen + bestätigte Kontakte (Sichtbarkeit `followers`/`public`) + eigene. `groupId`: nur aktive Mitglieder (sonst 403 `not_group_member`). `walkId`: Feed eines „Gemeinsam auf Distanz“-Termins (alle, die den Walk sehen dürfen; sonst 404 `walk_not_found`). `userId`: sichtbare Beiträge dieser Person (blockiert → 404 `user_not_found`). |
 |---|---|---|
-| POST | `/posts` | `{ text, visibility, groupId?, walkId?, activityId? }` → `{ post }` (Gruppe: nur aktive Mitglieder) |
+| POST | `/posts` | `{ text, visibility?, groupId?, walkId?, activityId?, photoIds? }` → 201 `{ post }`. `visibility` Standard `group`. Gruppe: nur aktive Mitglieder (403 `not_group_member`). `activityId`: nur eigene (sonst 404 `activity_not_found`). `photoIds`: zuvor per `POST /photos` hochgeladene eigene Fotos ohne Beitrag anhängen (max. 10). Text darf leer sein, wenn Aktivität oder Fotos dabei sind. Gruppen-Walk (`walkId`) setzt `groupId` automatisch. |
 | DELETE | `/posts/:id` | Autorin oder Gruppenleitung → `{ ok }` |
 | PUT / DELETE | `/posts/:id/like` | Herz setzen/entfernen, idempotent → `{ likeCount, likedByMe }` |
 | GET | `/posts/:id/comments` | `{ comments: Comment[] }` |
-| POST | `/posts/:id/comments` | `{ text }` → `{ comment }` (benachrichtigt Autorin) |
+| POST | `/posts/:id/comments` | `{ text }` (getrimmt, 1–1000 Zeichen, reiner Text) → 201 `{ comment }` (benachrichtigt Autorin) |
 | DELETE | `/comments/:id` | Autorin oder Gruppenleitung; **keine Benachrichtigung**, Kommentar verschwindet einfach → `{ ok }` |
 
 ### Personen, Folgen, Blockieren, Melden
 
-| GET | `/users/:id` | `{ profile: PublicProfile }` – Details (Ort, Abzeichen, Statistik) nur nach Profil-Sichtbarkeit; blockiert → 404. **Nie** Alter/Geburtsjahr/Geschlecht/Kontaktdaten. |
+| GET | `/users/:id` | `{ profile: PublicProfile }` – Details (Ort, Abzeichen, Statistik) nur nach Profil-Sichtbarkeit (`private`: nur Name, Profilbild falls erlaubt, gemeinsame Gruppen; `followers`: Details für bestätigte Kontakte; `public`: für alle Angemeldeten); von der Person blockiert → 404 `user_not_found`. Wer selbst blockiert hat, bekommt nur `{ displayName, isBlocked: true }` (zum Aufheben). **Nie** Alter/Geburtsjahr/Geschlecht/Kontaktdaten. |
 |---|---|---|
-| POST | `/users/:id/follow` | Folge-Anfrage → `{ followStatus: 'pending' }` (immer Bestätigung nötig); idempotent |
+| POST | `/users/:id/follow` | Folge-Anfrage → `{ followStatus }` (neu immer `'pending'`, Bestätigung nötig; bei bestehendem Folgen der aktuelle Status); idempotent. Sich selbst → 400 `cannot_follow_self`; selbst blockiert → 409 `blocked`; von der Person blockiert → 404 `user_not_found`. |
 | DELETE | `/users/:id/follow` | entfolgen / Anfrage zurückziehen |
-| GET | `/follows` | `{ following: PersonRef[], followers: PersonRef[], requests: PersonRef[] }` |
-| POST | `/follows/requests/:userId/accept` · `/decline` | `{ ok }` |
+| GET | `/follows` | `{ following: PersonRef[], followers: PersonRef[], requests: PersonRef[], sentRequests: PersonRef[] }` (`requests` = eingehende, `sentRequests` = eigene offene Anfragen) |
+| POST | `/follows/requests/:userId/accept` · `/decline` | `{ ok }` (idempotent; accept ohne Anfrage → 404 `user_not_found`; Ablehnen benachrichtigt nicht) |
 | DELETE | `/follows/followers/:userId` | jemanden als Kontakt entfernen |
 | POST / DELETE | `/users/:id/block` | blockieren / aufheben → `{ ok }`. Blockieren entfernt Folgen in beide Richtungen; Inhalte sind gegenseitig unsichtbar. |
 | GET | `/blocks` | `{ blocked: PersonRef[] }` |
-| POST | `/reports` | `{ targetType: 'user'\|'post'\|'comment'\|'group'\|'photo'\|'walk', targetId, reason }` → `{ ok }` |
+| POST | `/reports` | `{ targetType: 'user'\|'post'\|'comment'\|'group'\|'photo'\|'walk', targetId, reason (1–1000) }` → `{ ok }`; idempotent je Person+Ziel; unbekanntes Ziel → 404 `<typ>_not_found` |
 
 ### Fotos – `server/src/modules/photos.ts`
 
-| POST | `/photos` | multipart: `photo` (≤ 10 MB, JPG/PNG/WebP/HEIC), `altText`, `visibility` (Standard `group`), `postId?`, `groupId?` → `{ photo }`. EXIF/GPS wird entfernt (Neu-Kodierung). |
+| POST | `/photos` | multipart: `photo` (≤ 10 MB, JPG/PNG/WebP/HEIC), `altText` (≤ 300), `visibility` (Standard `group`), `postId?` (eigener Beitrag; übernimmt dessen Gruppe), `groupId?` (nur aktive Mitglieder) → 201 `{ photo }`. EXIF/GPS wird entfernt (Neu-Kodierung). Fehler: falscher Typ/kein Bild → 400 `invalid_image`, zu groß → 413 `file_too_large`. |
 |---|---|---|
-| GET | `/photos/:id` | Bild, nur mit Sichtrecht (`canSeeContent`) |
+| GET | `/photos/:id` | Bild (`image/jpeg`, `Cache-Control: private, max-age=3600`, `nosniff`), nur mit Sichtrecht (`canSeeContent`), sonst 404 `photo_not_found` |
 | PATCH | `/photos/:id` | `{ altText?, visibility? }` (Eigentümerin) |
 | DELETE | `/photos/:id` | Eigentümerin oder Gruppenleitung |
-| POST | `/photos/avatar` | multipart `photo` → `{ avatarUrl }`; DELETE `/photos/avatar` |
+| POST | `/photos/avatar` | multipart `photo` → `{ avatarUrl }` (`/api/v1/photos/avatar/<userId>?v=<version>`); DELETE `/photos/avatar` |
 | GET | `/photos/avatar/:userId` | Profilbild: sichtbar für sich selbst, gemeinsame Gruppe, bestätigte Kontakte oder öffentliches Profil; sonst 404 |
 
 ### Benachrichtigungen – `server/src/modules/notifications.ts`
 
-| GET | `/notifications` | `{ notifications: [{ id, type, data, readAt, createdAt }], unread: number }` (letzte 50) |
+| GET | `/notifications` | `{ notifications: [{ id, type, data, actor: PersonRef \| null, readAt, createdAt }], unread: number }` (letzte 50). `actor` aus `data.actorId`; Hinweise blockierter Personen werden ausgeblendet. |
 |---|---|---|
 | GET | `/notifications/unread-count` | `{ unread }` |
 | POST | `/notifications/read-all` | `{ ok }` |
+| POST | `/notifications/:id/read` | eine als gelesen markieren → `{ ok }` |
 
-Fehlercodes Paket C: `post_not_found`, `comment_not_found`, `photo_not_found`, `user_not_found`, `cannot_follow_self`, `blocked`.
+Fehlercodes Paket C: `post_not_found`, `comment_not_found`, `photo_not_found`, `user_not_found`, `cannot_follow_self`, `blocked`,
+`invalid_image`, `file_too_large` (sowie aus Paket A/B: `not_group_member`, `group_not_found`, `walk_not_found`, `activity_not_found`).
+
+Benachrichtigungstypen aus Paket C (`data`): `like` `{ postId, actorId }`, `comment` `{ postId, commentId, actorId }`,
+`follow_request` `{ actorId }`, `follow_accepted` `{ actorId }`. Ein Herz erzeugt je Person und Beitrag höchstens einen Hinweis;
+gelöschte Kommentare und zurückgezogene Folge-Anfragen entfernen ihren Hinweis wieder.
+
+Hilfsfunktionen für andere Module: `server/src/lib/people.ts` – `personRefs(ids, viewerId?)` (gesammelt, ohne N+1),
+`personRef`, `canSeeAvatar`, `sharesActiveGroup`, `blockedIds`, `loadViewerContext` + `canSeeWith` (Listen-Variante von `canSeeContent`).

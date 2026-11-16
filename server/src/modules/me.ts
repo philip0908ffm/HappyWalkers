@@ -133,6 +133,35 @@ router.get('/export', async (req, res) => {
     gehpartner: await db.select().from(s.partnerOffers).where(eq(s.partnerOffers.userId, userId)),
     ziele: await db.select().from(s.goals).where(eq(s.goals.userId, userId)),
     abo: await db.select().from(s.subscriptions).where(eq(s.subscriptions.userId, userId)),
+    // Ergänzt (Sicherheitsprüfung): weitere Daten, die sich auf die Person beziehen
+    benachrichtigungen: await db.select().from(s.notifications).where(eq(s.notifications.userId, userId)),
+    gehpartnerAnfragenGesendet: await db.select().from(s.partnerRequests).where(eq(s.partnerRequests.fromUserId, userId)),
+    gehpartnerAnfragenErhalten: await db
+      .select({ request: s.partnerRequests })
+      .from(s.partnerRequests)
+      .innerJoin(s.partnerOffers, eq(s.partnerOffers.id, s.partnerRequests.offerId))
+      .where(eq(s.partnerOffers.userId, userId))
+      .then((rows) => rows.map((r) => r.request)),
+    angelegteTermine: await db.select().from(s.walks).where(eq(s.walks.createdBy, userId)),
+    angelegteSerien: await db.select().from(s.walkSeries).where(eq(s.walkSeries.createdBy, userId)),
+    gegruendeteGruppen: await db
+      .select({ id: s.groups.id, name: s.groups.name, erstelltAm: s.groups.createdAt })
+      .from(s.groups)
+      .where(eq(s.groups.createdBy, userId)),
+    angelegteChallenges: await db.select().from(s.challenges).where(eq(s.challenges.createdBy, userId)),
+    einladungen: await db
+      .select({ id: s.groupInvites.id, gruppe: s.groupInvites.groupId, email: s.groupInvites.email, gueltigBis: s.groupInvites.expiresAt, erstelltAm: s.groupInvites.createdAt })
+      .from(s.groupInvites)
+      .where(or(eq(s.groupInvites.createdBy, userId), eq(s.groupInvites.email, u.email))),
+    // Angemeldete Geräte – ohne Sitzungs-Token
+    anmeldungen: await db
+      .select({ erstelltAm: s.session.createdAt, gueltigBis: s.session.expiresAt, ipAdresse: s.session.ipAddress, geraet: s.session.userAgent })
+      .from(s.session)
+      .where(eq(s.session.userId, userId)),
+    anmeldeverfahren: await db
+      .select({ verfahren: s.account.providerId, erstelltAm: s.account.createdAt })
+      .from(s.account)
+      .where(eq(s.account.userId, userId)),
   };
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
   res.setHeader('Content-Disposition', 'attachment; filename="gehmeinsam-meine-daten.json"');
@@ -147,7 +176,9 @@ router.get('/export', async (req, res) => {
 router.delete('/', async (req, res) => {
   parse(z.object({ confirm: z.literal('LÖSCHEN') }), req.body);
   const userId = me(req).id;
+  const fileKeys: (string | null)[] = [];
   await db.transaction(async (tx) => {
+    const deletedGroups: string[] = [];
     const founded = await tx
       .select({ groupId: s.groupMembers.groupId })
       .from(s.groupMembers)
@@ -165,16 +196,37 @@ router.delete('/', async (req, res) => {
           .set({ role: 'founder' })
           .where(and(eq(s.groupMembers.groupId, groupId), eq(s.groupMembers.userId, successor.userId)));
       } else {
-        await tx.delete(s.groups).where(eq(s.groups.id, groupId));
+        deletedGroups.push(groupId);
       }
     }
-    const photoKeys = await tx.select({ key: s.photos.storageKey }).from(s.photos).where(eq(s.photos.ownerId, userId));
+
+    // Alle Dateien einsammeln, deren Datenbankzeilen gleich mitgelöscht werden (Kaskade):
+    // eigene Fotos, Fotos an eigenen Beiträgen, Fotos/Bild aufgelöster Gruppen und das Profilbild.
+    const [u] = await tx.select({ email: s.user.email, phone: s.user.phoneNumber }).from(s.user).where(eq(s.user.id, userId));
+    const [p] = await tx.select({ avatar: s.profile.avatarPath }).from(s.profile).where(eq(s.profile.userId, userId));
+    fileKeys.push(p?.avatar ?? null);
+    const myPosts = tx.select({ id: s.posts.id }).from(s.posts).where(eq(s.posts.authorId, userId));
+    const photoConds = [eq(s.photos.ownerId, userId), inArray(s.photos.postId, myPosts)];
+    if (deletedGroups.length) {
+      const groupPosts = tx.select({ id: s.posts.id }).from(s.posts).where(inArray(s.posts.groupId, deletedGroups));
+      photoConds.push(inArray(s.photos.groupId, deletedGroups), inArray(s.photos.postId, groupPosts));
+      const groupPhotos = await tx.select({ key: s.groups.photoPath }).from(s.groups).where(inArray(s.groups.id, deletedGroups));
+      fileKeys.push(...groupPhotos.map((g) => g.key));
+      await tx.delete(s.groups).where(inArray(s.groups.id, deletedGroups));
+    }
+    const photoKeys = await tx.select({ key: s.photos.storageKey }).from(s.photos).where(or(...photoConds));
+    fileKeys.push(...photoKeys.map((ph) => ph.key));
+
+    // Einladungen an die eigene E-Mail-Adresse und offene SMS-Codes enthalten Kontaktdaten → mitlöschen.
+    if (u?.email) await tx.delete(s.groupInvites).where(eq(s.groupInvites.email, u.email));
+    if (u?.phone) await tx.delete(s.verification).where(eq(s.verification.identifier, `phone-number-otp-${u.phone}`));
+
+    // Sitzungen, Konten, Profil, Einträge, Beiträge … werden per ON DELETE CASCADE entfernt.
     await tx.delete(s.user).where(eq(s.user.id, userId));
-    res.locals.photoKeys = photoKeys.map((p) => p.key);
   });
-  // Dateien nach erfolgreicher Löschung entfernen
+  // Dateien erst nach erfolgreicher Löschung der Datenbankzeilen entfernen
   const { deleteStoredFiles } = await import('../services/storage.js');
-  await deleteStoredFiles(res.locals.photoKeys as string[]);
+  await deleteStoredFiles(fileKeys);
   res.json({ ok: true });
 });
 
