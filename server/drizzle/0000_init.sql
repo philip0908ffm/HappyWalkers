@@ -338,6 +338,7 @@ CREATE TABLE "walk_series" (
 	"meeting_description" text DEFAULT '' NOT NULL,
 	"meeting_lat" double precision,
 	"meeting_lon" double precision,
+	"max_participants" integer,
 	"active" boolean DEFAULT true NOT NULL,
 	"created_by" text,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
@@ -425,13 +426,22 @@ ALTER TABLE "walks" ADD CONSTRAINT "walks_series_id_walk_series_id_fk" FOREIGN K
 ALTER TABLE "walks" ADD CONSTRAINT "walks_created_by_user_id_fk" FOREIGN KEY ("created_by") REFERENCES "public"."user"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "activities_user_idx" ON "activities" USING btree ("user_id","started_at");--> statement-breakpoint
 CREATE UNIQUE INDEX "activities_user_walk_uq" ON "activities" USING btree ("user_id","walk_id");--> statement-breakpoint
+CREATE INDEX "blocks_blocked_idx" ON "blocks" USING btree ("blocked_id");--> statement-breakpoint
+CREATE INDEX "comments_post_idx" ON "comments" USING btree ("post_id","created_at");--> statement-breakpoint
+CREATE INDEX "follows_followee_idx" ON "follows" USING btree ("followee_id","status");--> statement-breakpoint
 CREATE UNIQUE INDEX "goals_user_period_metric" ON "goals" USING btree ("user_id","period","metric");--> statement-breakpoint
 CREATE INDEX "group_members_user_idx" ON "group_members" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "groups_geo_idx" ON "groups" USING btree ("lat","lon");--> statement-breakpoint
 CREATE INDEX "notifications_user_idx" ON "notifications" USING btree ("user_id","created_at");--> statement-breakpoint
+CREATE UNIQUE INDEX "partner_requests_pair_uq" ON "partner_requests" USING btree ("offer_id","from_user_id");--> statement-breakpoint
+CREATE INDEX "photos_post_idx" ON "photos" USING btree ("post_id");--> statement-breakpoint
+CREATE INDEX "photos_owner_idx" ON "photos" USING btree ("owner_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "points_unique_ref" ON "points_ledger" USING btree ("user_id","reason","ref");--> statement-breakpoint
 CREATE INDEX "posts_group_idx" ON "posts" USING btree ("group_id","created_at");--> statement-breakpoint
 CREATE INDEX "posts_author_idx" ON "posts" USING btree ("author_id");--> statement-breakpoint
+CREATE INDEX "posts_walk_idx" ON "posts" USING btree ("walk_id","created_at");--> statement-breakpoint
+CREATE INDEX "posts_created_idx" ON "posts" USING btree ("created_at");--> statement-breakpoint
+CREATE UNIQUE INDEX "reports_reporter_target_uq" ON "reports" USING btree ("reporter_id","target_type","target_id");--> statement-breakpoint
 CREATE INDEX "walks_starts_idx" ON "walks" USING btree ("starts_at");--> statement-breakpoint
 CREATE INDEX "walks_geo_idx" ON "walks" USING btree ("lat","lon");--> statement-breakpoint
 CREATE INDEX "walks_group_idx" ON "walks" USING btree ("group_id");--> statement-breakpoint

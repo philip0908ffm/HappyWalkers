@@ -1,5 +1,5 @@
 {
-  "id": "9212f323-bee3-4366-8f3a-3a2507cba710",
+  "id": "610c537c-7a43-437d-850e-14e13c85d454",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -305,7 +305,23 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "blocks_blocked_idx": {
+          "name": "blocks_blocked_idx",
+          "columns": [
+            {
+              "expression": "blocked_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "blocks_blocker_id_user_id_fk": {
           "name": "blocks_blocker_id_user_id_fk",
@@ -611,7 +627,29 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "comments_post_idx": {
+          "name": "comments_post_idx",
+          "columns": [
+            {
+              "expression": "post_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "comments_post_id_posts_id_fk": {
           "name": "comments_post_id_posts_id_fk",
@@ -677,7 +715,29 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "follows_followee_idx": {
+          "name": "follows_followee_idx",
+          "columns": [
+            {
+              "expression": "followee_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "follows_follower_id_user_id_fk": {
           "name": "follows_follower_id_user_id_fk",
@@ -1593,7 +1653,29 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "partner_requests_pair_uq": {
+          "name": "partner_requests_pair_uq",
+          "columns": [
+            {
+              "expression": "offer_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "from_user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "partner_requests_offer_id_partner_offers_id_fk": {
           "name": "partner_requests_offer_id_partner_offers_id_fk",
@@ -1709,7 +1791,38 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "photos_post_idx": {
+          "name": "photos_post_idx",
+          "columns": [
+            {
+              "expression": "post_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "photos_owner_idx": {
+          "name": "photos_owner_idx",
+          "columns": [
+            {
+              "expression": "owner_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "photos_owner_id_user_id_fk": {
           "name": "photos_owner_id_user_id_fk",
@@ -1932,6 +2045,42 @@
           "columns": [
             {
               "expression": "author_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "posts_walk_idx": {
+          "name": "posts_walk_idx",
+          "columns": [
+            {
+              "expression": "walk_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "posts_created_idx": {
+          "name": "posts_created_idx",
+          "columns": [
+            {
+              "expression": "created_at",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -2208,7 +2357,35 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "reports_reporter_target_uq": {
+          "name": "reports_reporter_target_uq",
+          "columns": [
+            {
+              "expression": "reporter_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "target_type",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "target_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "reports_reporter_id_user_id_fk": {
           "name": "reports_reporter_id_user_id_fk",
@@ -2780,6 +2957,12 @@
         "meeting_lon": {
           "name": "meeting_lon",
           "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "max_participants": {
+          "name": "max_participants",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
