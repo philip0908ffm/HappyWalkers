@@ -51,9 +51,17 @@ export function localToIso(date: string, time: string) {
 }
 
 /** Nächstes Datum (heute eingeschlossen) mit dem gewünschten Wochentag, als YYYY-MM-DD */
-export function nextWeekdayDate(weekday: number, from = new Date()) {
+/**
+ * Datum (YYYY-MM-DD) des nächsten Termins an diesem Wochentag.
+ * Mit `time` („10:00“): Ist die Uhrzeit heute schon vorbei, zählt erst die nächste Woche.
+ */
+export function nextWeekdayDate(weekday: number, from = new Date(), time?: string) {
   const d = new Date(from.getFullYear(), from.getMonth(), from.getDate());
-  const diff = (weekday - d.getDay() + 7) % 7;
+  let diff = (weekday - d.getDay() + 7) % 7;
+  if (diff === 0 && time && /^\d{2}:\d{2}$/.test(time)) {
+    const [h, m] = time.split(':').map(Number);
+    if (h * 60 + m <= from.getHours() * 60 + from.getMinutes()) diff = 7;
+  }
   d.setDate(d.getDate() + diff);
   const p = (n: number) => String(n).padStart(2, '0');
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;

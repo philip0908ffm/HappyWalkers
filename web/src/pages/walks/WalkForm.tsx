@@ -114,7 +114,7 @@ function WalkFormInner({ walk }: { walk: WalkDetail | null }) {
     const errs: Record<string, string> = {};
     if (!kind) errs.kind = t('form.kindRequired');
     if (!title.trim()) errs.title = t('form.titleRequired');
-    const startDate = recurring ? nextWeekdayDate(weekday) : date;
+    const startDate = recurring ? nextWeekdayDate(weekday, new Date(), time) : date;
     if (!recurring && !date) errs.startsAt = t('form.dateRequired');
     if (!/^\d{2}:\d{2}$/.test(time)) errs.time = t('form.timeRequired');
     let startsAt = '';
@@ -296,7 +296,7 @@ function WalkFormInner({ walk }: { walk: WalkDetail | null }) {
           {recurring ? (
             <p className="notice notice--info">
               <Icon name="calendar" />
-              <span>{t('form.recurringSummary', { weekday: weekdayName(weekday), time, first: formatDate(`${nextWeekdayDate(weekday)}T12:00:00`) })}</span>
+              <span>{t('form.recurringSummary', { weekday: weekdayName(weekday), time, first: formatDate(`${nextWeekdayDate(weekday, new Date(), time)}T12:00:00`) })}</span>
             </p>
           ) : null}
           {recurring && errors.startsAt ? (
