@@ -15,8 +15,10 @@
    und legt zwei Dienste an. Den Dienst für `web` löschen; beim verbleibenden Dienst unter
    *Settings → Source* das **Root Directory leer** lassen (Repository-Wurzel), nicht `server`.
    Der Server liefert API und Weboberfläche gemeinsam aus.
-3. Railway liest `railway.json`: Build `npm ci --include=dev && npm run build`, Start `npm start`,
-   Gesundheitsprüfung `/api/v1/health`. (`--include=dev` ist nötig, weil `NODE_ENV=production`
+3. Railway liest `railway.json`: Build `npm install --include=dev --no-audit --no-fund && npm run build`, Start `npm start`,
+   Gesundheitsprüfung `/api/v1/health`. (`npm install --include=dev` statt `npm ci`: Railpack hat die Pakete schon installiert und bindet einen
+   Zwischenspeicher unter `web/node_modules/.vite` ein, den `npm ci` nicht löschen kann (Fehler `EBUSY`).
+   `--include=dev` ist nötig, weil `NODE_ENV=production`
    sonst die Bauwerkzeuge TypeScript/Vite/tsup weglässt.) Eigene Build-/Start-Befehle in den
    Railway-Einstellungen leer lassen bzw. entfernen.
 4. **Volume** hinzufügen (für Fotos), Einhängepunkt z. B. `/data`.
