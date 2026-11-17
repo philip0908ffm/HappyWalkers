@@ -18,7 +18,7 @@ iOS/Android (später) ──┘        │  /api/auth/*  Better Auth (Magic Link
   sichere Cookies ohne CORS). Die Mobil-App nutzt dieselbe API mit Bearer-Token.
 - **Neon** wird über den Standardtreiber `pg` mit der „pooled“ Verbindung angesprochen.
 - **Keine Drittanbieter im Browser** außer den Kartenkacheln (OpenStreetMap, austauschbar über
-  `MAP_TILE_URL`). Schrift (Atkinson Hyperlegible) wird selbst ausgeliefert. Keine Tracking-Cookies
+  `MAP_TILE_URL`). Schriften (Atkinson Hyperlegible Next für Text, Figtree für Überschriften und Zahlen) werden selbst ausgeliefert. Keine Tracking-Cookies
   → kein Cookie-Banner nötig (nur technisch notwendiges Sitzungs-Cookie).
 - **PLZ-Suche ohne externe Dienste**: GeoNames-Daten liegen in `server/data/plz-de.json`.
 
