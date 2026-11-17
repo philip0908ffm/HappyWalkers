@@ -1,47 +1,79 @@
 /*
- * Gestaltungsgrundlagen (Miriam Schulz)
+ * Gestaltungsgrundlagen „Draußen unterwegs“ (Miriam Schulz, 11/2026)
  * Alle Größen in rem → Schriftgröße-Einstellung und Browser-Zoom wirken überall.
- * Kontraste geprüft gegen --color-bg und --color-surface (mind. 4,5:1 Text, 3:1 Bedienelemente).
+ * Kontraste (WCAG 2.x) sind hinter jeder Farbe angegeben: gegen Weiß (#fff) / Hintergrund (#f4f5f1).
  */
 :root {
-  /* Farben */
-  --color-bg: #fbf8f2;
-  --color-surface: #ffffff;
-  --color-surface-2: #f2ede3;
-  --color-text: #1a1a1a;
-  --color-text-muted: #45413a;
-  --color-border: #8a8378;
-  --color-border-soft: #d9d2c5;
-  --color-primary: #1d5c3f;
-  --color-primary-strong: #123d29;
-  --color-primary-soft: #e3f0e8;
-  --color-on-primary: #ffffff;
-  --color-accent: #a9441c;
-  --color-accent-soft: #fbe9df;
-  --color-success: #1d5c3f;
-  --color-success-soft: #e3f0e8;
-  --color-error: #a4161a;
-  --color-error-soft: #fbe4e4;
-  --color-warning-soft: #fff3cd;
-  --color-premium: #6b3fa0;
-  --color-premium-soft: #efe7f8;
-  --color-heart: #b3123f;
-  --color-focus: #0a3d91;
-  --color-focus-halo: #ffd27a;
-  --tier-1: #9a5b2b; /* Bronze */
-  --tier-2: #5f6b78; /* Silber */
-  --tier-3: #8a6400; /* Gold */
+  /* ---- Neutralfarben (Kiesel, leicht grünlich, NICHT Creme) ---- */
+  --color-bg: #f4f5f1;            /* Seitenhintergrund */
+  --color-surface: #ffffff;       /* Karten, Felder */
+  --color-surface-2: #e8ece6;     /* abgesenkte Flächen, Tabellenkopf, Fußzeile */
+  --color-text: #172321;          /* 16,2:1 / 14,8:1 – auf surface-2 13,5:1 */
+  --color-text-muted: #4a5754;    /* 7,6:1 / 6,9:1 – auf surface-2 6,3:1 */
+  --color-border: #6e7b77;        /* 4,4:1 / 4,0:1 – Rahmen von Bedienelementen (≥ 3:1) */
+  --color-border-soft: #d3dad4;   /* nur Schmuck: Kartenrahmen, Trennlinien (keine Bedeutung!) */
 
-  /* Schrift */
-  --font-family: 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
-  --font-size-sm: 0.9rem;
-  --font-size-md: 1rem;
-  --font-size-lg: 1.2rem;
-  --font-size-xl: 1.5rem;
-  --font-size-xxl: 2rem;
-  --line-height: 1.55;
+  /* ---- Hauptfarbe: Tannen-Petrol ---- */
+  --color-primary: #0e5149;       /* 9,2:1 / 8,4:1 – auf primary-soft 7,6:1 */
+  --color-primary-strong: #093b35;/* 12,4:1 / 11,4:1 */
+  --color-primary-soft: #dcede7;  /* Fläche für „ausgewählt“, Hinweise */
+  --color-on-primary: #ffffff;    /* auf primary 9,2:1, auf primary-strong 12,4:1 */
 
-  /* Abstände */
+  /* ---- Akzent: Sonnengelb (nur Fläche, nie Textfarbe auf Weiß!) ---- */
+  --color-accent: #f5b82e;        /* mit --color-on-accent: 9,1:1; gegen Hero 6,6:1 */
+  --color-accent-strong: #e9a91b; /* Hover der gelben Knöpfe (on-accent darauf 7,8:1) */
+  --color-accent-soft: #fdefc8;   /* Text darauf 14,1:1 */
+  --color-on-accent: #172321;
+  --color-accent-text: #7a4e00;   /* warmer Akzent als Textfarbe: 7,2:1 / 6,5:1 */
+
+  /* ---- Dunkle Bühne (Startseiten-Kopf, Erfolgsseite) ---- */
+  --color-hero: #0b3f3a;
+  --color-hero-line: #175a52;     /* Höhenlinien, nur Schmuck */
+  --color-on-hero: #ffffff;       /* 11,8:1 */
+  --color-on-hero-muted: #c9ded8; /* 8,4:1 */
+
+  /* ---- Zustände ---- */
+  --color-success: #1c6b3c;       /* 6,5:1 / 6,0:1 – auf success-soft 5,6:1 */
+  --color-success-soft: #e1f1e6;
+  --color-error: #b3261e;         /* 6,5:1 / 6,0:1 – auf error-soft 5,6:1 */
+  --color-error-strong: #8c1d17;  /* Hover „Löschen“ (ersetzt festes #7d1013) */
+  --color-error-soft: #fce8e6;
+  --color-warning: #7a4e00;       /* 7,2:1 – auf warning-soft 6,5:1 */
+  --color-warning-border: #a86b00;/* Rahmen/Balken auf warning-soft 4,0:1 */
+  --color-warning-soft: #fff3cf;
+  --color-premium: #34508f;       /* Nachtblau statt Lila: 7,8:1 – auf premium-soft 6,6:1 */
+  --color-premium-soft: #e6ecf8;
+  --color-heart: #b0174a;         /* 6,9:1 */
+
+  /* ---- Fokus (doppelt: blauer Rahmen + gelber Hof, wirkt auf hell UND dunkel) ---- */
+  --color-focus: #1f4fd1;         /* 6,8:1 / 6,2:1 */
+  --color-focus-halo: #f5b82e;    /* gegen Petrol 5,1:1, gegen Hero 6,6:1 */
+
+  /* ---- Abzeichen-Stufen: Linie (Text-tauglich) / Fläche / Band ---- */
+  --tier-1: #8a552a; --tier-1-soft: #f5e4d3; --tier-1-mid: #d49a68; /* Bronze: 6,2:1, auf soft 5,0:1 */
+  --tier-2: #56636e; --tier-2-soft: #ebeff2; --tier-2-mid: #b7c1ca; /* Silber: 6,2:1, auf soft 5,3:1 */
+  --tier-3: #7d6100; --tier-3-soft: #fbf0c4; --tier-3-mid: #e6b93a; /* Gold:   5,9:1, auf soft 5,1:1 */
+  --tier-locked: #6e7b77;         /* nur Linien (4,4:1); Text bei gesperrten Abzeichen = --color-text-muted */
+
+  /* ---- Schrift ---- */
+  --font-family: 'Atkinson Hyperlegible Next Variable', 'Atkinson Hyperlegible', system-ui, -apple-system,
+    'Segoe UI', Roboto, Arial, sans-serif;               /* Fließtext, Formulare, Beschriftungen */
+  --font-display: 'Figtree Variable', 'Atkinson Hyperlegible Next Variable', system-ui, -apple-system,
+    'Segoe UI', Roboto, Arial, sans-serif;               /* Überschriften, Logo-Wort, große Zahlen */
+  --font-size-sm: 0.9rem;     /* 16,2 px – nur Hinweise unter Feldern, Meta-Zeilen */
+  --font-size-md: 1rem;       /* 18 px Grundschrift */
+  --font-size-lg: 1.25rem;    /* 22,5 px – h3, Kartentitel */
+  --font-size-xl: 1.6rem;     /* 28,8 px – h2 */
+  --font-size-xxl: 2.2rem;    /* 39,6 px – h1 */
+  --font-size-display: clamp(2.3rem, 1.7rem + 2.6vw, 3.6rem); /* nur Startseiten-Kopf */
+  --line-height: 1.6;
+  --line-height-tight: 1.2;   /* Überschriften */
+  --weight-regular: 400;
+  --weight-medium: 560;       /* Navigation, Meta-Beschriftungen */
+  --weight-bold: 700;         /* Knöpfe, Feldbeschriftungen, Kartentitel */
+  --weight-display: 780;      /* h1/h2 in Figtree */
+
+  /* ---- Abstände (4-px-Raster in rem) ---- */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -49,54 +81,44 @@
   --space-5: 1.5rem;
   --space-6: 2rem;
   --space-7: 3rem;
+  --space-8: 4.5rem;          /* Abstand zwischen großen Seitenabschnitten */
 
-  /* Formen */
-  --radius-sm: 0.4rem;
-  --radius: 0.75rem;
-  --radius-lg: 1.25rem;
-  --shadow: 0 1px 2px rgb(0 0 0 / 0.08), 0 4px 12px rgb(0 0 0 / 0.06);
+  /* ---- Formen ---- */
+  --radius-sm: 0.5rem;
+  --radius: 0.75rem;          /* Felder, Kacheln */
+  --radius-lg: 1rem;          /* Karten (vorher 1,25 rem) */
+  --radius-pill: 999px;       /* Knöpfe, Marken */
+  --shadow: 0 1px 2px rgb(23 35 33 / 0.06), 0 2px 10px rgb(23 35 33 / 0.05);   /* Karte */
+  --shadow-raised: 0 2px 4px rgb(23 35 33 / 0.08), 0 10px 28px rgb(23 35 33 / 0.10); /* Suchfeld im Kopf, Mitteilung */
 
-  /* Bedienelemente: mind. 44 px (2.75rem bei 16 px, bei 18 px Grundschrift ≈ 50 px) */
-  --tap-min: 2.75rem;
+  /* ---- Maße ---- */
+  --tap-min: 2.75rem;         /* ≥ 44 px auch bei 16 px Browser-Grundschrift */
+  --control-height: 3rem;     /* Knöpfe und Felder: 54 px bei Normal */
   --content-max: 72rem;
+  --text-max: 42rem;          /* Zeilenlänge Fließtext ≈ 70 Zeichen */
   --nav-height: 4.5rem;
+  --sidebar-width: 22rem;
 }
 
-/* Schriftgröße in der App einstellbar: Normal (18 px) / Groß (20 px) / Sehr groß (23 px) */
-html {
-  font-size: 112.5%;
-}
-html[data-font='gross'] {
-  font-size: 125%;
-}
-html[data-font='sehr-gross'] {
-  font-size: 143.75%;
+/* Schriftgröße in der App einstellbar – UNVERÄNDERT: Normal 18 px / Groß 20 px / Sehr groß 23 px */
+html { font-size: 112.5%; }
+html[data-font='gross'] { font-size: 125%; }
+html[data-font='sehr-gross'] { font-size: 143.75%; }
+
+/* Tempo-Farben (immer mit Pfeil-Symbol und Text) – Linie/Text ≥ 4,5:1 auf Weiß und auf der eigenen Fläche */
+:root {
+  --tempo-gemuetlich: #1c6b3c;  --tempo-gemuetlich-soft: #e1f1e6;  /* 6,5:1 / 5,6:1 */
+  --tempo-zuegig: #8a5a00;      --tempo-zuegig-soft: #fdf0d2;      /* 5,9:1 / 5,2:1 */
+  --tempo-flott: #a8361e;       --tempo-flott-soft: #fbe5de;       /* 6,5:1 / 5,4:1 */
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.001ms !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
 }
-
-/* Windows-Kontrastmodus */
 @media (forced-colors: active) {
-  :root {
-    --color-focus: Highlight;
-  }
-}
-
-/* Tempo-Farben (immer zusammen mit Symbol und Text verwendet). Kontrast der Symbolfarben ≥ 4,5:1 auf Weiß. */
-:root {
-  --tempo-gemuetlich: #1d5c3f;
-  --tempo-gemuetlich-soft: #e3f0e8;
-  --tempo-zuegig: #7a5200;
-  --tempo-zuegig-soft: #fff1d6;
-  --tempo-flott: #a9441c;
-  --tempo-flott-soft: #fbe2d6;
-  --sidebar-width: 22rem;
+  :root { --color-focus: Highlight; }
 }

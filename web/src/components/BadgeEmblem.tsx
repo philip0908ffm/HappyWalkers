@@ -10,11 +10,12 @@ import type { BadgeKind } from '@happywalkers/shared';
  * Standard: dekorativ (aria-hidden), weil der Name daneben steht. Mit `label` wird es ein Bild mit Text.
  */
 const TIER = {
-  1: { stroke: '#7a4420', fill: '#f6e2cf', mid: '#d79a66' }, // Bronze
-  2: { stroke: '#4a5560', fill: '#eef1f4', mid: '#b4bec8' }, // Silber
-  3: { stroke: '#6e5000', fill: '#fdf0bf', mid: '#e3b93c' }, // Gold
+  1: { stroke: '#8a552a', fill: '#f5e4d3', mid: '#d49a68' }, // Bronze
+  2: { stroke: '#56636e', fill: '#ebeff2', mid: '#b7c1ca' }, // Silber
+  3: { stroke: '#7d6100', fill: '#fbf0c4', mid: '#e6b93a' }, // Gold
 } as const;
-const GREY = { stroke: '#77706a', fill: '#f1eee8', mid: '#cfc8bd' };
+// Werte entsprechen den Tokens --tier-* in tokens.css (SVG-Attribute nutzen keine CSS-Variablen)
+const GREY = { stroke: '#6e7b77', fill: '#f1f3ef', mid: '#d3dad4' };
 
 const SHAPES: Record<BadgeKind, string> = {
   distance: 'M60 6 108 22v42c0 30-20 52-48 68C32 116 12 94 12 64V22Z',

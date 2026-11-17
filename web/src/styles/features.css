@@ -16,7 +16,8 @@ fieldset {
   max-width: 44rem;
 }
 .btn--small {
-  padding: var(--space-1) var(--space-3);
+  min-height: var(--tap-min);
+  padding: var(--space-1) var(--space-4);
   font-size: var(--font-size-sm);
 }
 .btn--danger-outline {
@@ -25,8 +26,8 @@ fieldset {
 }
 .btn--danger-outline:hover {
   background: var(--color-error-soft);
-  color: #7d1013;
-  border-color: #7d1013;
+  color: var(--color-error-strong);
+  border-color: var(--color-error-strong);
 }
 .textarea--short {
   min-height: 4.5rem;
@@ -44,24 +45,28 @@ fieldset {
   display: grid;
   gap: var(--space-4);
 }
+.card.card--attention,
 .card--attention {
-  border-color: var(--color-accent);
-  border-width: 3px;
+  border: 2px solid var(--color-accent-text);
+  border-left-width: 0.375rem;
 }
+.card.card--warm,
 .card--warm {
   background: var(--color-accent-soft);
-  border-color: #e7c3ae;
+  border-color: var(--color-warning-border);
 }
 .status-pill {
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  padding: 0.15rem 0.75rem;
-  border-radius: 999px;
-  border: 2px solid var(--color-border);
+  min-height: 1.9rem;
+  padding: 0 0.75rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
   background: var(--color-surface);
-  font-weight: 700;
+  font-weight: var(--weight-bold);
   font-size: var(--font-size-sm);
+  line-height: 1.3;
 }
 .status-pill svg {
   width: 1.1em;
@@ -69,16 +74,18 @@ fieldset {
 }
 .status-pill--success {
   border-color: var(--color-success);
-  background: var(--color-success-soft);
-  color: var(--color-primary-strong);
+  background: var(--color-success);
+  color: #fff;
 }
 .status-pill--error {
-  border-color: var(--color-error);
+  border: 1px solid var(--color-error);
   background: var(--color-error-soft);
   color: var(--color-error);
 }
 .step-indicator {
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.02em;
   color: var(--color-text-muted);
 }
 .dialog__title {
@@ -111,12 +118,13 @@ fieldset {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  padding: 0.1rem 0.75rem 0.1rem 0.55rem;
-  border-radius: 999px;
-  border: 2px solid currentColor;
-  font-weight: 700;
+  min-height: 1.9rem;
+  padding: 0 0.75rem 0 0.55rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid currentColor;
+  font-weight: var(--weight-bold);
   font-size: var(--font-size-sm);
-  line-height: 1.5;
+  line-height: 1.3;
 }
 .tempo-badge > span {
   color: var(--color-text);
@@ -213,7 +221,8 @@ fieldset {
 .place-choices {
   margin: var(--space-3) 0 var(--space-4);
   padding: var(--space-4);
-  border: 2px solid var(--color-primary);
+  border: 0;
+  border-left: 0.375rem solid var(--color-primary);
   border-radius: var(--radius);
   background: var(--color-primary-soft);
 }
@@ -258,14 +267,15 @@ fieldset {
   margin-bottom: 0;
 }
 .search-results__count {
+  font-family: var(--font-display);
   font-size: var(--font-size-lg);
-  font-weight: 700;
+  font-weight: var(--weight-bold);
   min-height: 1.5em;
 }
 .nearest {
   margin-top: var(--space-6);
   padding-top: var(--space-5);
-  border-top: 2px dashed var(--color-border-soft);
+  border-top: 1px solid var(--color-border-soft);
 }
 .nearest__ideas {
   margin-top: var(--space-4);
@@ -283,46 +293,65 @@ fieldset {
 /* ---------- Terminkarte ---------- */
 .walk-card,
 .group-card {
+  position: relative;
   display: flex;
-  gap: var(--space-4);
+  gap: var(--space-5);
   background: var(--color-surface);
-  border: 2px solid var(--color-border-soft);
+  border: 1px solid var(--color-border-soft);
   border-radius: var(--radius-lg);
-  padding: var(--space-4);
+  padding: var(--space-5);
   box-shadow: var(--shadow);
+  transition: border-color 0.12s;
 }
 .walk-card--going {
-  border-color: var(--color-primary);
-  border-left-width: 0.5rem;
+  border: 2px solid var(--color-primary);
 }
 .walk-card--cancelled {
   background: var(--color-surface-2);
+  box-shadow: none;
 }
 .walk-card--cancelled .walk-card__title a {
   text-decoration-line: line-through;
 }
+/* Datumskachel als Kalenderblatt */
 .walk-card__date {
-  flex: 0 0 4.5rem;
+  flex: 0 0 4.75rem;
   align-self: flex-start;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--space-2) var(--space-1);
+  overflow: hidden;
   border-radius: var(--radius);
-  background: var(--color-primary-soft);
-  color: var(--color-primary-strong);
+  border: 1px solid var(--color-border-soft);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-display);
   line-height: 1.1;
   text-align: center;
 }
-.walk-card__weekday,
-.walk-card__month {
+.walk-card__weekday {
+  align-self: stretch;
+  padding: 0.2rem 0;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
   font-size: var(--font-size-sm);
-  font-weight: 700;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 .walk-card__day {
-  font-size: var(--font-size-xxl);
-  font-weight: 700;
+  padding-top: 0.25rem;
+  font-size: 2rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.walk-card__month {
+  padding-bottom: 0.35rem;
+  font-size: var(--font-size-sm);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
 }
 .walk-card__body,
 .group-card__body {
@@ -332,34 +361,66 @@ fieldset {
 .walk-card__title,
 .group-card__title {
   font-size: var(--font-size-lg);
+  font-weight: var(--weight-bold);
   margin-bottom: var(--space-1);
 }
 .walk-card__title a,
 .group-card__title a {
-  color: var(--color-primary-strong);
+  color: var(--color-text);
+  text-decoration-color: var(--color-primary);
+  text-decoration-thickness: 0.08em;
   display: inline-block;
   min-height: var(--tap-min);
   padding: 0.5rem 0;
   margin: -0.5rem 0;
 }
+.walk-card__title a:hover,
+.group-card__title a:hover {
+  color: var(--color-primary);
+  text-decoration-color: var(--color-primary);
+}
+/* Ganze Terminkarte anklickbar (die Karte enthält sonst keine Links) */
+.walk-card__title a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-lg);
+}
+/* Fokusrahmen bleibt am Titel-Link (dort, wo der Fokus liegt); die Karte zeigt zusätzlich einen Rahmen */
+.walk-card:has(.walk-card__title a:focus-visible) {
+  border-color: var(--color-focus);
+}
+.walk-card:has(.walk-card__title a:hover) {
+  border-color: var(--color-primary);
+}
 .walk-card__when {
-  font-weight: 700;
-  margin-bottom: var(--space-2);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: var(--weight-bold);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-primary-strong);
+  margin-bottom: var(--space-3);
+}
+.walk-card__when svg {
+  color: var(--color-primary);
 }
 .walk-card__meta {
   list-style: none;
   padding: 0;
-  margin: 0 0 var(--space-2);
+  margin: 0 0 var(--space-3);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-2) var(--space-4);
+  gap: var(--space-2) var(--space-5);
   color: var(--color-text-muted);
 }
 .walk-card__meta > * {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-1);
+  gap: var(--space-2);
+}
+.walk-card__meta svg:not(.tempo-symbol) {
+  color: var(--color-primary);
 }
 .walk-card__status {
   display: flex;
@@ -372,8 +433,8 @@ fieldset {
 
 /* ---------- Gruppenkarte ---------- */
 .group-card__photo {
-  flex: 0 0 6rem;
-  height: 6rem;
+  flex: 0 0 7rem;
+  height: 7rem;
   border-radius: var(--radius);
   overflow: hidden;
   background: var(--color-primary-soft);
@@ -388,11 +449,15 @@ fieldset {
   object-fit: cover;
 }
 .group-card__photo svg {
-  width: 3rem;
-  height: 3rem;
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 .group-card__next {
   margin-bottom: var(--space-2);
+}
+.group-card__next > svg {
+  color: var(--color-primary);
 }
 .group-card__status {
   margin: 0;
@@ -401,20 +466,32 @@ fieldset {
   .walk-card,
   .group-card {
     flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4);
   }
   .walk-card__date {
     flex-direction: row;
-    gap: var(--space-2);
     flex-basis: auto;
-    padding: var(--space-1) var(--space-3);
+    gap: var(--space-2);
+    padding-right: var(--space-3);
+  }
+  .walk-card__weekday {
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    padding: 0 var(--space-2);
   }
   .walk-card__day {
     font-size: var(--font-size-lg);
+    padding: 0.2rem 0;
+  }
+  .walk-card__month {
+    padding: 0;
   }
   .group-card__photo {
     flex-basis: auto;
     width: 100%;
-    height: 8rem;
+    height: 7rem;
   }
 }
 
@@ -568,22 +645,28 @@ fieldset {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.06em;
 }
 .facts dt svg {
   width: 1.3em;
   height: 1.3em;
+  color: var(--color-primary);
 }
 .facts dd {
   margin: var(--space-1) 0 0;
   font-size: var(--font-size-lg);
 }
 .facts__big {
+  font-family: var(--font-display);
   font-size: var(--font-size-xl);
+  font-weight: var(--weight-bold);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--line-height-tight);
 }
 .facts__hint {
   display: block;
@@ -592,8 +675,9 @@ fieldset {
   margin-top: var(--space-1);
 }
 .meeting-point__name {
+  font-family: var(--font-display);
   font-size: var(--font-size-lg);
-  font-weight: 700;
+  font-weight: var(--weight-bold);
   margin-bottom: var(--space-1);
 }
 .meeting-point__address {
@@ -603,7 +687,7 @@ fieldset {
 /* Zusagen-Kasten */
 .rsvp-box {
   background: var(--color-surface);
-  border: 3px solid var(--color-primary);
+  border: 2px solid var(--color-primary);
   border-radius: var(--radius-lg);
   padding: var(--space-5);
   box-shadow: var(--shadow);
@@ -639,7 +723,7 @@ fieldset {
 .confirm-walk {
   margin-top: var(--space-5);
   padding-top: var(--space-4);
-  border-top: 2px solid var(--color-border-soft);
+  border-top: 1px solid var(--color-border-soft);
 }
 
 /* Gruppenkopf */
@@ -674,6 +758,11 @@ fieldset {
   width: 5rem;
   height: 5rem;
 }
+.group-hero__photo svg.landscape {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
 .group-hero__text {
   flex: 1 1 20rem;
 }
@@ -683,14 +772,14 @@ fieldset {
 .group-hero--compact .group-hero__photo {
   width: 7rem;
 }
-.group-hero--compact .group-hero__photo svg {
+.group-hero--compact .group-hero__photo svg:not(.landscape) {
   width: 3rem;
   height: 3rem;
 }
 .pinned-rules {
   background: var(--color-warning-soft);
-  border: 2px solid #8a6400;
-  border-left-width: 0.5rem;
+  border: 0;
+  border-left: 0.375rem solid var(--color-warning-border);
   border-radius: var(--radius);
   padding: var(--space-4) var(--space-5);
   margin-bottom: var(--space-5);
@@ -709,7 +798,7 @@ fieldset {
 }
 .series-item {
   padding: var(--space-3) var(--space-4);
-  border: 2px solid var(--color-border-soft);
+  border: 1px solid var(--color-border-soft);
   border-radius: var(--radius);
   background: var(--color-surface);
 }
@@ -717,7 +806,9 @@ fieldset {
   margin-bottom: var(--space-2);
 }
 .series-item__when {
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--weight-bold);
   font-size: var(--font-size-lg);
 }
 .action-list {
@@ -744,7 +835,7 @@ fieldset {
 .invite-option {
   min-width: 0; /* Eingabefelder dürfen schrumpfen (320 px Breite) */
   padding: var(--space-4);
-  border: 2px solid var(--color-border-soft);
+  border: 1px solid var(--color-border-soft);
   border-radius: var(--radius);
   background: var(--color-bg);
 }
@@ -832,7 +923,7 @@ fieldset {
   font: inherit;
   color: var(--color-text);
   background: var(--color-surface);
-  border: 2px solid var(--color-border-soft);
+  border: 1px solid var(--color-border-soft);
   border-radius: var(--radius-lg);
   padding: var(--space-5);
   cursor: pointer;
@@ -843,12 +934,13 @@ fieldset {
   background: var(--color-primary-soft);
 }
 .template-tile--blank {
-  border-style: dashed;
+  background: var(--color-surface-2);
   box-shadow: none;
 }
 .template-tile__name {
+  font-family: var(--font-display);
   font-size: var(--font-size-lg);
-  font-weight: 700;
+  font-weight: var(--weight-bold);
   color: var(--color-primary-strong);
 }
 .template-tile__meta {
@@ -877,7 +969,7 @@ fieldset {
   gap: var(--space-3);
   min-height: var(--tap-min);
   padding: var(--space-3) var(--space-4);
-  border: 2px solid var(--color-border-soft);
+  border: 1px solid var(--color-border-soft);
   border-radius: var(--radius);
   background: var(--color-surface);
   text-decoration: none;
@@ -934,7 +1026,7 @@ fieldset {
   box-shadow: none;
 }
 .post-card {
-  border: 2px solid var(--color-border-soft);
+  border: 1px solid var(--color-border-soft);
   border-radius: var(--radius-lg);
   padding: var(--space-4);
   background: var(--color-surface);
@@ -990,7 +1082,7 @@ fieldset {
 .comments {
   margin-top: var(--space-4);
   padding-top: var(--space-4);
-  border-top: 2px solid var(--color-border-soft);
+  border-top: 1px solid var(--color-border-soft);
 }
 .comments__list {
   display: grid;
@@ -1132,7 +1224,7 @@ fieldset {
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
-  border: 2px solid var(--color-border-soft);
+  border: 1px solid var(--color-border-soft);
   border-radius: var(--radius);
 }
 .request-item__who {
@@ -1174,6 +1266,7 @@ fieldset {
   flex-wrap: wrap;
   gap: var(--space-2);
 }
+.card.danger-zone,
 .danger-zone {
   border-color: var(--color-error);
 }
@@ -1188,24 +1281,98 @@ fieldset {
 }
 
 /* ---------- Startseite ---------- */
+/* Abgemeldet: der Kopf ist eine volle Breite, dunkle Bühne. Die Hauptfläche wird dafür breit,
+   alle anderen Abschnitte behalten die normale Inhaltsbreite. */
+.app-main:has(> .home > .home-hero) {
+  max-width: none;
+  padding-top: 0;
+  padding-inline: 0;
+}
+.home:has(> .home-hero) > :not(.home-hero) {
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-inline: var(--space-4);
+}
 .home-hero {
+  position: relative;
+  overflow: hidden;
+  max-width: 100%;
+  margin-bottom: var(--space-8);
+  background: var(--color-hero);
+  color: var(--color-on-hero);
+}
+.home-hero > .landscape--contours {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  pointer-events: none;
+}
+.home-hero__inner {
+  position: relative;
   display: grid;
-  gap: var(--space-5);
+  gap: var(--space-6);
   align-items: center;
-  margin-bottom: var(--space-7);
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding: var(--space-7) var(--space-4);
 }
-.home-hero .page-header h1 {
-  font-size: clamp(2rem, 1.5rem + 2vw, 2.8rem);
+@media (min-width: 60em) {
+  .home-hero__inner {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    padding-block: var(--space-8);
+  }
 }
-.home-hero__search {
-  border-color: var(--color-primary);
-  border-width: 3px;
+.home-hero h1 {
+  font-size: var(--font-size-display);
+  letter-spacing: -0.02em;
+  color: var(--color-on-hero);
+  max-width: 14ch;
+  margin-bottom: var(--space-4);
+}
+.home-hero .page-header {
+  margin-bottom: var(--space-6);
+}
+.home-hero .page-header__lead {
+  color: var(--color-on-hero-muted);
+  max-width: 34rem;
+}
+.home-hero a:not(.btn) {
+  color: var(--color-on-hero);
+}
+.home-hero :focus-visible {
+  outline-color: #fff;
+}
+.home-hero__search.card {
+  max-width: 36rem;
+  color: var(--color-text);
+  border: 0;
+  box-shadow: var(--shadow-raised);
+}
+.home-hero__search :focus-visible {
+  outline-color: var(--color-focus);
+}
+.home-hero__search a:not(.btn) {
+  color: var(--color-primary);
 }
 .home-hero__search-title {
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-lg);
+  font-weight: var(--weight-bold);
+  margin-bottom: var(--space-4);
 }
 .home-hero__search .place-search__form .field {
   margin-bottom: var(--space-3);
+}
+/* Gelber Suchknopf: die eine Hauptsache dieser Ansicht */
+.home-hero__search .place-search__form > .btn[type='submit']:not([disabled]) {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-on-accent);
+}
+.home-hero__search .place-search__form > .btn[type='submit']:not([disabled]):hover {
+  background: var(--color-accent-strong);
+  border-color: var(--color-accent-strong);
 }
 .home-hero__signin {
   display: flex;
@@ -1213,18 +1380,15 @@ fieldset {
   align-items: center;
   gap: var(--space-3);
   margin-top: var(--space-5);
-  font-size: var(--font-size-lg);
+  margin-bottom: 0;
+  color: var(--color-on-hero-muted);
 }
 .home-hero__art svg {
-  width: 100%;
-  max-width: 26rem;
   display: block;
-  margin: 0 auto;
-}
-@media (min-width: 60em) {
-  .home-hero {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-  }
+  width: 100%;
+  max-width: 28rem;
+  margin-left: auto;
+  border-radius: 50% 50% var(--radius-lg) var(--radius-lg) / 38% 38% var(--radius-lg) var(--radius-lg);
 }
 @media (max-width: 40em) {
   .home-hero__art {
@@ -1233,23 +1397,27 @@ fieldset {
 }
 .home-how,
 .home-promises {
-  margin-bottom: var(--space-7);
+  margin-bottom: var(--space-8);
 }
+.home-how > h2,
+.home-promises > h2 {
+  margin-bottom: var(--space-5);
+}
+/* „So einfach geht's“: drei Spalten ohne Kästen */
 .steps {
   list-style: none;
   padding: 0;
   margin: 0;
   display: grid;
-  gap: var(--space-4);
+  gap: var(--space-5) var(--space-6);
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
 }
 .step {
   display: flex;
-  gap: var(--space-4);
-  padding: var(--space-5);
-  background: var(--color-surface);
-  border: 2px solid var(--color-border-soft);
-  border-radius: var(--radius-lg);
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 2px solid var(--color-border-soft);
 }
 .step h3 {
   margin-bottom: var(--space-2);
@@ -1258,13 +1426,16 @@ fieldset {
   margin: 0;
 }
 .step__num {
-  flex: 0 0 3rem;
+  flex: 0 0 auto;
+  width: 3rem;
   height: 3rem;
   border-radius: 50%;
   background: var(--color-accent);
-  color: #fff;
-  font-weight: 700;
+  color: var(--color-on-accent);
+  font-family: var(--font-display);
+  font-weight: 800;
   font-size: var(--font-size-xl);
+  font-variant-numeric: tabular-nums;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1272,61 +1443,72 @@ fieldset {
 .promise-list {
   list-style: none;
   padding: 0;
-  margin: 0 0 var(--space-4);
+  margin: 0 0 var(--space-5);
   display: grid;
-  gap: var(--space-3);
+  gap: var(--space-4);
 }
 .promise-list li {
   display: flex;
-  gap: var(--space-3);
-  align-items: flex-start;
+  gap: var(--space-4);
+  align-items: center;
   font-size: var(--font-size-lg);
 }
 .promise-list svg {
-  width: 1.8rem;
-  height: 1.8rem;
+  width: 3rem;
+  height: 3rem;
+  padding: 0.65rem;
+  border-radius: 50%;
+  background: var(--color-primary-soft);
   flex-shrink: 0;
   color: var(--color-primary);
 }
+/* Angemeldet: Schnellkacheln */
 .quick-tiles {
   display: grid;
   gap: var(--space-4);
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-7);
 }
 .quick-tile {
   display: grid;
   grid-template-columns: auto 1fr;
   grid-template-rows: auto auto;
-  gap: 0 var(--space-3);
+  gap: 0 var(--space-4);
   align-items: center;
   height: 100%;
   padding: var(--space-4) var(--space-5);
-  border: 2px solid var(--color-primary);
+  border: 1px solid var(--color-border-soft);
   border-radius: var(--radius-lg);
   background: var(--color-surface);
   text-decoration: none;
   color: var(--color-text);
   box-shadow: var(--shadow);
+  transition:
+    background-color 0.12s,
+    border-color 0.12s;
 }
 .quick-tile:hover {
+  border-color: var(--color-primary);
   background: var(--color-primary-soft);
   color: var(--color-text);
 }
 .quick-tile svg {
   grid-row: span 2;
-  width: 2.6rem;
-  height: 2.6rem;
-  padding: 0.4rem;
+  width: 3rem;
+  height: 3rem;
+  padding: 0.6rem;
   border-radius: 50%;
-  background: var(--color-primary);
-  color: var(--color-on-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
 }
 .quick-tile__label {
+  font-family: var(--font-display);
   font-size: var(--font-size-lg);
-  font-weight: 700;
+  font-weight: var(--weight-bold);
   color: var(--color-primary-strong);
   text-decoration: underline;
+  text-decoration-thickness: 0.07em;
+  text-underline-offset: 0.2em;
 }
 .quick-tile__text {
   color: var(--color-text-muted);
@@ -1334,11 +1516,12 @@ fieldset {
 }
 .quick-tiles li:first-child .quick-tile {
   background: var(--color-primary);
+  border-color: var(--color-primary);
   color: var(--color-on-primary);
 }
 .quick-tiles li:first-child .quick-tile svg {
-  background: var(--color-on-primary);
-  color: var(--color-primary);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
 }
 .quick-tiles li:first-child .quick-tile__label,
 .quick-tiles li:first-child .quick-tile__text {
@@ -1346,15 +1529,20 @@ fieldset {
 }
 .quick-tiles li:first-child .quick-tile:hover {
   background: var(--color-primary-strong);
+  border-color: var(--color-primary-strong);
 }
 .home-columns {
   display: grid;
-  gap: var(--space-5);
+  gap: var(--space-6) var(--space-5);
   align-items: start;
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-6);
 }
 .home-columns .card + .card {
   margin-top: 0;
+}
+.home-columns h2 .inline-icon,
+.section-head h2 .inline-icon {
+  color: var(--color-primary);
 }
 @media (min-width: 60em) {
   .home-columns {
@@ -1407,7 +1595,7 @@ fieldset {
 }
 /* Abstände von Listen, die auch .plain-list (margin: 0) tragen */
 .plain-list.quick-tiles {
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-7);
 }
 .plain-list.link-list,
 .plain-list.series-list,
@@ -1431,4 +1619,12 @@ fieldset {
   width: 1.4rem;
   height: 1.4rem;
   flex-shrink: 0;
+}
+
+/* Zurück-Link auf Detailseiten als Textknopf (Text bündig mit dem Inhalt) */
+.back-link {
+  margin-inline-start: calc(-1 * var(--space-3));
+}
+.home > :last-child {
+  margin-bottom: 0;
 }

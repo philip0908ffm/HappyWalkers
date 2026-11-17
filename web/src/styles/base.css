@@ -19,9 +19,19 @@ h1,
 h2,
 h3,
 h4 {
-  line-height: 1.25;
+  font-family: var(--font-display);
+  line-height: var(--line-height-tight);
   margin: 0 0 var(--space-4);
   color: var(--color-text);
+}
+h1,
+h2 {
+  font-weight: var(--weight-display);
+  letter-spacing: -0.01em;
+}
+h3,
+h4 {
+  font-weight: var(--weight-bold);
 }
 h1 {
   font-size: var(--font-size-xxl);
@@ -34,18 +44,32 @@ h3 {
 }
 p {
   margin: 0 0 var(--space-4);
-  max-width: 70ch;
+  max-width: var(--text-max);
+}
+strong,
+b {
+  font-weight: var(--weight-bold);
+}
+
+/* Kleine Überschrift in Großbuchstaben (nur dort, wo es sie schon gibt) */
+.overline {
+  font-family: var(--font-display);
+  font-size: var(--font-size-sm);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
 }
 
 a {
   color: var(--color-primary);
   text-decoration: underline;
-  text-underline-offset: 0.18em;
-  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 0.07em;
 }
 a:hover {
   color: var(--color-primary-strong);
-  text-decoration-thickness: 0.14em;
+  text-decoration-thickness: 0.12em;
 }
 
 img,

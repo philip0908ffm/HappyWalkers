@@ -411,7 +411,7 @@ export default function LogWalk() {
           </div>
         ) : null}
 
-        <button type="submit" className="btn btn--large" disabled={save.isPending}>
+        <button type="submit" className="btn btn--accent btn--large" disabled={save.isPending}>
           <Icon name="check" /> {save.isPending ? t('common:status.saving') : t('log.submit')}
         </button>
       </form>

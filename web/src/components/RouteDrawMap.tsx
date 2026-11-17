@@ -88,20 +88,20 @@ export function RouteDrawMap({
           />
           <MapRef onMap={setMap} />
           {readOnly ? <FitRoute route={route} /> : <ClickToAdd onAdd={add} />}
-          {route.length >= 2 ? <Polyline positions={route.map(toLatLng)} pathOptions={{ color: '#1d5c3f', weight: 5 }} /> : null}
+          {route.length >= 2 ? <Polyline positions={route.map(toLatLng)} pathOptions={{ color: '#0e5149', weight: 5 }} /> : null}
           {route.length >= 1 ? (
-            <CircleMarker center={toLatLng(route[0])} radius={8} pathOptions={{ color: '#123d29', fillColor: '#ffffff', fillOpacity: 1, weight: 3 }} />
+            <CircleMarker center={toLatLng(route[0])} radius={8} pathOptions={{ color: '#093b35', fillColor: '#ffffff', fillOpacity: 1, weight: 3 }} />
           ) : null}
           {route.length >= 2 ? (
             <CircleMarker
               center={toLatLng(route[route.length - 1])}
               radius={8}
-              pathOptions={{ color: '#123d29', fillColor: '#1d5c3f', fillOpacity: 1, weight: 3 }}
+              pathOptions={{ color: '#093b35', fillColor: '#0e5149', fillOpacity: 1, weight: 3 }}
             />
           ) : null}
           {!readOnly
             ? route.slice(1, -1).map((p, i) => (
-                <CircleMarker key={i} center={toLatLng(p)} radius={4} pathOptions={{ color: '#123d29', fillOpacity: 1, weight: 2 }} />
+                <CircleMarker key={i} center={toLatLng(p)} radius={4} pathOptions={{ color: '#093b35', fillOpacity: 1, weight: 2 }} />
               ))
             : null}
         </MapContainer>

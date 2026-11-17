@@ -139,7 +139,7 @@ function BadgeCard({ available: a, earned }: { available: BadgeAvailable; earned
   const headingId = useId();
 
   return (
-    <article className={`card badge-card ${isEarned ? '' : 'badge-card--locked'}`} aria-labelledby={headingId}>
+    <article className={`card badge-card badge-card--t${tier} ${isEarned ? '' : 'badge-card--locked'}`} aria-labelledby={headingId}>
       <BadgeEmblem kind={kind} tier={tier} earned={isEarned} size={120} />
       <div className="badge-card__body">
         <h3 id={headingId} className="badge-card__name">

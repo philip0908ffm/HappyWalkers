@@ -11,7 +11,7 @@
 .info-placeholder {
   background: var(--color-warning-soft);
   color: var(--color-text);
-  border: 2px dashed #8a6400;
+  border: 2px dashed var(--color-warning-border);
   border-radius: var(--radius-sm);
   padding: 0 0.2em;
 }

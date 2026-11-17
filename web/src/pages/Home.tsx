@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { groupsApi, isLead, qk, walksApi } from '../api/walks';
 import { Icon, type IconName } from '../components/Icon';
+import { Landscape } from '../components/Landscape';
 import { LoadError, Loading } from '../components/Loading';
 import { PageHeader } from '../components/PageHeader';
 import { PlaceSearch } from '../components/PlaceSearch';
@@ -22,27 +23,30 @@ function HomeWelcome() {
   return (
     <div className="home">
       <div className="home-hero">
-        <div className="home-hero__text">
-          <PageHeader title={t('welcome.title')} lead={t('welcome.lead')} />
-          <div className="home-hero__search card">
-            <h2 className="home-hero__search-title">{t('welcome.searchTitle')}</h2>
-            <PlaceSearch
-              allowLocation={false}
-              submitLabel={t('welcome.searchButton')}
-              onSelect={(loc) => {
-                if (loc.type === 'postal') navigate(`/walks?plz=${loc.postalCode}`);
-              }}
-            />
+        <Landscape variant="contours" />
+        <div className="home-hero__inner">
+          <div className="home-hero__text">
+            <PageHeader title={t('welcome.title')} lead={t('welcome.lead')} />
+            <div className="home-hero__search card">
+              <h2 className="home-hero__search-title">{t('welcome.searchTitle')}</h2>
+              <PlaceSearch
+                allowLocation={false}
+                submitLabel={t('welcome.searchButton')}
+                onSelect={(loc) => {
+                  if (loc.type === 'postal') navigate(`/walks?plz=${loc.postalCode}`);
+                }}
+              />
+            </div>
+            <p className="home-hero__signin">
+              {t('welcome.haveAccount')}{' '}
+              <Link className="btn btn--on-dark" to="/anmelden">
+                <Icon name="user" /> {t('welcome.signIn')}
+              </Link>
+            </p>
           </div>
-          <p className="home-hero__signin">
-            {t('welcome.haveAccount')}{' '}
-            <Link className="btn btn--secondary" to="/anmelden">
-              <Icon name="user" /> {t('welcome.signIn')}
-            </Link>
-          </p>
-        </div>
-        <div className="home-hero__art" aria-hidden="true">
-          <HeroArt />
+          <div className="home-hero__art" aria-hidden="true">
+            <Landscape variant="hero" />
+          </div>
         </div>
       </div>
 
@@ -78,25 +82,6 @@ function HomeWelcome() {
         </p>
       </section>
     </div>
-  );
-}
-
-function HeroArt() {
-  // Zwei Figuren beim gemeinsamen Gehen – ruhig, freundlich, ohne Animation
-  return (
-    <svg viewBox="0 0 240 200" focusable="false">
-      <circle cx="190" cy="48" r="26" fill="#ffd27a" />
-      <path d="M0 170c40-24 80-30 120-22s80 6 120-14v66H0z" fill="#e3f0e8" />
-      <path d="M0 184c50-14 110-16 160-6s60 4 80-2v24H0z" fill="#c9e2d2" />
-      <g stroke="#1d5c3f" strokeWidth="7" strokeLinecap="round" fill="none">
-        <circle cx="92" cy="62" r="11" fill="#1d5c3f" stroke="none" />
-        <path d="M92 78v42M92 120l-12 34M92 120l14 32M92 90l-16 18M92 90l18 12" />
-      </g>
-      <g stroke="#a9441c" strokeWidth="7" strokeLinecap="round" fill="none">
-        <circle cx="140" cy="66" r="11" fill="#a9441c" stroke="none" />
-        <path d="M140 82v40M140 122l-10 32M140 122l14 30M140 94l-20 10M140 94l16 18" />
-      </g>
-    </svg>
   );
 }
 
@@ -145,10 +130,12 @@ function HomeSignedIn() {
       </nav>
 
       <div className="home-columns">
-        <section className="card" aria-labelledby="next-title">
-          <h2 id="next-title">
-            <Icon name="calendar" className="inline-icon" /> {t('home.nextTitle')}
-          </h2>
+        <section className="section-block" aria-labelledby="next-title">
+          <div className="section-head">
+            <h2 id="next-title">
+              <Icon name="calendar" className="inline-icon" /> {t('home.nextTitle')}
+            </h2>
+          </div>
           {mineQ.isLoading ? (
             <Loading />
           ) : mineQ.error ? (

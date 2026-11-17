@@ -85,7 +85,7 @@
 .poster__kicker {
   font-size: 1.8rem;
   font-weight: 700;
-  color: var(--color-accent);
+  color: var(--color-accent-text);
   margin: 0 auto var(--space-2);
 }
 .poster__name {

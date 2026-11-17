@@ -12,6 +12,7 @@ import { GroupFeed } from '../../components/GroupFeed';
 import { Icon } from '../../components/Icon';
 import { InvitePanel } from '../../components/InvitePanel';
 import { JoinGroup } from '../../components/JoinGroup';
+import { Landscape } from '../../components/Landscape';
 import { LoadError, Loading } from '../../components/Loading';
 import { PageHeader } from '../../components/PageHeader';
 import { TempoBadge } from '../../components/Tempo';
@@ -44,14 +45,14 @@ function GroupView({ group }: { group: Group }) {
   return (
     <div className="group-detail">
       <p>
-        <Link to="/gruppen">
-          <Icon name="arrowLeft" className="inline-icon" /> {t('detail.backToList')}
+        <Link to="/gruppen" className="btn btn--ghost back-link">
+          <Icon name="arrowLeft" /> {t('detail.backToList')}
         </Link>
       </p>
 
       <div className="group-hero">
         <div className="group-hero__photo">
-          {group.photoUrl ? <img src={group.photoUrl} alt={t('detail.photoAlt', { name: group.name })} /> : <Icon name="group" />}
+          {group.photoUrl ? <img src={group.photoUrl} alt={t('detail.photoAlt', { name: group.name })} /> : <Landscape variant="thumb" seed={group.id} />}
         </div>
         <div className="group-hero__text">
           <PageHeader title={group.name} lead={place} />
@@ -99,10 +100,12 @@ function GroupView({ group }: { group: Group }) {
             </section>
           ) : null}
 
-          <section className="card" aria-labelledby="next-title">
-            <h2 id="next-title">
-              <Icon name="calendar" className="inline-icon" /> {t('detail.nextWalks')}
-            </h2>
+          <section className="section-block" aria-labelledby="next-title">
+            <div className="section-head">
+              <h2 id="next-title">
+                <Icon name="calendar" className="inline-icon" /> {t('detail.nextWalks')}
+              </h2>
+            </div>
             {group.upcomingWalks.length ? (
               <WalkList walks={group.upcomingWalks} showGroup={false} />
             ) : (

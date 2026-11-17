@@ -3,14 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Icon, type IconName } from './Icon';
 
-/** Logo */
+/** Logo „Weg zur Sonne“: Petrol-Quadrat, gelbe Sonne, weißer Weg, Hügellinie (dekorativ) */
 function Logo() {
   return (
     <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-      <rect width="64" height="64" rx="14" fill="#1d5c3f" />
-      <circle cx="24" cy="18" r="6" fill="#ffd27a" />
-      <circle cx="42" cy="18" r="6" fill="#fff" />
-      <path d="M24 26v14l-6 12M24 40l6 12M42 26v14l-6 12M42 40l6 12" stroke="#fff" strokeWidth="5" strokeLinecap="round" fill="none" />
+      <rect width="64" height="64" rx="16" fill="#0e5149" />
+      <circle cx="42" cy="22" r="9" fill="#f5b82e" />
+      <path d="M14 54c6-10 20-8 22-16s-6-10-2-15" fill="none" stroke="#fff" strokeWidth="5.5" strokeLinecap="round" />
+      <path d="M6 46c10-6 20-5 30-2s16 2 22-2" fill="none" stroke="#2f7a6f" strokeWidth="3" strokeLinecap="round" />
     </svg>
   );
 }
@@ -70,6 +70,7 @@ export function Layout() {
         <Outlet />
       </main>
       <footer className="app-footer no-print">
+        <p className="app-footer__brand">{t('app.name')}</p>
         <ul>
           <li>
             <Link to="/hilfe">{t('footer.help')}</Link>

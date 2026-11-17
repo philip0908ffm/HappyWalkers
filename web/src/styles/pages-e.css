@@ -25,7 +25,7 @@
   font-size: var(--font-size-lg);
 }
 .subsection-e {
-  border-top: 2px solid var(--color-border-soft);
+  border-top: 1px solid var(--color-border-soft);
   padding-top: var(--space-5);
   margin-top: var(--space-5);
 }
@@ -71,26 +71,29 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
-  padding: var(--space-4);
+  padding: var(--space-4) var(--space-5);
   background: var(--color-surface);
-  border: 2px solid var(--color-border-soft);
-  border-radius: var(--radius);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-lg);
 }
 .stat-tile--accent {
-  background: var(--color-primary-soft);
-  border-color: var(--color-primary);
+  background: var(--color-accent-soft);
+  border-color: var(--color-warning-border);
 }
 .stat-tile__value {
+  font-family: var(--font-display);
   font-size: var(--font-size-xxl);
-  font-weight: 700;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
   line-height: 1.1;
-  color: var(--color-primary-strong);
+  color: var(--color-text);
 }
 .stat-tile__value--small {
   font-size: var(--font-size-lg);
 }
 .stat-tile__label {
-  font-weight: 700;
+  font-weight: var(--weight-medium);
+  color: var(--color-text-muted);
 }
 
 /* ---------- Walk eintragen ---------- */
@@ -151,18 +154,21 @@
   margin: 0 0 var(--space-4);
 }
 .facts-e dt {
-  font-weight: 700;
+  font-weight: var(--weight-medium);
   color: var(--color-text-muted);
 }
 .facts-e dd {
   margin: 0;
 }
 .facts-e--big dd {
+  font-family: var(--font-display);
   font-size: var(--font-size-lg);
-  font-weight: 700;
+  font-weight: var(--weight-bold);
+  font-variant-numeric: tabular-nums;
 }
 .facts-e__sub {
   display: block;
+  font-family: var(--font-family);
   font-size: var(--font-size-md);
   font-weight: 400;
 }
@@ -174,37 +180,55 @@
 }
 
 /* Erfolgsseite: feierlich, aber ruhig */
+/* Dunkle Bühne wie der Startseiten-Kopf – ohne Konfetti, ohne Bewegung */
 .success-e__head {
   text-align: center;
-  padding: var(--space-6) var(--space-4);
-  background: var(--color-primary-soft);
-  border: 2px solid var(--color-primary);
+  padding: var(--space-7) var(--space-5);
+  background: var(--color-hero);
+  color: var(--color-on-hero);
   border-radius: var(--radius-lg);
   margin-bottom: var(--space-5);
 }
 .success-e__head h1 {
-  font-size: 2.4rem;
-  color: var(--color-primary-strong);
+  font-size: var(--font-size-display);
+  letter-spacing: -0.02em;
+  color: var(--color-on-hero);
 }
 .success-e__head h1:focus {
   outline: none;
 }
 .success-e__head h1:focus-visible {
-  outline: 3px solid var(--color-focus);
+  outline: 3px solid #fff;
 }
 .success-e__head p {
   margin-left: auto;
   margin-right: auto;
 }
+.success-e__head .page-header__lead {
+  color: var(--color-on-hero-muted);
+}
+.success-e__head :focus-visible {
+  outline-color: #fff;
+}
 .success-e__icon {
   width: 3.5rem;
   height: 3.5rem;
-  color: var(--tier-3);
+  padding: 0.6rem;
+  margin-bottom: var(--space-3);
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
 }
 .success-e__points {
+  font-family: var(--font-display);
   font-size: var(--font-size-xl);
-  font-weight: 700;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
   text-align: center;
+  margin-inline: auto;
+}
+.success-e__points .inline-icon {
+  color: var(--color-accent-text);
 }
 .success-e__badges {
   margin-bottom: var(--space-5);
@@ -228,35 +252,66 @@
 }
 .badge-row-e__tier {
   color: var(--color-text-muted);
-  font-weight: 700;
+  font-weight: var(--weight-medium);
 }
 
 /* ---------- Vitrine ---------- */
 .badge-grid {
   display: grid;
   gap: var(--space-4);
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
 }
 .badge-grid > li {
   display: flex;
 }
 .badge-card {
+  --plate: var(--color-primary-soft);
   display: flex;
-  gap: var(--space-4);
-  align-items: flex-start;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: stretch;
   width: 100%;
+}
+.badge-card--t1 {
+  --plate: var(--tier-1-soft);
+  --tier-line: var(--tier-1);
+  --tier-mid: var(--tier-1-mid);
+}
+.badge-card--t2 {
+  --plate: var(--tier-2-soft);
+  --tier-line: var(--tier-2);
+  --tier-mid: var(--tier-2-mid);
+}
+.badge-card--t3 {
+  --plate: var(--tier-3-soft);
+  --tier-line: var(--tier-3);
+  --tier-mid: var(--tier-3-mid);
 }
 .card + .card.badge-card {
   margin-top: 0;
 }
-.badge-card .badge-emblem {
+/* Wappen auf einem „Sockel“: Fläche über die ganze Breite, Kreis in der Stufenfarbe dahinter */
+.badge-card > .badge-emblem {
   flex-shrink: 0;
-  width: 6.5rem;
-  height: auto;
+  width: 100%;
+  max-width: none;
+  height: 9rem;
+  padding: var(--space-4) 0 var(--space-3);
+  border-radius: var(--radius);
+  background:
+    radial-gradient(circle at 50% 58%, var(--plate) 0 3.3rem, transparent 3.35rem),
+    var(--color-bg);
 }
-.badge-card--locked {
-  background: var(--color-bg);
-  border-style: dashed;
+.card.badge-card--locked {
+  --plate: var(--color-surface);
+  --tier-line: var(--tier-locked);
+  --tier-mid: transparent;
+  background: var(--color-surface-2);
+  border-color: transparent;
+  box-shadow: none;
+}
+.badge-card--locked > .badge-emblem {
+  background: radial-gradient(circle at 50% 58%, var(--plate) 0 3.3rem, transparent 3.35rem);
 }
 .badge-card__body {
   flex: 1;
@@ -267,13 +322,28 @@
 }
 .badge-card__name {
   font-size: var(--font-size-lg);
-  margin-bottom: var(--space-1);
+  margin-bottom: var(--space-2);
 }
 .badge-card__tier,
 .badge-card__date {
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
-  font-weight: 700;
+  font-weight: var(--weight-bold);
+}
+/* Stufe mit kleinem Farbpunkt (die Stufe steht immer auch als Text daneben) */
+.badge-card__tier {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.badge-card__tier::before {
+  content: '';
+  flex-shrink: 0;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+  border: 2px solid var(--tier-line, var(--color-border));
+  background: var(--tier-mid, transparent);
 }
 .badge-card__actions {
   margin-top: var(--space-3);
@@ -289,11 +359,6 @@
 .field__label-e {
   font-weight: 700;
 }
-@media (max-width: 30em) {
-  .badge-card {
-    flex-direction: column;
-  }
-}
 
 .mini-badges {
   display: grid;
@@ -306,7 +371,7 @@
   align-items: center;
   text-align: center;
   gap: var(--space-1);
-  font-weight: 700;
+  font-weight: var(--weight-medium);
 }
 
 .challenge-card {
@@ -328,21 +393,22 @@ table.data.ranking-e tbody th {
 }
 table.data.ranking-e .ranking-e__me th,
 table.data.ranking-e .ranking-e__me td {
-  background: var(--color-primary-soft);
-  font-weight: 700;
-  border-top: 3px solid var(--color-primary);
-  border-bottom: 3px solid var(--color-primary);
+  background: var(--color-accent-soft);
+  font-weight: var(--weight-bold);
+}
+table.data.ranking-e .ranking-e__me > :first-child {
+  box-shadow: inset 0.375rem 0 0 var(--color-accent-text);
 }
 .ranking-e__you {
-  color: var(--color-primary-strong);
+  color: var(--color-accent-text);
 }
 
 /* Geteiltes Abzeichen */
 .shared-badge__frame {
   text-align: center;
   padding: var(--space-6) var(--space-4);
-  background: linear-gradient(180deg, var(--color-primary-soft), var(--color-surface));
-  border: 2px solid var(--color-border-soft);
+  background: radial-gradient(circle at 50% 38%, var(--color-primary-soft) 0 9rem, transparent 9.05rem), var(--color-surface);
+  border: 1px solid var(--color-border-soft);
   border-radius: var(--radius-lg);
   margin-bottom: var(--space-5);
 }
@@ -358,7 +424,7 @@ table.data.ranking-e .ranking-e__me td {
   font-size: var(--font-size-lg);
 }
 .shared-badge__meta {
-  font-weight: 700;
+  font-weight: var(--weight-medium);
   color: var(--color-text-muted);
 }
 
@@ -377,9 +443,10 @@ table.data.ranking-e .ranking-e__me td {
   height: 100%;
   padding: var(--space-3) var(--space-4);
   background: var(--color-surface);
-  border: 2px solid var(--color-border-soft);
+  border: 1px solid var(--color-border-soft);
   border-radius: var(--radius);
-  font-weight: 700;
+  box-shadow: var(--shadow);
+  font-weight: var(--weight-bold);
   color: var(--color-primary-strong);
   text-decoration: none;
 }
@@ -391,10 +458,11 @@ table.data.ranking-e .ranking-e__me td {
   width: 1.6rem;
   height: 1.6rem;
   flex-shrink: 0;
+  color: var(--color-primary);
 }
 .badge-pill--count {
   background: var(--color-accent);
-  color: #fff;
+  color: var(--color-on-accent);
   border-color: var(--color-accent);
 }
 .avatar-edit {
@@ -422,7 +490,7 @@ table.data.ranking-e .ranking-e__me td {
   align-items: center;
   min-height: var(--tap-min);
   padding: var(--space-3) var(--space-4);
-  border: 2px solid var(--color-border-soft);
+  border: 1px solid var(--color-border-soft);
   border-radius: var(--radius);
   text-decoration: none;
   color: var(--color-text);
@@ -534,12 +602,12 @@ table.data.ranking-e .ranking-e__me td {
   gap: var(--space-3);
   padding: var(--space-4);
   background: var(--color-surface);
-  border: 2px solid var(--color-border-soft);
+  border: 1px solid var(--color-border-soft);
   border-radius: var(--radius);
 }
 .notif-e--new {
   border-color: var(--color-primary);
-  border-left-width: 0.5rem;
+  border-left: 0.375rem solid var(--color-primary);
 }
 .notif-e__icon {
   width: 1.8rem;
@@ -577,7 +645,7 @@ table.data.ranking-e .ranking-e__me td {
   display: flex;
   flex-direction: column;
   padding: var(--space-3) var(--space-4);
-  border: 2px solid var(--color-border-soft);
+  border: 1px solid var(--color-border-soft);
   border-radius: var(--radius);
 }
 .group-row-e__name {
@@ -587,7 +655,7 @@ table.data.ranking-e .ranking-e__me td {
 .offer-e,
 .distance-e {
   padding: var(--space-4);
-  border: 2px solid var(--color-border-soft);
+  border: 1px solid var(--color-border-soft);
   border-radius: var(--radius);
   background: var(--color-surface);
 }
@@ -621,8 +689,10 @@ table.data.ranking-e .ranking-e__me td {
   border-color: var(--color-premium);
 }
 .premium-price__amount {
+  font-family: var(--font-display);
   font-size: 2.6rem;
-  font-weight: 700;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
   color: var(--color-premium);
   margin: var(--space-3) auto;
   line-height: 1.2;
@@ -709,26 +779,29 @@ table.data.ranking-e .ranking-e__me td {
   appearance: none;
   width: 100%;
   max-width: 36rem;
-  height: 1.25rem;
-  border: 2px solid var(--color-primary-strong);
-  border-radius: 999px;
+  height: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
   background: var(--color-surface);
   overflow: hidden;
 }
 .progress__bar::-webkit-progress-bar {
   background: var(--color-surface);
+  border-radius: var(--radius-pill);
 }
 .progress__bar::-webkit-progress-value {
   background: var(--color-primary);
+  border-radius: var(--radius-pill);
 }
 .progress__bar::-moz-progress-bar {
   background: var(--color-primary);
+  border-radius: var(--radius-pill);
 }
 .progress--done .progress__bar::-webkit-progress-value {
-  background: var(--tier-3);
+  background: var(--color-success);
 }
 .progress--done .progress__bar::-moz-progress-bar {
-  background: var(--tier-3);
+  background: var(--color-success);
 }
 .progress__text {
   font-weight: 700;
@@ -746,7 +819,7 @@ table.data.ranking-e .ranking-e__me td {
   align-items: center;
   gap: var(--space-3) var(--space-4);
   padding: var(--space-5);
-  border: 3px dashed var(--color-border);
+  border: 2px dashed var(--color-border);
   border-radius: var(--radius-lg);
   background: var(--color-surface);
   max-width: 40rem;

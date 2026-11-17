@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import type { GroupSummary } from '../api/types-walks';
 import { formatDate, formatKm, formatTime } from '../lib/format';
 import { Icon, type IconName } from './Icon';
+import { Landscape } from './Landscape';
 import { TempoBadge } from './Tempo';
 
 export const joinPolicyIcon: Record<JoinPolicy, IconName> = { open: 'group', request: 'mail', invite: 'lock' };
@@ -16,7 +17,7 @@ export function GroupCard({ group, headingLevel = 3 }: { group: GroupSummary; he
   return (
     <article className="group-card">
       <div className="group-card__photo" aria-hidden="true">
-        {group.photoUrl ? <img src={group.photoUrl} alt="" loading="lazy" /> : <Icon name="group" />}
+        {group.photoUrl ? <img src={group.photoUrl} alt="" loading="lazy" /> : <Landscape variant="thumb" seed={group.id} />}
       </div>
       <div className="group-card__body">
         <H className="group-card__title">

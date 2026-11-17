@@ -57,8 +57,8 @@ function WalkView({ walk }: { walk: Walk }) {
   return (
     <div className="walk-detail">
       <p className="no-print">
-        <Link to={walk.group ? `/gruppen/${walk.group.id}` : '/walks'}>
-          <Icon name="arrowLeft" className="inline-icon" /> {walk.group ? t('detail.backToGroup', { name: walk.group.name }) : t('detail.backToList')}
+        <Link to={walk.group ? `/gruppen/${walk.group.id}` : '/walks'} className="btn btn--ghost back-link">
+          <Icon name="arrowLeft" /> {walk.group ? t('detail.backToGroup', { name: walk.group.name }) : t('detail.backToList')}
         </Link>
       </p>
       <PageHeader
@@ -331,7 +331,7 @@ function RsvpBox({ walk, isMember, full, started }: { walk: Walk; isMember: bool
       ) : (
         <>
           <p>{t('rsvp.text')}</p>
-          <button type="button" className="btn btn--large btn--block" disabled={rsvp.isPending} onClick={() => rsvp.mutate('yes')}>
+          <button type="button" className="btn btn--accent btn--large btn--block" disabled={rsvp.isPending} onClick={() => rsvp.mutate('yes')}>
             <Icon name="check" /> {rsvp.isPending ? t('common:status.saving') : t('rsvp.yes')}
           </button>
         </>
