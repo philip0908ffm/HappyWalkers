@@ -1,0 +1,495 @@
+<!doctype html>
+<!--
+  Musterseite zur Abstimmung der neuen Gestaltung (Miriam Schulz) – KEIN Produktionscode.
+  Zeigt Kopfzeile, Startseiten-Kopf, zwei Karten, Knöpfe, Formularfeld, Hinweis und Abzeichen.
+  Schriften: kommen nach `npm install -w web @fontsource-variable/atkinson-hyperlegible-next @fontsource-variable/figtree`
+  aus node_modules; ohne diese Pakete fällt die Seite auf Systemschriften zurück.
+  Der App-Name steht hier nur als Beispiel – in der App kommt er immer aus APP_NAME bzw. t('app.name').
+-->
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Gestaltungsmuster – HappyWalkers</title>
+<style>
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next Variable';
+  font-style: normal; font-display: swap; font-weight: 200 800;
+  src: url('../node_modules/@fontsource-variable/atkinson-hyperlegible-next/files/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'Figtree Variable';
+  font-style: normal; font-display: swap; font-weight: 300 900;
+  src: url('../node_modules/@fontsource-variable/figtree/files/figtree-latin-wght-normal.woff2') format('woff2-variations');
+}
+
+/* ===== Neue Tokens (identisch mit dem Block in docs/DESIGN-KONZEPT.md, Abschnitt 3) ===== */
+:root {
+  --color-bg: #f4f5f1;
+  --color-surface: #ffffff;
+  --color-surface-2: #e8ece6;
+  --color-text: #172321;
+  --color-text-muted: #4a5754;
+  --color-border: #6e7b77;
+  --color-border-soft: #d3dad4;
+  --color-primary: #0e5149;
+  --color-primary-strong: #093b35;
+  --color-primary-soft: #dcede7;
+  --color-on-primary: #ffffff;
+  --color-accent: #f5b82e;
+  --color-accent-soft: #fdefc8;
+  --color-on-accent: #172321;
+  --color-hero: #0b3f3a;
+  --color-hero-line: #175a52;
+  --color-on-hero: #ffffff;
+  --color-on-hero-muted: #c9ded8;
+  --color-success: #1c6b3c;
+  --color-success-soft: #e1f1e6;
+  --color-error: #b3261e;
+  --color-error-strong: #8c1d17;
+  --color-error-soft: #fce8e6;
+  --color-warning: #7a4e00;
+  --color-warning-border: #a86b00;
+  --color-warning-soft: #fff3cf;
+  --color-focus: #1f4fd1;
+  --color-focus-halo: #f5b82e;
+  --tempo-gemuetlich: #1c6b3c; --tempo-gemuetlich-soft: #e1f1e6;
+  --tempo-zuegig: #8a5a00;     --tempo-zuegig-soft: #fdf0d2;
+  --tempo-flott: #a8361e;      --tempo-flott-soft: #fbe5de;
+  --tier-1: #8a552a; --tier-1-soft: #f5e4d3; --tier-1-mid: #d49a68;
+  --tier-2: #56636e; --tier-2-soft: #ebeff2; --tier-2-mid: #b7c1ca;
+  --tier-3: #7d6100; --tier-3-soft: #fbf0c4; --tier-3-mid: #e6b93a;
+
+  --font-family: 'Atkinson Hyperlegible Next Variable', 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-display: 'Figtree Variable', 'Atkinson Hyperlegible Next Variable', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-size-sm: 0.9rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.6rem;
+  --font-size-xxl: 2.2rem;
+  --font-size-display: clamp(2.3rem, 1.7rem + 2.6vw, 3.6rem);
+  --line-height: 1.6;
+  --line-height-tight: 1.2;
+  --weight-regular: 400;
+  --weight-medium: 560;
+  --weight-bold: 700;
+  --weight-display: 780;
+
+  --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
+  --space-5: 1.5rem;  --space-6: 2rem;   --space-7: 3rem;    --space-8: 4.5rem;
+
+  --radius-sm: 0.5rem;
+  --radius: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-pill: 999px;
+  --shadow: 0 1px 2px rgb(23 35 33 / 0.06), 0 2px 10px rgb(23 35 33 / 0.05);
+  --shadow-raised: 0 2px 4px rgb(23 35 33 / 0.08), 0 10px 28px rgb(23 35 33 / 0.10);
+
+  --tap-min: 2.75rem;
+  --control-height: 3rem;
+  --content-max: 72rem;
+  --text-max: 42rem;
+}
+html { font-size: 112.5%; }
+
+/* ===== Grundlagen ===== */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: var(--font-family); font-size: 1rem; line-height: var(--line-height); color: var(--color-text); background: var(--color-bg); overflow-wrap: break-word; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: var(--weight-display); line-height: var(--line-height-tight); letter-spacing: -0.01em; margin: 0 0 var(--space-3); }
+h2 { font-size: var(--font-size-xl); }
+h3 { font-size: var(--font-size-lg); font-weight: var(--weight-bold); }
+p { margin: 0 0 var(--space-4); max-width: var(--text-max); }
+a { color: var(--color-primary); text-underline-offset: 0.2em; text-decoration-thickness: 0.07em; }
+:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; box-shadow: 0 0 0 7px var(--color-focus-halo); border-radius: var(--radius-sm); }
+.wrap { max-width: var(--content-max); margin: 0 auto; padding: 0 var(--space-4); }
+svg { max-width: 100%; }
+.ico { width: 1.25em; height: 1.25em; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.overline { font-family: var(--font-display); font-size: var(--font-size-sm); font-weight: var(--weight-bold); letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text-muted); margin-bottom: var(--space-2); }
+
+/* ===== Kopfzeile ===== */
+.app-header { position: sticky; top: 0; z-index: 50; background: var(--color-surface); border-bottom: 1px solid var(--color-border-soft); }
+.app-header__inner { max-width: var(--content-max); margin: 0 auto; display: flex; align-items: center; gap: var(--space-4); padding: var(--space-2) var(--space-4); }
+.app-logo { display: flex; align-items: center; gap: var(--space-3); min-height: var(--tap-min); font-family: var(--font-display); font-weight: 800; font-size: 1.3rem; letter-spacing: -0.015em; color: var(--color-text); text-decoration: none; }
+.app-logo svg { width: 2.4rem; height: 2.4rem; }
+.app-nav { margin-left: auto; }
+.app-nav ul { list-style: none; margin: 0; padding: 0; display: flex; gap: var(--space-1); }
+.app-nav a { position: relative; display: flex; align-items: center; gap: var(--space-2); min-height: var(--control-height); padding: 0 var(--space-4); border-radius: var(--radius); color: var(--color-text); text-decoration: none; font-weight: var(--weight-medium); }
+.app-nav a .ico { width: 1.5rem; height: 1.5rem; color: var(--color-primary); }
+.app-nav a:hover { background: var(--color-surface-2); }
+.app-nav a[aria-current='page'] { background: var(--color-primary-soft); color: var(--color-primary-strong); font-weight: var(--weight-bold); }
+.app-nav a[aria-current='page']::after { content: ''; position: absolute; left: var(--space-3); right: var(--space-3); bottom: 0.3rem; height: 0.2rem; border-radius: 2px; background: var(--color-primary); }
+@media (max-width: 59.99em) {
+  .app-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 60; background: var(--color-surface); border-top: 1px solid var(--color-border-soft); box-shadow: 0 -2px 12px rgb(23 35 33 / 0.08); padding: var(--space-1); }
+  .app-nav ul { justify-content: space-around; gap: 0; }
+  .app-nav li { flex: 1 1 0; min-width: 0; }
+  .app-nav a { flex-direction: column; gap: 0.1rem; padding: var(--space-1); min-height: 3.6rem; font-size: 0.8rem; justify-content: center; }
+  .app-nav a[aria-current='page']::after { top: 0; bottom: auto; }
+  body { padding-bottom: 5rem; }
+}
+@media (max-width: 22em) { .app-nav a { font-size: 0.72rem; padding-inline: 0; } }
+
+/* ===== Startseiten-Kopf (abgemeldet) ===== */
+.hero { position: relative; overflow: hidden; background: var(--color-hero); color: var(--color-on-hero); }
+.hero__lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.hero__inner { position: relative; display: grid; gap: var(--space-6); padding-top: var(--space-7); padding-bottom: var(--space-7); align-items: center; }
+@media (min-width: 60em) { .hero__inner { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); padding-top: var(--space-8); padding-bottom: var(--space-8); } }
+.hero h1 { font-size: var(--font-size-display); color: var(--color-on-hero); letter-spacing: -0.02em; max-width: 14ch; margin-bottom: var(--space-4); }
+.hero .overline { color: var(--color-accent); }
+.hero__lead { font-size: var(--font-size-lg); color: var(--color-on-hero-muted); max-width: 34rem; margin-bottom: var(--space-6); }
+.hero :focus-visible { outline-color: #fff; }
+.search-panel { background: var(--color-surface); color: var(--color-text); border-radius: var(--radius-lg); padding: var(--space-5); box-shadow: var(--shadow-raised); max-width: 36rem; }
+.search-panel h2 { font-size: var(--font-size-lg); margin-bottom: var(--space-4); }
+.search-row { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: flex-end; }
+.search-row .field { flex: 1 1 12rem; margin: 0; }
+.hero__signin { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); margin-top: var(--space-5); color: var(--color-on-hero-muted); }
+.hero__art svg { display: block; width: 100%; max-width: 28rem; margin-left: auto; border-radius: 50% 50% var(--radius-lg) var(--radius-lg) / 38% 38% var(--radius-lg) var(--radius-lg); }
+@media (max-width: 40em) { .hero__art { display: none; } }
+
+/* ===== Knöpfe ===== */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); min-height: var(--control-height); min-width: var(--tap-min); padding: var(--space-2) var(--space-5); border: 2px solid var(--color-primary); border-radius: var(--radius-pill); background: var(--color-primary); color: var(--color-on-primary); font: inherit; font-weight: var(--weight-bold); line-height: 1.2; text-decoration: none; cursor: pointer; transition: background-color 0.12s, border-color 0.12s; }
+.btn:hover { background: var(--color-primary-strong); border-color: var(--color-primary-strong); }
+.btn--secondary { background: var(--color-surface); color: var(--color-primary-strong); }
+.btn--secondary:hover { background: var(--color-primary-soft); }
+.btn--accent { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-on-accent); }
+.btn--accent:hover { background: #e9a91b; border-color: #e9a91b; }
+.btn--on-dark { background: transparent; color: var(--color-on-hero); border-color: var(--color-on-hero-muted); }
+.btn--on-dark:hover { background: var(--color-hero-line); }
+.btn--ghost { background: transparent; border-color: transparent; color: var(--color-primary-strong); text-decoration: underline; text-underline-offset: 0.2em; padding-inline: var(--space-3); }
+.btn--ghost:hover { background: var(--color-surface-2); }
+.btn--danger { background: var(--color-error); border-color: var(--color-error); }
+.btn-row { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+
+/* ===== Formular ===== */
+.field { margin-bottom: var(--space-5); }
+.field label { display: block; font-weight: var(--weight-bold); margin-bottom: var(--space-1); }
+.field__hint { display: block; font-size: var(--font-size-sm); color: var(--color-text-muted); margin-bottom: var(--space-2); }
+.input { display: block; width: 100%; max-width: 36rem; min-height: var(--control-height); padding: var(--space-2) var(--space-4); font: inherit; color: var(--color-text); background: var(--color-surface); border: 2px solid var(--color-border); border-radius: var(--radius); }
+.input:hover { border-color: var(--color-text-muted); }
+.input:focus-visible { border-color: var(--color-primary); border-radius: var(--radius); }
+.input[aria-invalid='true'] { border-color: var(--color-error); background: var(--color-error-soft); }
+.field__error { display: flex; gap: var(--space-2); align-items: flex-start; color: var(--color-error); font-weight: var(--weight-bold); margin-top: var(--space-2); }
+
+/* ===== Abschnitte ===== */
+main { display: block; }
+.section { padding: var(--space-7) 0 0; }
+.section-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-4); }
+.section-head h2 { margin: 0; }
+.cols { display: grid; gap: var(--space-5); }
+@media (min-width: 60em) { .cols { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); } }
+.card-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-4); }
+
+/* ===== Terminkarte ===== */
+.walk-card, .group-card { position: relative; display: flex; gap: var(--space-5); background: var(--color-surface); border: 1px solid var(--color-border-soft); border-radius: var(--radius-lg); padding: var(--space-5); box-shadow: var(--shadow); }
+.walk-card--going { border: 2px solid var(--color-primary); }
+.walk-card__date { flex: 0 0 4.75rem; align-self: flex-start; display: flex; flex-direction: column; align-items: center; overflow: hidden; border-radius: var(--radius); border: 1px solid var(--color-border-soft); background: var(--color-surface); text-align: center; line-height: 1.1; font-family: var(--font-display); }
+.walk-card__weekday { align-self: stretch; padding: 0.2rem 0; background: var(--color-primary); color: var(--color-on-primary); font-size: var(--font-size-sm); font-weight: var(--weight-bold); letter-spacing: 0.06em; text-transform: uppercase; }
+.walk-card__day { font-size: 2rem; font-weight: 800; padding-top: 0.25rem; font-variant-numeric: tabular-nums; }
+.walk-card__month { font-size: var(--font-size-sm); font-weight: var(--weight-bold); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-muted); padding-bottom: 0.35rem; }
+.walk-card__body, .group-card__body { flex: 1; min-width: 0; }
+.walk-card__title, .group-card__title { font-size: var(--font-size-lg); margin-bottom: var(--space-1); }
+.walk-card__title a, .group-card__title a { color: var(--color-text); text-decoration-color: var(--color-primary); text-decoration-thickness: 0.08em; }
+.walk-card__title a:hover, .group-card__title a:hover { color: var(--color-primary); }
+.walk-card__when { font-family: var(--font-display); font-size: 1.05rem; font-variant-numeric: tabular-nums; font-weight: var(--weight-bold); color: var(--color-primary-strong); margin-bottom: var(--space-3); }
+.meta { list-style: none; margin: 0 0 var(--space-3); padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); color: var(--color-text-muted); }
+.meta li { display: inline-flex; align-items: center; gap: var(--space-2); }
+.meta .ico { color: var(--color-primary); }
+.walk-card__corner { position: absolute; top: var(--space-4); right: var(--space-4); }
+@media (max-width: 30em) {
+  .walk-card, .group-card { flex-direction: column; gap: var(--space-3); padding: var(--space-4); }
+  .walk-card__date { flex-direction: row; flex-basis: auto; gap: var(--space-2); padding-right: var(--space-3); }
+  .walk-card__weekday { align-self: stretch; display: flex; align-items: center; padding: 0 var(--space-2); }
+  .walk-card__day { font-size: var(--font-size-lg); padding: 0.2rem 0; }
+  .walk-card__month { padding: 0; }
+  .walk-card__corner { position: static; }
+}
+.group-card__photo { flex: 0 0 7rem; height: 7rem; border-radius: var(--radius); overflow: hidden; background: var(--color-primary-soft); }
+.group-card__photo svg { width: 100%; height: 100%; display: block; }
+@media (max-width: 30em) { .group-card__photo { flex-basis: auto; width: 100%; height: 7rem; } }
+
+/* Kleine Marken */
+.pill { display: inline-flex; align-items: center; gap: var(--space-2); min-height: 1.9rem; padding: 0 0.75rem; border-radius: var(--radius-pill); font-size: var(--font-size-sm); font-weight: var(--weight-bold); color: var(--color-text); border: 1px solid currentColor; }
+.tempo--gemuetlich { background: var(--tempo-gemuetlich-soft); border-color: var(--tempo-gemuetlich); }
+.tempo--gemuetlich .tempo-symbol { color: var(--tempo-gemuetlich); }
+.tempo--zuegig { background: var(--tempo-zuegig-soft); border-color: var(--tempo-zuegig); }
+.tempo--zuegig .tempo-symbol { color: var(--tempo-zuegig); }
+.tempo--flott { background: var(--tempo-flott-soft); border-color: var(--tempo-flott); }
+.tempo--flott .tempo-symbol { color: var(--tempo-flott); }
+.tempo-symbol { width: 1.6em; height: 0.9em; }
+.status--success { background: var(--color-success); color: #fff; border-color: var(--color-success); }
+
+/* ===== Hinweis / Bestätigung ===== */
+.notice { display: flex; gap: var(--space-3); align-items: flex-start; padding: var(--space-4) var(--space-5); border-radius: var(--radius); border-left: 0.375rem solid; margin: 0 0 var(--space-5); }
+.notice p { margin: 0; }
+.notice .ico { width: 1.5rem; height: 1.5rem; margin-top: 0.1rem; }
+.notice--success { background: var(--color-success-soft); border-color: var(--color-success); }
+.notice--success .ico { color: var(--color-success); }
+
+/* ===== Vitrine ===== */
+.stat-tiles { list-style: none; margin: 0 0 var(--space-6); padding: 0; display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); }
+.stat-tile { padding: var(--space-4) var(--space-5); background: var(--color-surface); border-radius: var(--radius-lg); border: 1px solid var(--color-border-soft); }
+.stat-tile--accent { background: var(--color-accent-soft); border-color: var(--color-warning-border); }
+.stat-tile__value { display: block; font-family: var(--font-display); font-size: var(--font-size-xxl); font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.stat-tile__label { color: var(--color-text-muted); font-weight: var(--weight-medium); }
+.badge-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); }
+.badge-card { height: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); padding: var(--space-5); background: var(--color-surface); border: 1px solid var(--color-border-soft); border-radius: var(--radius-lg); box-shadow: var(--shadow); }
+.badge-card__plate { align-self: stretch; display: flex; justify-content: center; padding: var(--space-4) 0 var(--space-3); border-radius: var(--radius); background: radial-gradient(circle at 50% 60%, var(--plate) 0 38%, transparent 39%), var(--color-bg); }
+.badge-card__plate svg { width: 6.5rem; height: auto; }
+.badge-card--t1 { --plate: var(--tier-1-soft); }
+.badge-card--t2 { --plate: var(--tier-2-soft); }
+.badge-card--t3 { --plate: var(--tier-3-soft); }
+.badge-card--locked { background: var(--color-surface-2); box-shadow: none; border-color: transparent; --plate: var(--color-surface); }
+.badge-card--locked .badge-card__plate { background: radial-gradient(circle at 50% 60%, var(--plate) 0 38%, transparent 39%), transparent; }
+.badge-card h3 { margin: 0; }
+.badge-card__tier { font-size: var(--font-size-sm); font-weight: var(--weight-bold); color: var(--color-text-muted); margin: 0; display: inline-flex; align-items: center; gap: var(--space-2); }
+.badge-card__tier i { display: inline-block; width: 0.8rem; height: 0.8rem; border-radius: 50%; border: 2px solid currentColor; }
+.badge-card p { margin: 0; }
+.progress { width: 100%; }
+.progress__bar { width: 100%; height: 0.75rem; border-radius: var(--radius-pill); background: var(--color-surface); border: 1px solid var(--color-border); overflow: hidden; }
+.progress__bar span { display: block; height: 100%; background: var(--color-primary); border-radius: var(--radius-pill); }
+.progress__text { font-weight: var(--weight-bold); margin-top: var(--space-1) !important; }
+
+/* ===== Muster-Abschnitte ===== */
+.specimen { background: var(--color-surface); border: 1px solid var(--color-border-soft); border-radius: var(--radius-lg); padding: var(--space-5); }
+.app-footer { margin-top: var(--space-8); background: var(--color-surface-2); padding: var(--space-6) 0; }
+.app-footer ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); }
+.app-footer a { display: inline-flex; align-items: center; min-height: var(--tap-min); color: var(--color-primary-strong); }
+.app-footer__brand { font-family: var(--font-display); font-weight: 800; margin-bottom: var(--space-2); }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0.001ms !important; } }
+</style>
+</head>
+<body>
+<!-- Symbolvorrat (Linien-Symbole, 24er-Raster, 2 px Strich – wie Icon.tsx) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></symbol>
+  <symbol id="i-walk" viewBox="0 0 24 24"><circle cx="13" cy="4.5" r="1.8"/><path d="m9 21 2.5-6 2.5 2v4M11.5 15l1-6-3 1.5-1.5 3M12.5 9l2 3 3 1"/></symbol>
+  <symbol id="i-group" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6"/><path d="M16 5.2a3 3 0 0 1 0 5.6M18 14.5c1.9.8 3 2.8 3 5.5"/></symbol>
+  <symbol id="i-badge" viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6Z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h7a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h7"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5a7 7 0 1 0-14 0C5 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></symbol>
+  <symbol id="i-people" viewBox="0 0 24 24"><circle cx="8" cy="8" r="2.8"/><circle cx="16" cy="8" r="2.8"/><path d="M3 19c0-3 2.2-5 5-5s5 2 5 5M11 19c0-3 2.2-5 5-5s5 2 5 5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.1"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-open" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6"/><path d="M16 5.2a3 3 0 0 1 0 5.6M18 14.5c1.9.8 3 2.8 3 5.5"/></symbol>
+  <symbol id="tempo1" viewBox="0 0 30 16"><path d="M3 3l6 5-6 5"/><path d="M12 3l6 5-6 5" opacity=".2"/><path d="M21 3l6 5-6 5" opacity=".2"/></symbol>
+  <symbol id="tempo2" viewBox="0 0 30 16"><path d="M3 3l6 5-6 5"/><path d="M12 3l6 5-6 5"/><path d="M21 3l6 5-6 5" opacity=".2"/></symbol>
+</svg>
+
+<header class="app-header">
+  <div class="app-header__inner">
+    <a class="app-logo" href="#">
+      <!-- Neues Zeichen: Weg zur Sonne (Wegbild statt Strichmännchen) -->
+      <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+        <rect width="64" height="64" rx="16" fill="#0e5149"/>
+        <circle cx="42" cy="22" r="9" fill="#f5b82e"/>
+        <path d="M14 54c6-10 20-8 22-16s-6-10-2-15" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M6 46c10-6 20-5 30-2s16 2 22-2" fill="none" stroke="#2f7a6f" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      <span>HappyWalkers</span>
+    </a>
+    <nav class="app-nav" aria-label="Hauptnavigation">
+      <ul>
+        <li><a href="#" aria-current="page"><svg class="ico"><use href="#i-home"/></svg><span>Start</span></a></li>
+        <li><a href="#"><svg class="ico"><use href="#i-walk"/></svg><span>Walks</span></a></li>
+        <li><a href="#"><svg class="ico"><use href="#i-group"/></svg><span>Gruppen</span></a></li>
+        <li><a href="#"><svg class="ico"><use href="#i-badge"/></svg><span>Abzeichen</span></a></li>
+        <li><a href="#"><svg class="ico"><use href="#i-user"/></svg><span>Profil</span></a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="inhalt">
+  <!-- ===== Startseiten-Kopf ===== -->
+  <section class="hero" aria-labelledby="hero-title">
+    <svg class="hero__lines" viewBox="0 0 1200 520" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+      <g fill="none" stroke="#175a52" stroke-width="1.5">
+        <path d="M-50 420c180-60 320-20 460-70s240-150 420-130 300 90 420 60"/>
+        <path d="M-50 460c200-60 340-10 500-60s250-140 420-110 280 90 380 70"/>
+        <path d="M-50 380c170-60 300-40 430-90s230-160 410-150 320 80 460 50"/>
+        <path d="M-50 340c160-60 280-60 400-110s220-170 400-170 340 70 500 40"/>
+        <path d="M-50 300c150-60 260-80 370-130s210-180 390-190 360 60 540 30"/>
+        <path d="M-50 500c220-50 360 0 540-40s260-120 420-90 260 80 340 70"/>
+        <path d="M600 120c40-30 110-30 140 0s-10 70-70 70-110-40-70-70Z"/>
+        <path d="M570 110c60-60 170-55 210-5s-20 115-110 115-160-50-100-110Z"/>
+      </g>
+    </svg>
+    <div class="wrap hero__inner">
+      <div>
+        <p class="overline">Gemeinsam unterwegs</p>
+        <h1 id="hero-title">Gemeinsam gehen – nicht allein</h1>
+        <p class="hero__lead">HappyWalkers bringt Menschen zusammen, die sich gern mehr bewegen möchten: verabredete Spaziergänge in zügigem Schritt, ganz in Ihrer Nähe.</p>
+        <div class="search-panel">
+          <h2>Walks in Ihrer Nähe finden</h2>
+          <form class="search-row" onsubmit="return false">
+            <div class="field">
+              <label for="plz">Postleitzahl oder Ort</label>
+              <span class="field__hint" id="plz-hint">Zum Beispiel: 34117 oder Kassel</span>
+              <input class="input" id="plz" aria-describedby="plz-hint" autocomplete="postal-code" />
+            </div>
+            <button class="btn btn--accent" type="submit"><svg class="ico"><use href="#i-search"/></svg>Walks in meiner Nähe finden</button>
+          </form>
+        </div>
+        <p class="hero__signin">Schon dabei oder neu hier? <a class="btn btn--on-dark" href="#"><svg class="ico"><use href="#i-user"/></svg>Anmelden</a></p>
+      </div>
+      <div class="hero__art" aria-hidden="true">
+        <!-- Landschaft statt Figuren: Hügel, Weg, Sonne – flächig, ruhig -->
+        <svg viewBox="0 0 400 360" focusable="false">
+          <circle cx="292" cy="96" r="44" fill="#f5b82e"/>
+          <path d="M0 220c70-40 140-50 210-26s130 20 190-14v180H0Z" fill="#175a52"/>
+          <path d="M0 262c90-30 170-28 250-8s110 12 150-4v110H0Z" fill="#2f7a6f"/>
+          <path d="M0 300c80-18 170-16 260-2s110 6 140 0v64H0Z" fill="#dcede7"/>
+          <path d="M120 360c10-30 60-40 90-56s50-30 80-58" fill="none" stroke="#f5b82e" stroke-width="7" stroke-linecap="round" stroke-dasharray="2 16"/>
+          <g transform="translate(276 214)"><path d="M14 40S0 26 0 14a14 14 0 0 1 28 0c0 12-14 26-14 26Z" fill="#fff"/><circle cx="14" cy="14" r="5" fill="#0e5149"/></g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <!-- ===== Karten ===== -->
+    <section class="section" aria-labelledby="cards-title">
+      <div class="section-head">
+        <h2 id="cards-title">Ihre nächsten Walks</h2>
+        <a class="btn btn--ghost" href="#">Alle Walks ansehen<svg class="ico"><use href="#i-arrow"/></svg></a>
+      </div>
+      <div class="cols">
+        <ul class="card-list">
+          <li>
+            <article class="walk-card walk-card--going">
+              <div class="walk-card__date" aria-hidden="true"><span class="walk-card__weekday">Fr</span><span class="walk-card__day">20</span><span class="walk-card__month">Nov</span></div>
+              <div class="walk-card__body">
+                <h3 class="walk-card__title"><a href="#">Freitags-Runde in der Karlsaue</a></h3>
+                <p class="walk-card__when">Freitag, 20. November 2026, 09:30 Uhr</p>
+                <ul class="meta">
+                  <li><span class="pill tempo--gemuetlich"><svg class="tempo-symbol" style="fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round"><use href="#tempo1"/></svg>gemütlich</span></li>
+                  <li><svg class="ico"><use href="#i-clock"/></svg>1 Stunde</li>
+                  <li><svg class="ico"><use href="#i-route"/></svg>5,0 km</li>
+                  <li><svg class="ico"><use href="#i-pin"/></svg>Kassel</li>
+                  <li><svg class="ico"><use href="#i-people"/></svg>5 Personen haben zugesagt</li>
+                </ul>
+                <span class="pill status--success"><svg class="ico"><use href="#i-check"/></svg>Sie sind dabei</span>
+              </div>
+            </article>
+          </li>
+          <li>
+            <article class="walk-card">
+              <div class="walk-card__date" aria-hidden="true"><span class="walk-card__weekday">Sa</span><span class="walk-card__day">21</span><span class="walk-card__month">Nov</span></div>
+              <div class="walk-card__body">
+                <h3 class="walk-card__title"><a href="#">Samstags im Bergpark</a></h3>
+                <p class="walk-card__when">Samstag, 21. November 2026, 10:00 Uhr</p>
+                <ul class="meta">
+                  <li><span class="pill tempo--zuegig"><svg class="tempo-symbol" style="fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round"><use href="#tempo2"/></svg>zügig</span></li>
+                  <li><svg class="ico"><use href="#i-clock"/></svg>1 Std. 15 Min.</li>
+                  <li><svg class="ico"><use href="#i-route"/></svg>6,5 km</li>
+                  <li><svg class="ico"><use href="#i-pin"/></svg>Kassel (4,8 km entfernt)</li>
+                </ul>
+              </div>
+            </article>
+          </li>
+        </ul>
+        <article class="group-card">
+          <div class="group-card__photo" aria-hidden="true">
+            <!-- Ersatzbild ohne Foto: Landschaftsausschnitt in Gruppenfarbe -->
+            <svg viewBox="0 0 120 120" preserveAspectRatio="xMidYMid slice"><rect width="120" height="120" fill="#dcede7"/><circle cx="86" cy="34" r="14" fill="#f5b82e"/><path d="M0 78c26-16 52-18 78-8s32 6 42-2v52H0Z" fill="#2f7a6f"/><path d="M0 96c30-10 64-10 90-2s22 2 30 0v28H0Z" fill="#0e5149"/></svg>
+          </div>
+          <div class="group-card__body">
+            <h3 class="group-card__title"><a href="#">Morgenrunde Karlsaue</a></h3>
+            <ul class="meta">
+              <li><svg class="ico"><use href="#i-pin"/></svg>Kassel</li>
+              <li><svg class="ico"><use href="#i-people"/></svg>5 Mitglieder</li>
+              <li><svg class="ico"><use href="#i-open"/></svg>Offen für alle</li>
+            </ul>
+            <p style="margin:0"><svg class="ico" style="vertical-align:-0.2em;color:var(--color-primary)"><use href="#i-cal"/></svg> Nächster Termin: <a href="#">Fr., 20. November, 09:30 Uhr</a></p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===== Bedienelemente ===== -->
+    <section class="section" aria-labelledby="ui-title">
+      <h2 id="ui-title">Knöpfe, Formularfeld, Bestätigung</h2>
+      <div class="cols">
+        <div class="specimen">
+          <div class="btn-row" style="margin-bottom:var(--space-5)">
+            <a class="btn" href="#"><svg class="ico"><use href="#i-plus"/></svg>Walk eintragen</a>
+            <a class="btn btn--secondary" href="#"><svg class="ico"><use href="#i-search"/></svg>Gruppen finden</a>
+            <a class="btn btn--ghost" href="#">Doch nicht dabei – absagen</a>
+          </div>
+          <div class="field">
+            <label for="km">Strecke in Kilometern</label>
+            <span class="field__hint" id="km-hint">Mit Komma, zum Beispiel 5,2</span>
+            <input class="input" id="km" value="5.2.1" aria-invalid="true" aria-describedby="km-hint km-err" style="max-width:14rem" />
+            <p class="field__error" id="km-err"><svg class="ico"><use href="#i-alert"/></svg>Bitte geben Sie die Strecke als Zahl ein, zum Beispiel 5,2.</p>
+          </div>
+        </div>
+        <div>
+          <div class="notice notice--success" role="status">
+            <svg class="ico"><use href="#i-check"/></svg>
+            <p><strong>Gespeichert.</strong> Ihr Walk über 5,2 km ist eingetragen. Dafür gibt es 15 Punkte.</p>
+          </div>
+          <ul class="stat-tiles" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,8rem),1fr))">
+            <li class="stat-tile stat-tile--accent"><span class="stat-tile__value">194</span><span class="stat-tile__label">Punkte</span></li>
+            <li class="stat-tile"><span class="stat-tile__value">34,8</span><span class="stat-tile__label">Kilometer</span></li>
+            <li class="stat-tile"><span class="stat-tile__value">3</span><span class="stat-tile__label">Abzeichen</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Vitrine ===== -->
+    <section class="section" aria-labelledby="vitrine-title">
+      <h2 id="vitrine-title">Abzeichen</h2>
+      <ul class="badge-grid">
+        <li>
+          <article class="badge-card badge-card--t1">
+            <div class="badge-card__plate"><svg viewBox="0 0 120 140" aria-hidden="true"><path d="M60 8a56 56 0 1 1 0 112A56 56 0 0 1 60 8Z" fill="#f5e4d3" stroke="#8a552a" stroke-width="5"/><path d="M36 56h14l6 8 20 4c6 1 8 5 8 9H36ZM36 77h48" fill="none" stroke="#8a552a" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="24" y="96" width="72" height="20" rx="6" fill="#d49a68" stroke="#8a552a" stroke-width="3"/><path d="M60 99l2 4.3 4.6.6-3.4 3.2.9 4.6-4.1-2.3-4.1 2.3.9-4.6-3.4-3.2 4.6-.6Z" fill="#8a552a"/></svg></div>
+            <h3>Erster Walk</h3>
+            <p class="badge-card__tier"><i style="color:var(--tier-1);background:var(--tier-1-mid)"></i>Bronze · erreicht am 17. November 2026</p>
+            <p>Für den ersten eingetragenen Walk – der wichtigste Schritt.</p>
+          </article>
+        </li>
+        <li>
+          <article class="badge-card badge-card--t3">
+            <div class="badge-card__plate"><svg viewBox="0 0 120 140" aria-hidden="true"><path d="M60 6 108 22v42c0 30-20 52-48 68C32 116 12 94 12 64V22Z" fill="#fbf0c4" stroke="#7d6100" stroke-width="5" stroke-linejoin="round"/><path d="M60 6 108 22v42c0 30-20 52-48 68C32 116 12 94 12 64V22Z" transform="translate(8.4 9.24) scale(.86)" fill="none" stroke="#7d6100" stroke-width="3"/><path d="M60 6 108 22v42c0 30-20 52-48 68C32 116 12 94 12 64V22Z" transform="translate(15.6 17.16) scale(.74)" fill="none" stroke="#7d6100" stroke-width="2.5"/><path d="M38 80c8-4 10-12 18-14s14 4 22-4M78 62V40l12 5-12 5" fill="none" stroke="#7d6100" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="24" y="96" width="72" height="20" rx="6" fill="#e6b93a" stroke="#7d6100" stroke-width="3"/><g fill="#7d6100"><path d="M40 99l2 4.3 4.6.6-3.4 3.2.9 4.6-4.1-2.3-4.1 2.3.9-4.6-3.4-3.2 4.6-.6Z"/><path d="M60 99l2 4.3 4.6.6-3.4 3.2.9 4.6-4.1-2.3-4.1 2.3.9-4.6-3.4-3.2 4.6-.6Z"/><path d="M80 99l2 4.3 4.6.6-3.4 3.2.9 4.6-4.1-2.3-4.1 2.3.9-4.6-3.4-3.2 4.6-.6Z"/></g></svg></div>
+            <h3>500 Kilometer gesamt</h3>
+            <p class="badge-card__tier"><i style="color:var(--tier-3);background:var(--tier-3-mid)"></i>Gold · erreicht am 2. Oktober 2026</p>
+            <p>Für insgesamt 500 km auf allen Walks zusammen.</p>
+          </article>
+        </li>
+        <li>
+          <article class="badge-card badge-card--locked">
+            <div class="badge-card__plate"><svg viewBox="0 0 120 140" aria-hidden="true"><path d="M40 8h40l28 28v40l-28 28H40L12 76V36Z" fill="#f1f3ef" stroke="#6e7b77" stroke-width="5" stroke-dasharray="6 5" stroke-linejoin="round"/><path d="M40 44h40v38H40ZM40 54h40M48 38v10M72 38v10M50 68l6 6 14-12" fill="none" stroke="#6e7b77" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="24" y="96" width="72" height="20" rx="6" fill="#d3dad4" stroke="#6e7b77" stroke-width="3"/><g fill="#fff" stroke="#6e7b77" stroke-width="1.5"><path d="M50 99l2 4.3 4.6.6-3.4 3.2.9 4.6-4.1-2.3-4.1 2.3.9-4.6-3.4-3.2 4.6-.6Z"/><path d="M70 99l2 4.3 4.6.6-3.4 3.2.9 4.6-4.1-2.3-4.1 2.3.9-4.6-3.4-3.2 4.6-.6Z"/></g></svg></div>
+            <h3>4 Wochen in Folge</h3>
+            <p class="badge-card__tier"><i style="color:var(--color-border)"></i>Silber · noch nicht erreicht</p>
+            <div class="progress">
+              <div class="progress__bar" aria-hidden="true"><span style="width:50%"></span></div>
+              <p class="progress__text">2 von 4 Wochen hintereinander</p>
+            </div>
+          </article>
+        </li>
+      </ul>
+    </section>
+  </div>
+</main>
+
+<footer class="app-footer">
+  <div class="wrap">
+    <p class="app-footer__brand">HappyWalkers</p>
+    <ul>
+      <li><a href="#">Hilfe</a></li>
+      <li><a href="#">Wer sieht was?</a></li>
+      <li><a href="#">Datenschutz</a></li>
+      <li><a href="#">Impressum &amp; Quellen</a></li>
+      <li><a href="#">Premium</a></li>
+    </ul>
+  </div>
+</footer>
+</body>
+</html>
