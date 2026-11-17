@@ -78,7 +78,7 @@ function GroupView({ group }: { group: Group }) {
       {group.rules ? (
         <section className="pinned-rules" aria-labelledby="rules-title">
           <h2 id="rules-title">
-            <Icon name="pin" className="inline-icon" /> {t('detail.rules')}
+            <Icon name="list" className="inline-icon" /> {t('detail.rules')}
           </h2>
           <p className="pre-line">{group.rules}</p>
         </section>

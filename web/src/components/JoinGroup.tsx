@@ -15,9 +15,12 @@ import { Icon } from './Icon';
 export function JoinGroup({
   group,
   onJoined,
+  compact = false,
 }: {
   group: Pick<GroupSummary, 'id' | 'name' | 'joinPolicy' | 'womenOnly' | 'myMembership'>;
   onJoined?: (status: string) => void;
+  /** Zweite Stelle auf derselben Seite (z. B. Kasten „Mitgehen“): ohne Nachrichtenfeld, damit es nicht doppelt erscheint. */
+  compact?: boolean;
 }) {
   const { t } = useTranslation('groups');
   const { data: me } = useMe();
@@ -78,7 +81,7 @@ export function JoinGroup({
           </p>
         </div>
       ) : null}
-      {group.joinPolicy === 'request' ? (
+      {group.joinPolicy === 'request' && !compact ? (
         <Field label={t('join.messageLabel')} hint={t('join.messageHint')} optional>
           <textarea className="textarea textarea--short" value={message} maxLength={500} onChange={(e) => setMessage(e.target.value)} />
         </Field>

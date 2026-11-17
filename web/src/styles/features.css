@@ -218,6 +218,10 @@ fieldset {
 .search-panel .place-search__form > .btn {
   width: 100%;
 }
+/* Feld nie schmaler als der Suchknopf darunter (Tablet: Suchbereich über volle Breite) */
+.search-panel .place-search__form .input {
+  max-width: none;
+}
 .place-choices {
   margin: var(--space-3) 0 var(--space-4);
   padding: var(--space-4);
@@ -764,7 +768,9 @@ fieldset {
   display: block;
 }
 .group-hero__text {
-  flex: 1 1 20rem;
+  flex: 1 1 min(100%, 20rem);
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .group-hero--compact {
   margin-bottom: var(--space-4);
@@ -776,10 +782,11 @@ fieldset {
   width: 3rem;
   height: 3rem;
 }
+/* Gruppenregeln: neutraler Hinweis (Gelb bleibt der wichtigsten Handlung vorbehalten) */
 .pinned-rules {
-  background: var(--color-warning-soft);
+  background: var(--color-surface-2);
   border: 0;
-  border-left: 0.375rem solid var(--color-warning-border);
+  border-left: 0.375rem solid var(--color-primary);
   border-radius: var(--radius);
   padding: var(--space-4) var(--space-5);
   margin-bottom: var(--space-5);
@@ -787,6 +794,9 @@ fieldset {
 .pinned-rules h2 {
   font-size: var(--font-size-lg);
   margin-bottom: var(--space-2);
+}
+.pinned-rules h2 svg {
+  color: var(--color-primary);
 }
 .pinned-rules p:last-child {
   margin-bottom: 0;
@@ -998,6 +1008,15 @@ fieldset {
 }
 .link-list__arrow {
   margin-left: auto;
+  flex-shrink: 0;
+}
+/* Lange Wörter (320 px + Schrift „Sehr groß“): umbrechen statt waagerecht scrollen */
+.link-list__link,
+.link-list__link > span,
+.choice__text,
+.tempo-choice__title {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .link-list__extra {
   display: inline-flex;
@@ -1318,10 +1337,23 @@ fieldset {
   margin-inline: auto;
   padding: var(--space-7) var(--space-4);
 }
+/* Laptop (z. B. 1366×768): kompakter Kopf, damit „Anmelden“ ohne Scrollen sichtbar ist */
 @media (min-width: 60em) {
   .home-hero__inner {
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    padding-block: var(--space-8);
+    padding-block: var(--space-6);
+  }
+  .home-hero h1 {
+    margin-bottom: var(--space-2);
+  }
+  .home-hero .page-header {
+    margin-bottom: var(--space-5);
+  }
+  .home-hero__search-title {
+    margin-bottom: var(--space-3);
+  }
+  .home-hero__signin {
+    margin-top: var(--space-4);
   }
 }
 .home-hero h1 {
@@ -1345,7 +1377,8 @@ fieldset {
   outline-color: #fff;
 }
 .home-hero__search.card {
-  max-width: 36rem;
+  /* breit genug, dass Feld und Suchknopf auf dem Laptop nebeneinander passen */
+  max-width: 42rem;
   color: var(--color-text);
   border: 0;
   box-shadow: var(--shadow-raised);
@@ -1393,6 +1426,11 @@ fieldset {
 @media (max-width: 40em) {
   .home-hero__art {
     display: none;
+  }
+}
+@media (min-width: 60em) {
+  .home-hero__art svg {
+    max-width: 24rem;
   }
 }
 .home-how,

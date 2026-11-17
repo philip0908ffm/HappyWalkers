@@ -51,6 +51,20 @@ function WalkView({ walk }: { walk: Walk }) {
     enabled: needsGroup,
   });
   const isMember = walk.group ? walk.canSeeMeetingPoint || groupQ.data?.myMembership?.status === 'active' : true;
+  // Nach dem Beitritt: nächsten Schritt („Ich bin dabei – zusagen“) zeigen und fokussieren
+  const [focusRsvp, setFocusRsvp] = useState(false);
+  const onJoined = (status: string) => {
+    if (status === 'active') setFocusRsvp(true);
+  };
+  const joinGroup = walk.group
+    ? groupQ.data ?? {
+        id: walk.group.id,
+        name: walk.group.name,
+        joinPolicy: walk.group.joinPolicy,
+        womenOnly: walk.group.womenOnly,
+        myMembership: null,
+      }
+    : null;
 
   const place = [walk.city, walk.district && walk.district !== walk.city ? walk.district : null].filter(Boolean).join(', ');
 
@@ -158,7 +172,7 @@ function WalkView({ walk }: { walk: Walk }) {
             ) : null}
           </section>
 
-          <MeetingPoint walk={walk} isMember={isMember} groupQ={groupQ.data} />
+          <MeetingPoint walk={walk} isMember={isMember} joinGroup={joinGroup} onJoined={onJoined} />
 
           {walk.participants && walk.participants.length ? (
             <section className="card" aria-labelledby="who-title">
@@ -183,7 +197,16 @@ function WalkView({ walk }: { walk: Walk }) {
         </div>
 
         <aside className="detail-layout__side" aria-label={t('detail.actionsLabel')}>
-          <RsvpBox walk={walk} isMember={isMember} full={full} started={started} />
+          <RsvpBox
+            walk={walk}
+            isMember={isMember}
+            full={full}
+            started={started}
+            joinGroup={joinGroup}
+            onJoined={onJoined}
+            focusYes={focusRsvp}
+            onFocusDone={() => setFocusRsvp(false)}
+          />
           {walk.canManage || walk.canConfirm ? <LeadBox walk={walk} started={started} /> : null}
         </aside>
       </div>
@@ -191,7 +214,19 @@ function WalkView({ walk }: { walk: Walk }) {
   );
 }
 
-function MeetingPoint({ walk, isMember, groupQ }: { walk: Walk; isMember: boolean; groupQ?: Parameters<typeof JoinGroup>[0]['group'] }) {
+type JoinGroupData = Parameters<typeof JoinGroup>[0]['group'];
+
+function MeetingPoint({
+  walk,
+  isMember,
+  joinGroup,
+  onJoined,
+}: {
+  walk: Walk;
+  isMember: boolean;
+  joinGroup: JoinGroupData | null;
+  onJoined: (status: string) => void;
+}) {
   const { t } = useTranslation('walks');
   if (walk.kind === 'distance')
     return (
@@ -229,31 +264,38 @@ function MeetingPoint({ walk, isMember, groupQ }: { walk: Walk; isMember: boolea
             <Icon name="lock" />
             <p>{t('detail.meetingPointHidden')}</p>
           </div>
-          {walk.group && !isMember ? (
-            <JoinGroup
-              group={
-                groupQ ?? {
-                  id: walk.group.id,
-                  name: walk.group.name,
-                  joinPolicy: walk.group.joinPolicy,
-                  womenOnly: walk.group.womenOnly,
-                  myMembership: null,
-                }
-              }
-            />
-          ) : null}
+          {joinGroup && !isMember ? <JoinGroup group={joinGroup} onJoined={onJoined} /> : null}
         </>
       )}
     </section>
   );
 }
 
-function RsvpBox({ walk, isMember, full, started }: { walk: Walk; isMember: boolean; full: boolean; started: boolean }) {
+function RsvpBox({
+  walk,
+  isMember,
+  full,
+  started,
+  joinGroup,
+  onJoined,
+  focusYes,
+  onFocusDone,
+}: {
+  walk: Walk;
+  isMember: boolean;
+  full: boolean;
+  started: boolean;
+  joinGroup: JoinGroupData | null;
+  onJoined: (status: string) => void;
+  focusYes: boolean;
+  onFocusDone: () => void;
+}) {
   const { t } = useTranslation('walks');
   const { data: me } = useMe();
   const [askCancel, setAskCancel] = useState(false);
   const [justJoined, setJustJoined] = useState(false);
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const yesRef = useRef<HTMLButtonElement>(null);
   const cancelled = walk.status === 'cancelled';
 
   const rsvp = useAction({
@@ -269,6 +311,18 @@ function RsvpBox({ walk, isMember, full, started }: { walk: Walk; isMember: bool
   useEffect(() => {
     if (justJoined && walk.myRsvp === 'yes') headingRef.current?.focus();
   }, [justJoined, walk.myRsvp]);
+
+  // Nach „Gruppe beitreten“: Zusagen-Knopf in den sichtbaren Bereich holen und fokussieren
+  useEffect(() => {
+    if (!focusYes || !isMember) return;
+    const el = yesRef.current;
+    if (el) {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      el.scrollIntoView({ block: 'center', behavior: reduce ? 'auto' : 'smooth' });
+      el.focus({ preventScroll: true });
+    }
+    onFocusDone();
+  }, [focusYes, isMember, onFocusDone]);
 
   const tools = (
     <div className="btn-row rsvp-tools">
@@ -325,13 +379,16 @@ function RsvpBox({ walk, isMember, full, started }: { walk: Walk; isMember: bool
           </Link>
         </>
       ) : !isMember ? (
-        <p>{t('rsvp.joinFirst')}</p>
+        <>
+          <p>{t('rsvp.joinFirst')}</p>
+          {joinGroup ? <JoinGroup group={joinGroup} onJoined={onJoined} compact /> : null}
+        </>
       ) : full ? (
         <p>{t('rsvp.full')}</p>
       ) : (
         <>
           <p>{t('rsvp.text')}</p>
-          <button type="button" className="btn btn--accent btn--large btn--block" disabled={rsvp.isPending} onClick={() => rsvp.mutate('yes')}>
+          <button ref={yesRef} type="button" className="btn btn--accent btn--large btn--block" disabled={rsvp.isPending} onClick={() => rsvp.mutate('yes')}>
             <Icon name="check" /> {rsvp.isPending ? t('common:status.saving') : t('rsvp.yes')}
           </button>
         </>

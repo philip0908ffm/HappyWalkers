@@ -289,7 +289,10 @@
 }
 .btn--large {
   font-size: var(--font-size-lg);
-  padding: var(--space-3) var(--space-6);
+  /* sehr schmal (320 px, Schrift „Sehr groß“): weniger Polster, lange Wörter umbrechen statt waagerecht scrollen */
+  padding: var(--space-3) clamp(var(--space-4), 5vw, var(--space-6));
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 .btn--block {
   width: 100%;
@@ -620,17 +623,25 @@ fieldset.field {
   color: var(--color-premium);
 }
 
-/* Bestätigungs-Toast: groß, deutlich, oben in der Mitte, bleibt bis zum Schließen oder 8 s */
+/* Bestätigungs-Toast: groß, deutlich, direkt UNTER der festen Kopfzeile (verdeckt weder Kopf noch untere
+   Navigation). --app-header-height setzt ToastProvider (misst den Kopf, auch bei großer Schrift). */
 .toast-region {
   position: fixed;
-  top: var(--space-4);
-  left: 50%;
-  transform: translateX(-50%);
+  top: calc(var(--app-header-height, 4.5rem) + var(--space-3));
+  left: var(--space-4);
+  right: var(--space-4);
   z-index: 200;
-  width: min(36rem, calc(100% - 2rem));
   display: grid;
   gap: var(--space-2);
   pointer-events: none;
+}
+/* Breiter Bildschirm: rechtsbündig im Inhaltsbereich, damit die Überschrift links frei bleibt */
+@media (min-width: 60em) {
+  .toast-region {
+    left: auto;
+    right: max(var(--space-4), calc((100vw - var(--content-max)) / 2 + var(--space-4)));
+    width: min(30rem, calc(100vw - 2rem));
+  }
 }
 .toast {
   pointer-events: auto;
@@ -644,6 +655,10 @@ fieldset.field {
   font-weight: var(--weight-bold);
   font-size: var(--font-size-lg);
   box-shadow: var(--shadow-raised);
+}
+.toast > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .toast--error {
   background: var(--color-error);

@@ -116,6 +116,35 @@ test.describe('angemeldet', () => {
     await expect(page.locator('html')).toHaveAttribute('data-font', 'normal');
   });
 
+  test('Bestätigung (Toast) verdeckt weder Kopf noch untere Navigation; Seitenwechsel räumt auf', async ({ page }) => {
+    await page.goto('/profil/einstellungen');
+    await ready(page);
+    await page.getByRole('radio', { name: 'Groß', exact: true }).click();
+    const toast = page.locator('.toast').filter({ hasText: /gespeichert/ }).first();
+    await expect(page.getByRole('status').filter({ hasText: /gespeichert/ }).first()).toBeVisible();
+    await expect(toast).toBeVisible();
+    await page.waitForTimeout(300); // Kopfhöhe nach Schriftwechsel neu gemessen
+    const header = await page.locator('.app-header').boundingBox();
+    const box = await toast.boundingBox();
+    expect(header && box).toBeTruthy();
+    // unterhalb des Kopfes (keine Überlappung)
+    expect(box!.y).toBeGreaterThanOrEqual(header!.y + header!.height);
+    // und nicht über der Hauptnavigation (am schmalen Bildschirm unten fest)
+    const nav = await page.getByRole('navigation', { name: 'Hauptnavigation' }).boundingBox();
+    const overlaps = box!.x < nav!.x + nav!.width && nav!.x < box!.x + box!.width && box!.y < nav!.y + nav!.height && nav!.y < box!.y + box!.height;
+    expect(overlaps).toBe(false);
+
+    // Zurück auf „Normal“ – höchstens 2 Meldungen gleichzeitig
+    await page.getByRole('radio', { name: 'Normal' }).click();
+    await expect(page.locator('html')).toHaveAttribute('data-font', 'normal');
+    expect(await page.locator('.toast').count()).toBeLessThanOrEqual(2);
+    // Seitenwechsel: alte Meldungen verschwinden
+    await page.waitForTimeout(1600);
+    await page.getByRole('navigation', { name: 'Hauptnavigation' }).getByRole('link', { name: 'Start' }).click();
+    await ready(page);
+    await expect(page.locator('.toast')).toHaveCount(0);
+  });
+
   test('axe in dieser Ansicht: Start, Walk-Detail, Walk eintragen', async ({ page }) => {
     for (const p of ['/', `/walks/${rich.walkId}`, '/walk-eintragen']) {
       await page.goto(p);

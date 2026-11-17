@@ -49,15 +49,23 @@ test('Persona: Walk finden, Gruppe beitreten, zusagen und in den Kalender übern
   expect(apiBefore.walk.meetingPoint).toBeNull();
   expect(apiBefore.walk.participants).toBeNull();
 
+  // Der Beitreten-Knopf steht auch im Kasten „Mitgehen“ (gleiche Aktion)
+  const mitgehen = page.getByRole('region', { name: 'Mitgehen' });
+  await expect(mitgehen.getByRole('button', { name: 'Gruppe beitreten' })).toBeVisible();
+
   // Gruppe beitreten
   await meeting.getByRole('button', { name: 'Gruppe beitreten' }).click();
   await expect(page.getByRole('status').filter({ hasText: /Willkommen|beigetreten|Mitglied/ }).first()).toBeVisible();
   await expect(meeting.getByText('Orangerie, Haupteingang')).toBeVisible();
   await expect(meeting.getByText(/An der Karlsaue 20c/)).toBeVisible();
 
-  // Zusagen – Doppelklick darf nichts kaputt machen
-  const mitgehen = page.getByRole('region', { name: 'Mitgehen' });
+  // Nächster Schritt: Zusagen-Knopf ist fokussiert und im sichtbaren Bereich
   const yes = mitgehen.getByRole('button', { name: 'Ich bin dabei – zusagen' });
+  await expect(yes).toBeFocused();
+  await expect(yes).toBeInViewport();
+  await expect(mitgehen.getByRole('button', { name: 'Gruppe beitreten' })).toHaveCount(0);
+
+  // Zusagen – Doppelklick darf nichts kaputt machen
   await expect(yes).toBeVisible();
   const before = await page.request.get(`/api/v1/walks/${walkId}`).then((r) => r.json());
   await yes.dblclick();
