@@ -1,4 +1,4 @@
-import { TEMPOS, type Tempo } from '@gehmeinsam/shared';
+import { TEMPOS, type Tempo } from '@happywalkers/shared';
 import { useQuery } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';

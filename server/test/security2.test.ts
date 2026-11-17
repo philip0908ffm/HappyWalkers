@@ -316,9 +316,9 @@ describe('Lena-Entscheidungen: Privatzone und geschützte Namen', () => {
     expect(maskRouteForOthers(route.slice(0, 4))).toBeNull(); // zu kurz → keine Route
   });
 
-  it('lehnt Anzeigenamen ab, die wie das Gehmeinsam-Team aussehen', async () => {
+  it('lehnt Anzeigenamen ab, die wie das HappyWalkers-Team aussehen', async () => {
     const { agent } = await signUp();
-    await agent.patch('/api/v1/me/profile').send({ displayName: 'Gehmeinsam Team' }).expect(400);
+    await agent.patch('/api/v1/me/profile').send({ displayName: 'HappyWalkers Team' }).expect(400);
     await agent.patch('/api/v1/me/profile').send({ displayName: 'Erika' }).expect(200);
   });
 });

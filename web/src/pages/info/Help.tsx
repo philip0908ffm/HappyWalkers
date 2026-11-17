@@ -1,4 +1,4 @@
-import { PREMIUM } from '@gehmeinsam/shared';
+import { PREMIUM } from '@happywalkers/shared';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { Icon, type IconName } from '../../components/Icon';

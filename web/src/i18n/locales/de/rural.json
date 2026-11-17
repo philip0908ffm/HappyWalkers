@@ -141,7 +141,7 @@
     "submit": "Interesse anmelden",
     "saved": "Danke! Wir melden uns per E-Mail, sobald sich in Ihrer Nähe etwas tut.",
     "active": "Angemeldet: Wir benachrichtigen Sie für {{city}} im Umkreis von {{km}} km.",
-    "mailsOff": "Achtung: E-Mails von Gehmeinsam sind in Ihren Einstellungen ausgeschaltet. Dann bekommen Sie keine Nachricht.",
+    "mailsOff": "Achtung: E-Mails von {{appName}} sind in Ihren Einstellungen ausgeschaltet. Dann bekommen Sie keine Nachricht.",
     "toSettings": "Zu den Einstellungen",
     "delete": "Abmelden",
     "deleteTitle": "Interesse abmelden?",

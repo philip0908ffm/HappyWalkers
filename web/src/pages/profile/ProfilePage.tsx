@@ -1,5 +1,5 @@
 import '../../styles/pages-e.css';
-import { LIMITS, badgeDefinition } from '@gehmeinsam/shared';
+import { LIMITS, badgeDefinition } from '@happywalkers/shared';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -12,5 +12,5 @@ export const smsEnabled = () => config.SMS_PROVIDER !== 'none';
 export async function sendSmsCode(phoneNumber: string, code: string): Promise<void> {
   if (config.SMS_PROVIDER === 'none') throw new Error('sms_disabled');
   sentSms.push({ phoneNumber, code });
-  if (!isTest) console.info(`[SMS an ${phoneNumber}] Ihr Gehmeinsam-Code: ${code}`);
+  if (!isTest) console.info(`[SMS an ${phoneNumber}] Ihr ${config.APP_NAME}-Code: ${code}`);
 }

@@ -1,4 +1,4 @@
-import { PREMIUM } from '@gehmeinsam/shared';
+import { PREMIUM } from '@happywalkers/shared';
 import { config } from '../config.js';
 import { ApiError } from './http.js';
 

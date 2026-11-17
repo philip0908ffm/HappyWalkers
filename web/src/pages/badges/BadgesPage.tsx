@@ -1,5 +1,5 @@
 import '../../styles/pages-e.css';
-import { POINTS, REGION_BADGE_PREFIX, badgeDefinition } from '@gehmeinsam/shared';
+import { POINTS, REGION_BADGE_PREFIX, badgeDefinition } from '@happywalkers/shared';
 import { useQuery } from '@tanstack/react-query';
 import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';

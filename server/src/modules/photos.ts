@@ -1,4 +1,4 @@
-import { LIMITS, VISIBILITIES } from '@gehmeinsam/shared';
+import { LIMITS, VISIBILITIES } from '@happywalkers/shared';
 import { and, eq } from 'drizzle-orm';
 import { Router, type Response } from 'express';
 import multer from 'multer';

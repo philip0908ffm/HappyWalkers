@@ -1,4 +1,4 @@
-import { FONT_SCALES } from '@gehmeinsam/shared';
+import { FONT_SCALES } from '@happywalkers/shared';
 import { useQuery } from '@tanstack/react-query';
 import { useRef, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';

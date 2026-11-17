@@ -1,5 +1,5 @@
 {
-  "name": "@gehmeinsam/server",
+  "name": "@happywalkers/server",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -14,7 +14,7 @@
     "db:seed": "tsx --env-file-if-exists=../.env src/db/seed.ts"
   },
   "dependencies": {
-    "@gehmeinsam/shared": "0.1.0",
+    "@happywalkers/shared": "0.1.0",
     "better-auth": "^1.7.25",
     "cors": "^2.8.6",
     "drizzle-orm": "^0.45.4",

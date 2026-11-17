@@ -31,7 +31,7 @@ export async function sendMail(input: MailMessage): Promise<void> {
     return;
   }
   const { error } = await resend.emails.send({
-    from: config.EMAIL_FROM || 'Gehmeinsam <hallo@gehmeinsam.de>',
+    from: config.EMAIL_FROM || `${config.APP_NAME} <hallo@example.org>`,
     to: msg.to,
     subject: msg.subject,
     text: msg.text,
@@ -55,5 +55,5 @@ export function textToHtml(text: string, button?: { label: string; url: string }
   const btn = button
     ? `<p style="margin:24px 0"><a href="${escapeHtml(button.url)}" style="display:inline-block;background:#1d5c3f;color:#fff;padding:16px 28px;border-radius:10px;font-size:20px;font-weight:bold;text-decoration:none">${escapeHtml(button.label)}</a></p>`
     : '';
-  return `<!doctype html><html lang="de"><body style="font-family:Arial,Helvetica,sans-serif;font-size:19px;line-height:1.5;color:#1a1a1a;background:#fbf8f2;padding:24px"><div style="max-width:560px;margin:0 auto;background:#fff;padding:28px;border-radius:12px"><p style="font-size:24px;font-weight:bold;color:#1d5c3f;margin:0 0 20px">Gehmeinsam</p>${paras}${btn}</div></body></html>`;
+  return `<!doctype html><html lang="de"><body style="font-family:Arial,Helvetica,sans-serif;font-size:19px;line-height:1.5;color:#1a1a1a;background:#fbf8f2;padding:24px"><div style="max-width:560px;margin:0 auto;background:#fff;padding:28px;border-radius:12px"><p style="font-size:24px;font-weight:bold;color:#1d5c3f;margin:0 0 20px">${escapeHtml(config.APP_NAME)}</p>${paras}${btn}</div></body></html>`;
 }

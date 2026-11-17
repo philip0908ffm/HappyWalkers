@@ -1,4 +1,4 @@
-import { REGION_BADGE_PREFIX } from '@gehmeinsam/shared';
+import { REGION_BADGE_PREFIX } from '@happywalkers/shared';
 import { useTranslation } from 'react-i18next';
 
 /** Name und Ein-Satz-Beschreibung eines Abzeichens (auch regionale Wappen „region:<Landkreis>“). */

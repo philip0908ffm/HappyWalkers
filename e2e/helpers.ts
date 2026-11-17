@@ -25,7 +25,7 @@ export async function signUpFromLoginPage(page: Page, opts: { name?: string; pos
   await expect(page.getByRole('heading', { name: /Bitte schauen Sie in Ihr E-Mail-Postfach/ })).toBeVisible();
   const link = await magicLinkFor(page, email);
   await page.goto(link);
-  await expect(page.getByRole('heading', { name: 'Willkommen bei Gehmeinsam!' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Willkommen bei HappyWalkers!' })).toBeVisible();
   await page.getByLabel('Wie dürfen wir Sie nennen?').fill(opts.name ?? 'Erika');
   await page.getByLabel('Ihre Postleitzahl').fill(opts.postalCode ?? '34117');
   await expect(page.getByText(/Gefunden: Kassel|Gefunden:/)).toBeVisible();
@@ -58,7 +58,7 @@ export async function expectNoA11yViolations(page: Page) {
 /** Direkter Datenbankzugriff – nur für Testvorbereitungen, die über die Oberfläche nicht gehen (Zeit vorstellen). */
 export async function dbQuery<T = Record<string, unknown>>(text: string, params: unknown[] = []): Promise<T[]> {
   const client = new pg.Client({
-    connectionString: process.env.E2E_DATABASE_URL ?? 'postgres://gehmeinsam:gehmeinsam@localhost:5432/gehmeinsam_e2e',
+    connectionString: process.env.E2E_DATABASE_URL ?? 'postgres://happywalkers:happywalkers@localhost:5432/happywalkers_e2e',
   });
   await client.connect();
   try {

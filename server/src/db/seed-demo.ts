@@ -210,7 +210,7 @@ export async function seedDemo(): Promise<void> {
     const place = lookupPostalCode(p.postalCode)!;
     await db
       .insert(s.user)
-      .values({ id: p.id, name: p.name, email: `${p.id}@demo.gehmeinsam.invalid`, emailVerified: true })
+      .values({ id: p.id, name: p.name, email: `${p.id}@demo.happywalkers.invalid`, emailVerified: true })
       .onConflictDoNothing();
     await db
       .insert(s.profile)

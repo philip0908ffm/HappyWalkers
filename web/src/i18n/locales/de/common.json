@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "Gehmeinsam",
+    "name": "{{appName}}",
     "tagline": "Gemeinsam zügig gehen – in Ihrer Nähe."
   },
   "nav": {

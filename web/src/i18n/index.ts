@@ -1,6 +1,7 @@
-import { BADGE_NAMES } from '@gehmeinsam/shared';
+import { BADGE_NAMES } from '@happywalkers/shared';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import { APP_NAME } from '../lib/brand';
 
 /**
  * Mehrsprachigkeit (i18next).
@@ -39,7 +40,8 @@ void i18n.use(initReactI18next).init({
   fallbackLng: { du: ['de'], default: ['de'] },
   ns: namespaces,
   defaultNS: 'common',
-  interpolation: { escapeValue: false },
+  // {{appName}} steht in allen Texten automatisch zur Verfügung
+  interpolation: { escapeValue: false, defaultVariables: { appName: APP_NAME } },
   returnNull: false,
 });
 

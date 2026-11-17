@@ -1,7 +1,7 @@
 {
   "welcome": {
     "title": "Gemeinsam gehen – nicht allein",
-    "lead": "Gehmeinsam bringt Menschen zusammen, die sich gern mehr bewegen möchten: verabredete Spaziergänge in zügigem Schritt, ganz in Ihrer Nähe.",
+    "lead": "{{appName}} bringt Menschen zusammen, die sich gern mehr bewegen möchten: verabredete Spaziergänge in zügigem Schritt, ganz in Ihrer Nähe.",
     "searchTitle": "Walks in Ihrer Nähe finden",
     "searchButton": "Walks in meiner Nähe finden",
     "haveAccount": "Schon dabei oder neu hier?",

@@ -6,7 +6,7 @@ import { execSync } from 'node:child_process';
  * Eigene Datenbank pro Person/Agent über TEST_DATABASE_URL.
  */
 export default async function setup() {
-  const url = process.env.TEST_DATABASE_URL ?? 'postgres://gehmeinsam:gehmeinsam@localhost:5432/gehmeinsam_test';
+  const url = process.env.TEST_DATABASE_URL ?? 'postgres://happywalkers:happywalkers@localhost:5432/happywalkers_test';
   const pg = await import('pg');
   const client = new pg.default.Client({ connectionString: url });
   await client.connect();

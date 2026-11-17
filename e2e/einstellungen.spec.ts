@@ -28,11 +28,11 @@ test('Einstellungen: Schriftgröße „Sehr groß“ wirkt und bleibt erhalten',
 test('Einstellungen: Du-Ansprache wechselt die Texte', async ({ page }) => {
   await signUpViaUi(page, { name: 'Elfriede' });
   await page.goto('/profil/einstellungen');
-  await expect(page.getByText('Hier stellen Sie ein, wie Gehmeinsam für Sie aussieht')).toBeVisible();
+  await expect(page.getByText('Hier stellen Sie ein, wie HappyWalkers für Sie aussieht')).toBeVisible();
   // Sprachwechsel lädt die Du-Texte nach und zeichnet die Seite neu – daher click() + Zustandsprüfung
   await page.getByRole('group', { name: 'Ansprache' }).getByRole('radio', { name: '„Du“' }).click();
   await expect(page.getByRole('radio', { name: '„Du“' })).toBeChecked();
-  await expect(page.getByText('Hier stellst du ein, wie Gehmeinsam für dich aussieht')).toBeVisible();
+  await expect(page.getByText('Hier stellst du ein, wie HappyWalkers für dich aussieht')).toBeVisible();
   await page.getByRole('navigation', { name: 'Hauptnavigation' }).getByRole('link', { name: 'Start' }).click();
   await expect(page.getByText(/Was möchtest du heute tun\?/)).toBeVisible();
   await expect(page.getByText(/Was möchten Sie heute tun\?/)).toHaveCount(0);
@@ -41,7 +41,7 @@ test('Einstellungen: Du-Ansprache wechselt die Texte', async ({ page }) => {
   await page.goto('/profil/einstellungen');
   await page.getByRole('radio', { name: '„Sie“' }).click();
   await expect(page.getByRole('radio', { name: '„Sie“' })).toBeChecked();
-  await expect(page.getByText('Hier stellen Sie ein, wie Gehmeinsam für Sie aussieht')).toBeVisible();
+  await expect(page.getByText('Hier stellen Sie ein, wie HappyWalkers für Sie aussieht')).toBeVisible();
 });
 
 test('Einstellungen: Datenexport und Konto löschen', async ({ page }) => {

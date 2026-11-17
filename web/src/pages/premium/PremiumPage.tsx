@@ -1,5 +1,5 @@
 import '../../styles/pages-e.css';
-import { PREMIUM } from '@gehmeinsam/shared';
+import { PREMIUM } from '@happywalkers/shared';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';

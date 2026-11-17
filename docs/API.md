@@ -1,4 +1,4 @@
-# API-Vertrag „Gehmeinsam“ (v1)
+# API-Vertrag „HappyWalkers“ (v1)
 
 Verbindlich für Backend (Jonas) und Oberfläche (Miriam, Jonas). Dieselbe API nutzt später die
 iOS/Android-App. Verantwortlich: Lena Hoffmann. Änderungen nur zusammen mit dieser Datei.

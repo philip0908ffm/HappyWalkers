@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useMe } from '../hooks/useMe';
 import { languageFor } from '../i18n';
 
-const FONT_KEY = 'gehmeinsam.fontScale';
-const ANREDE_KEY = 'gehmeinsam.anrede';
+const FONT_KEY = 'happywalkers.fontScale';
+const ANREDE_KEY = 'happywalkers.anrede';
 
 /** Gerätespeicher (nur Komfort, keine Tracking-Daten). */
 export function readLocalPref(key: 'fontScale' | 'anrede'): string | null {

@@ -1,4 +1,4 @@
-# Gehmeinsam
+# HappyWalkers
 
 Gemeinsam zügig gehen – eine Community-Plattform für Menschen ab 50.
 Walks in der Nähe finden, Gruppen gründen, Walks eintragen, Abzeichen sammeln. Barrierefrei (WCAG 2.2 AA),

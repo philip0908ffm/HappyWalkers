@@ -16,7 +16,7 @@ export function safeNext(next: string | null): string {
   // würden sonst zu „//evil.com“ (fremde Seite).
   if (/[\\\u0000-\u001f\u007f]/.test(next)) return '/';
   try {
-    const base = 'https://gehmeinsam.invalid';
+    const base = 'https://happywalkers.invalid';
     const url = new URL(next, base);
     if (url.origin !== base) return '/';
     return url.pathname + url.search + url.hash;

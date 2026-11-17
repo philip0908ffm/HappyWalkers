@@ -1,3 +1,4 @@
+import { config } from '../config.js';
 /** Kalenderdatei (.ics, RFC 5545) für einen Walk. */
 export interface IcsEvent {
   uid: string;
@@ -39,11 +40,11 @@ export function buildIcs(ev: IcsEvent): string {
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Gehmeinsam//DE',
+    `PRODID:-//${config.APP_NAME}//DE`,
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     'BEGIN:VEVENT',
-    `UID:${ev.uid}@gehmeinsam`,
+    `UID:${ev.uid}@happywalkers`,
     `DTSTAMP:${fmt(new Date())}`,
     `DTSTART:${fmt(ev.start)}`,
     `DTEND:${fmt(end)}`,

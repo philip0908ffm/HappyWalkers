@@ -1,4 +1,5 @@
-import { LIMITS, SEARCH_RADII_KM, TEMPOS, WALK_KINDS } from '@gehmeinsam/shared';
+import { appSlug } from '@happywalkers/shared';
+import { LIMITS, SEARCH_RADII_KM, TEMPOS, WALK_KINDS } from '@happywalkers/shared';
 import { and, asc, eq, gt, gte, inArray, lte, ne, or, sql, type SQL } from 'drizzle-orm';
 import { Router, type Request } from 'express';
 import { z } from 'zod';
@@ -807,7 +808,7 @@ router.get('/:id/ics', async (req, res) => {
     url,
   });
   res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
-  res.setHeader('Content-Disposition', 'attachment; filename="gehmeinsam-walk.ics"');
+  res.setHeader('Content-Disposition', `attachment; filename="${appSlug(config.APP_NAME)}-walk.ics"`);
   res.send(ics);
 });
 

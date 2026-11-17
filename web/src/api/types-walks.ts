@@ -2,7 +2,7 @@
  * Antworttypen für Gruppen, Walks, Einladungen und Neuigkeiten (siehe docs/API.md, Paket A und C).
  * Andere Pakete dürfen diese Typen gerne mitbenutzen.
  */
-import type { GroupRole, JoinPolicy, MemberStatus, Tempo, Visibility, WalkKind } from '@gehmeinsam/shared';
+import type { GroupRole, JoinPolicy, MemberStatus, Tempo, Visibility, WalkKind } from '@happywalkers/shared';
 import type { Place } from './types';
 
 export type { GroupRole, JoinPolicy, MemberStatus, Tempo, Visibility, WalkKind, Place };

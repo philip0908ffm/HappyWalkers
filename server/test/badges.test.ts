@@ -3,7 +3,7 @@ import { and, eq } from 'drizzle-orm';
 import { describe, expect, it } from 'vitest';
 import { db } from '../src/db/index.js';
 import * as s from '../src/db/schema.js';
-import { BADGES, BADGE_NAMES } from '@gehmeinsam/shared';
+import { BADGES, BADGE_NAMES } from '@happywalkers/shared';
 import { badgeName } from '../src/modules/badges.js';
 import { awardBadge, onActivityRecorded } from '../src/services/gamification.js';
 import { getApp, signUp } from './helpers.js';

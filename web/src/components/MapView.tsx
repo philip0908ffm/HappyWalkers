@@ -1,5 +1,5 @@
 import 'leaflet/dist/leaflet.css';
-import type { Tempo } from '@gehmeinsam/shared';
+import type { Tempo } from '@happywalkers/shared';
 import L from 'leaflet';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

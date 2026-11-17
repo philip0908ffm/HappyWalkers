@@ -1,4 +1,4 @@
-import { JOIN_POLICIES, LIMITS, TEMPOS } from '@gehmeinsam/shared';
+import { JOIN_POLICIES, LIMITS, TEMPOS } from '@happywalkers/shared';
 import { and, asc, eq, gt, gte, ilike, inArray, ne, or, sql } from 'drizzle-orm';
 import { Router, type Request } from 'express';
 import multer from 'multer';
@@ -123,7 +123,7 @@ export async function mailPerson(
 
 export const greeting = (du: boolean, name: string) =>
   name ? (du ? `Hallo ${name},` : `Guten Tag ${name},`) : du ? 'Hallo,' : 'Guten Tag,';
-export const signOff = (du: boolean) => `Herzliche Grüße\n${du ? 'Dein' : 'Ihr'} Gehmeinsam-Team`;
+export const signOff = (du: boolean) => `Herzliche Grüße\n${du ? 'Dein' : 'Ihr'} ${config.APP_NAME}-Team`;
 
 /* ------------------------------------------------------------------ */
 /* Einladungscode                                                      */
@@ -148,7 +148,7 @@ export const isInviteCode = (input: string) => /^(WALK)?[-\s]?[A-Z0-9]{6}$/i.tes
 
 export function inviteLinks(code: string, groupName: string) {
   const url = `${config.APP_URL}/einladung/${code}`;
-  const text = `Kommen Sie mit zu unserer Gehgruppe „${groupName}“ bei Gehmeinsam! Hier können Sie beitreten: ${url} (Einladungscode: ${code})`;
+  const text = `Kommen Sie mit zu unserer Gehgruppe „${groupName}“ bei ${config.APP_NAME}! Hier können Sie beitreten: ${url} (Einladungscode: ${code})`;
   return {
     url,
     code,
@@ -773,7 +773,7 @@ router.post('/:id/invite/email', requireUser, async (req, res) => {
     const name = inviter?.displayName ?? 'Ein Mitglied';
     const text = [
       'Guten Tag,',
-      `${name} lädt Sie in die Gehgruppe „${g.name}“ in ${g.city} ein. Bei Gehmeinsam verabreden sich Menschen, um gemeinsam zügig zu gehen – in angenehmer Gesellschaft und im eigenen Tempo.`,
+      `${name} lädt Sie in die Gehgruppe „${g.name}“ in ${g.city} ein. Bei ${config.APP_NAME} verabreden sich Menschen, um gemeinsam zügig zu gehen – in angenehmer Gesellschaft und im eigenen Tempo.`,
       ...(body.message ? [`Persönliche Nachricht von ${name}:\n„${body.message}“`] : []),
       `Mit diesem Link können Sie der Gruppe beitreten:\n${url}`,
       `Der Link ist ${INVITE_DAYS} Tage gültig. Wenn Sie die Einladung nicht annehmen möchten, löschen Sie diese E-Mail einfach.`,

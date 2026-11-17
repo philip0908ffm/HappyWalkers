@@ -1,4 +1,4 @@
-import type { JoinPolicy } from '@gehmeinsam/shared';
+import type { JoinPolicy } from '@happywalkers/shared';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import type { GroupSummary } from '../api/types-walks';

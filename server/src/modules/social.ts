@@ -1,5 +1,5 @@
 import { maskRouteForOthers } from '../lib/geo.js';
-import { badgeDefinition, LIMITS, REPORT_TARGETS, VISIBILITIES } from '@gehmeinsam/shared';
+import { badgeDefinition, LIMITS, REPORT_TARGETS, VISIBILITIES } from '@happywalkers/shared';
 import { and, asc, count, desc, eq, inArray, isNull, not, notInArray, or, sql, sum, type SQL } from 'drizzle-orm';
 import { Router } from 'express';
 import { z } from 'zod';

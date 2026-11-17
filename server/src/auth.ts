@@ -30,7 +30,7 @@ async function anredeFor(email: string): Promise<'sie' | 'du'> {
  * `bearer()` erlaubt der späteren Mobil-App Anfragen mit `Authorization: Bearer <token>`.
  */
 export const auth = betterAuth({
-  appName: 'Gehmeinsam',
+  appName: config.APP_NAME,
   baseURL: config.APP_URL,
   basePath: '/api/auth',
   secret: config.BETTER_AUTH_SECRET,
@@ -62,7 +62,7 @@ export const auth = betterAuth({
     database: { generateId: () => crypto.randomUUID() },
     // Die Client-IP setzt app.ts aus req.ip (trust proxy) – ein vom Browser mitgeschickter
     // X-Forwarded-For-Kopf kann die Ratenbegrenzung so nicht umgehen.
-    ipAddress: { ipAddressHeaders: ['x-gehmeinsam-client-ip'] },
+    ipAddress: { ipAddressHeaders: ['x-happywalkers-client-ip'] },
   },
   databaseHooks: {
     user: {
@@ -81,11 +81,11 @@ export const auth = betterAuth({
       sendMagicLink: async ({ email, url }) => {
         const du = (await anredeFor(email)) === 'du';
         const text = du
-          ? `Hallo,\n\nklicke auf den Knopf, um dich bei Gehmeinsam anzumelden. Der Link ist 20 Minuten gültig und funktioniert nur einmal.\n\nDu hast keine Anmeldung angefordert? Dann kannst du diese E-Mail einfach löschen.`
-          : `Guten Tag,\n\nklicken Sie auf den Knopf, um sich bei Gehmeinsam anzumelden. Der Link ist 20 Minuten gültig und funktioniert nur einmal.\n\nSie haben keine Anmeldung angefordert? Dann können Sie diese E-Mail einfach löschen.`;
+          ? `Hallo,\n\nklicke auf den Knopf, um dich bei ${config.APP_NAME} anzumelden. Der Link ist 20 Minuten gültig und funktioniert nur einmal.\n\nDu hast keine Anmeldung angefordert? Dann kannst du diese E-Mail einfach löschen.`
+          : `Guten Tag,\n\nklicken Sie auf den Knopf, um sich bei ${config.APP_NAME} anzumelden. Der Link ist 20 Minuten gültig und funktioniert nur einmal.\n\nSie haben keine Anmeldung angefordert? Dann können Sie diese E-Mail einfach löschen.`;
         await sendMail({
           to: email,
-          subject: 'Ihr Anmelde-Link für Gehmeinsam',
+          subject: `Ihr Anmelde-Link für ${config.APP_NAME}`,
           text: `${text}\n\nAnmelde-Link: ${url}`,
           html: textToHtml(text, { label: du ? 'Jetzt anmelden' : 'Jetzt anmelden', url }),
         });
@@ -101,7 +101,7 @@ export const auth = betterAuth({
       },
       signUpOnVerification: {
         // Platzhalter-Adresse; kann später in den Einstellungen durch eine echte ersetzt werden
-        getTempEmail: (n) => `${n.replace(/\D/g, '')}@telefon.gehmeinsam.invalid`,
+        getTempEmail: (n) => `${n.replace(/\D/g, '')}@telefon.happywalkers.invalid`,
         getTempName: () => '',
       },
     }),

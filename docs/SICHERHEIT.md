@@ -18,7 +18,7 @@ Tests zu den Befunden: `server/test/security.test.ts` (S-xx), `server/test/secur
 ## 2. Angreifer und Szenarien
 
 1. **Fremde aus dem Internet** – Konten aufzählen, Anmelde-Links abfangen, Massenanmeldung, Bildbomben,
-   Offene Weiterleitung für Phishing („gehmeinsam.de/anmelden?weiter=…“).
+   Offene Weiterleitung für Phishing („happywalkers.de/anmelden?weiter=…“).
 2. **Angemeldete Fremde** – Treffpunkte/Profile/Fotos außerhalb der Berechtigung lesen (IDs raten),
    Kontaktdaten erfragen, Gruppen „nur Frauen“ unterwandern, Belästigung.
 3. **Gesperrte oder blockierte Personen** – über Umwege (Einladungslink, ICS, Profilbild-URL) weiter Inhalte sehen.
@@ -128,7 +128,7 @@ Schwere: hoch / mittel / niedrig. Status: ✅ behoben (Test in `server/test/secu
 | S2-16 | niedrig | `modules/walks.ts:511` | „Gemeinsam auf Distanz“ ohne Gruppe speichert `lat/lon` des **PLZ-Mittelpunkts der Erstellerin**; `WalkSummary.lat/lon` gibt ihn an alle aus → PLZ ableitbar (Stadt steht ohnehin da). | ⏳ Empfehlung: für `kind = 'distance'` `lat/lon` = Stadtmittelpunkt oder `null`. |
 | S2-17 | niedrig | `modules/social.ts` (`/users/:id/follow`, `/reports`), `modules/rural.ts` (`/rural/partners?postalCode`) | Keine eigene Ratenbegrenzung für Folge-Anfragen (Benachrichtigungs-Flut) und Meldungen; Gehpartner-Entfernungen (ganze km) über viele `postalCode`-Abfragen trianguliertbar (Ergebnis ≈ PLZ, Stadt ist ohnehin sichtbar). | ⏳ Empfehlung: Tageskontingent für Folge-Anfragen; Ratenbegrenzer S-05f gilt auch für `lib/ratelimit.ts` (im Speicher). |
 | S2-18 | niedrig | `lib/access.ts` (`canJoinWomenOnly`) | Geschlecht ist Selbstauskunft; wer nach dem Beitritt das Geschlecht ändert, bleibt Mitglied. Leitung kann Personen entfernen/sperren. | ⏳ Hinweis (Produkt): Moderation statt Technik. |
-| S2-19 | niedrig | `modules/groups.ts` (E-Mail-Einladung) | Einladungs-Mail nennt im Betreff den frei wählbaren Anzeigenamen der einladenden Person („Gehmeinsam-Team lädt Sie …“) → Vortäuschen möglich; persönliche Nachricht kann Links enthalten (Mailprogramme verlinken sie). | ✅ Entscheidung Lena: Anzeigenamen mit „Gehmeinsam“, „Team“, „Admin“, „Moderat…“, „Support“ werden abgelehnt (`modules/me.ts`). |
+| S2-19 | niedrig | `modules/groups.ts` (E-Mail-Einladung) | Einladungs-Mail nennt im Betreff den frei wählbaren Anzeigenamen der einladenden Person („HappyWalkers-Team lädt Sie …“) → Vortäuschen möglich; persönliche Nachricht kann Links enthalten (Mailprogramme verlinken sie). | ✅ Entscheidung Lena: Anzeigenamen mit „HappyWalkers“, „Team“, „Admin“, „Moderat…“, „Support“ werden abgelehnt (`modules/me.ts`). |
 
 ### Geprüft und in Ordnung (Auswahl)
 

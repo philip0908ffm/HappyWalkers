@@ -41,7 +41,7 @@ für Personen/Profilbilder) statt eigener Regeln. Neue Regeln dort ergänzen, ni
 | Gehpartner-Gesuch | angemeldete Personen im Umkreis: `PersonRef`, Stadt, gerundete Entfernung, Tempo, Zeiten, Notiz – keine Kontaktdaten. Anfragen blockierter Personen: unsichtbar und nicht annehmbar | `modules/rural.ts` |
 | Geteiltes Abzeichen | öffentlich nur per zufälligem Token, nur `displayName` + Abzeichen; Teilen beenden löscht Token | `modules/badges.ts` |
 | Browser-Standort | nur als Suchparameter `lat/lon` einer Anfrage; **nie speichern, nie protokollieren** | `modules/groups.ts`, `walks.ts` |
-| E-Mail/Telefon | nur selbst; Benachrichtigungen laufen über Gehmeinsam | `services/notify.ts` |
+| E-Mail/Telefon | nur selbst; Benachrichtigungen laufen über HappyWalkers | `services/notify.ts` |
 | Fotos (Dateien) | nur über Routen mit Zugriffsprüfung, nie statisch; EXIF/GPS beim Speichern entfernt; Fotos zu Distanz-Beiträgen nach der Regel des Beitrags | `services/storage.ts`, `canSeePhoto` |
 | Gruppen „nur auf Einladung“ | erscheinen nicht in Suchen (Gruppen, Walks, `nearest`, `rural/overview`, Distanz-Termine mit dieser Gruppe); Details, Walks und Beitrittsversuch nur für Mitglieder/Eingeladene (sonst 404). Ausnahme: das Gruppenbild (`/groups/:id/photo`) ist wie bei allen Gruppen ohne Anmeldung abrufbar, wenn man die ID kennt (Einladungsseite) | `modules/groups.ts` |
 | Gruppenbild | öffentlich (wie Name und Ort der Gruppe) – keine Personen erkennbar zeigen | `modules/groups.ts` |

@@ -139,7 +139,7 @@ export function createApp() {
 }
 
 /** Kopf, über den die vertrauenswürdige Client-IP an Better Auth übergeben wird (siehe auth.ts). */
-export const CLIENT_IP_HEADER = 'x-gehmeinsam-client-ip';
+export const CLIENT_IP_HEADER = 'x-happywalkers-client-ip';
 
 function allowedOrigins(): string[] {
   const list = [config.APP_URL, ...config.TRUSTED_ORIGINS.split(',').map((s) => s.trim()).filter(Boolean)];

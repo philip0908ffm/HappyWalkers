@@ -1,10 +1,10 @@
 {
   "settings": {
-    "lead": "Hier stellst du ein, wie Gehmeinsam für dich aussieht und wer was sehen darf.",
+    "lead": "Hier stellst du ein, wie {{appName}} für dich aussieht und wer was sehen darf.",
     "profile_private_hint": "Andere sehen nur deinen Namen in Gruppen.",
     "profile_followers_hint": "Personen, deren Anfrage du bestätigt hast.",
     "profile_public_hint": "Dein Name, Ort und deine Abzeichen sind sichtbar. Dein Alter nie.",
-    "emailNotifications": "E-Mails von Gehmeinsam erhalten (z. B. wenn sich jemand in deiner Nähe einträgt)",
+    "emailNotifications": "E-Mails von {{appName}} erhalten (z. B. wenn sich jemand in deiner Nähe einträgt)",
     "saved": "Deine Einstellungen wurden gespeichert.",
     "signedOut": "Du wurdest abgemeldet. Bis bald!",
     "yourData": "Deine Daten",

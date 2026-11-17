@@ -8,7 +8,7 @@ async function main() {
   if (isProd || process.env.RUN_MIGRATIONS === '1') await runMigrations();
   const app = createApp();
   app.listen(config.PORT, () => {
-    console.log(`Gehmeinsam läuft auf Port ${config.PORT}`);
+    console.log(`${config.APP_NAME} läuft auf Port ${config.PORT}`);
   });
   // allgemeine Challenges (z. B. für den neuen Monat) automatisch anlegen – idempotent
   registerJob({ name: 'challenges', everyMs: 6 * 60 * 60 * 1000, run: seedBase });

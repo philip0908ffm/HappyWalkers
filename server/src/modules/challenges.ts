@@ -1,4 +1,4 @@
-import { CHALLENGE_TYPES, POINTS } from '@gehmeinsam/shared';
+import { CHALLENGE_TYPES, POINTS } from '@happywalkers/shared';
 import { and, asc, desc, eq, gt, inArray, lte, or, sql } from 'drizzle-orm';
 import { Router } from 'express';
 import { randomBytes } from 'node:crypto';

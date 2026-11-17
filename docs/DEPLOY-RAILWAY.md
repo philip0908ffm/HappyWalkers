@@ -27,11 +27,12 @@
 | Variable | Wert |
 |---|---|
 | `NODE_ENV` | `production` |
+| `APP_NAME` | optional, Projektname (Standard: `HappyWalkers`) – gilt für Oberfläche, E-Mails, Urkunden; nach Änderung neu deployen |
 | `DATABASE_URL` | Neon-URL (pooled) |
-| `APP_URL` | nur bei eigener Domain nötig, z. B. `https://gehmeinsam.de` – sonst wird die Railway-Domain automatisch verwendet (unter *Settings → Networking* „Generate Domain“ klicken) |
+| `APP_URL` | nur bei eigener Domain nötig, z. B. `https://happywalkers.de` – sonst wird die Railway-Domain automatisch verwendet (unter *Settings → Networking* „Generate Domain“ klicken) |
 | `BETTER_AUTH_SECRET` | `openssl rand -base64 32` |
 | `RESEND_API_KEY` | Schlüssel von Resend |
-| `EMAIL_FROM` | **Pflicht**, z. B. `Gehmeinsam <hallo@ihre-domain.de>` – Domain muss bei Resend bestätigt sein |
+| `EMAIL_FROM` | **Pflicht**, z. B. `HappyWalkers <hallo@ihre-domain.de>` – Domain muss bei Resend bestätigt sein |
 | `UPLOAD_DIR` | `/data/uploads` |
 | `SMS_PROVIDER` | `none` (bis ein SMS-Anbieter angebunden ist) |
 | `BILLING_PROVIDER` | `none` (bis ein Zahlungsanbieter angebunden ist; `dev` nur zum Testen!) |
@@ -41,7 +42,7 @@
 
 ## Wenn das Deployment fehlschlägt
 Im Railway-Protokoll (*Deployments → View Logs → Deploy Logs*) steht dann eine Zeile
-„Gehmeinsam kann in Produktion nicht starten …“ mit den fehlenden Variablen. Häufige Ursachen:
+„HappyWalkers kann in Produktion nicht starten …“ mit den fehlenden Variablen. Häufige Ursachen:
 - `BETTER_AUTH_SECRET` fehlt oder ist kürzer als 32 Zeichen
 - `RESEND_API_KEY` oder `EMAIL_FROM` fehlt
 - Build schlägt fehl: eigener Build-Befehl ohne `--include=dev` in den Railway-Einstellungen, oder Root Directory steht auf `web`/`server`

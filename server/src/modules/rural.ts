@@ -1,4 +1,4 @@
-import { TEMPOS } from '@gehmeinsam/shared';
+import { TEMPOS } from '@happywalkers/shared';
 import { and, asc, desc, eq, gt, gte, inArray, lte, ne, sql } from 'drizzle-orm';
 import { Router } from 'express';
 import { z } from 'zod';

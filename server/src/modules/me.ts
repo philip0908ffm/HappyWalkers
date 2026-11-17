@@ -1,4 +1,6 @@
-import { ANREDEN, FONT_SCALES, LOCALES, PROFILE_VISIBILITIES } from '@gehmeinsam/shared';
+import { appSlug } from '@happywalkers/shared';
+import { config } from '../config.js';
+import { ANREDEN, FONT_SCALES, LOCALES, PROFILE_VISIBILITIES } from '@happywalkers/shared';
 import { and, asc, eq, inArray, ne, or, sql } from 'drizzle-orm';
 import { Router } from 'express';
 import { z } from 'zod';
@@ -9,6 +11,14 @@ import { badRequest, parse } from '../lib/http.js';
 import { me, requireUser } from '../middleware/auth.js';
 
 export const router = Router();
+
+/** Anzeigenamen, die nach offizieller Plattform aussehen (Projektname aus APP_NAME, Team, Admin …). */
+export function isReservedName(name: string): boolean {
+  const squash = (v: string) => v.toLowerCase().replace(/[^a-z0-9äöüß]/g, '');
+  const brand = squash(config.APP_NAME);
+  if (brand.length >= 3 && squash(name).includes(brand)) return true;
+  return /\bteam\b|admin|moderat|support/i.test(name);
+}
 router.use(requireUser);
 
 /** Eigenes Profil inkl. Einstellungen (nur für die Person selbst). */
@@ -53,13 +63,13 @@ router.get('/', async (req, res) => {
 });
 
 const profileSchema = z.object({
-  // geschützte Namen (S2-19): niemand soll sich als Gehmeinsam-Team ausgeben können
+  // geschützte Namen (S2-19): niemand soll sich als Team der Plattform ausgeben können
   displayName: z
     .string()
     .trim()
     .min(1)
     .max(40)
-    .refine((n) => !/geh\s*meinsam|\bteam\b|admin|moderat|support/i.test(n), 'reserved_name')
+    .refine((n) => !isReservedName(n), 'reserved_name')
     .optional(),
   bio: z.string().trim().max(500).nullable().optional(),
   postalCode: z.string().regex(/^\d{5}$/).optional(),
@@ -111,7 +121,7 @@ router.get('/export', async (req, res) => {
   const userId = me(req).id;
   const [u] = await db.select().from(s.user).where(eq(s.user.id, userId));
   const data = {
-    hinweis: 'Dies sind alle Daten, die Gehmeinsam über Sie gespeichert hat.',
+    hinweis: `Dies sind alle Daten, die ${config.APP_NAME} über Sie gespeichert hat.`,
     exportiertAm: new Date().toISOString(),
     konto: { id: u.id, email: u.email, telefon: u.phoneNumber, erstelltAm: u.createdAt },
     profil: (await db.select().from(s.profile).where(eq(s.profile.userId, userId)))[0] ?? null,
@@ -171,7 +181,7 @@ router.get('/export', async (req, res) => {
       .where(eq(s.account.userId, userId)),
   };
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
-  res.setHeader('Content-Disposition', 'attachment; filename="gehmeinsam-meine-daten.json"');
+  res.setHeader('Content-Disposition', `attachment; filename="${appSlug(config.APP_NAME)}-meine-daten.json"`);
   res.send(JSON.stringify(data, null, 2));
 });
 

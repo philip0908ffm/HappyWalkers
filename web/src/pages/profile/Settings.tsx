@@ -1,4 +1,4 @@
-import { FONT_SCALES, PROFILE_VISIBILITIES } from '@gehmeinsam/shared';
+import { FONT_SCALES, PROFILE_VISIBILITIES } from '@happywalkers/shared';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -1,4 +1,4 @@
-import { SEARCH_RADII_KM } from '@gehmeinsam/shared';
+import { SEARCH_RADII_KM } from '@happywalkers/shared';
 import { useTranslation } from 'react-i18next';
 
 /** Umkreis-Auswahl (5 / 15 / 30 / 50 km) als große Auswahlknöpfe. */

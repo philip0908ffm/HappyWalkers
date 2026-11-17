@@ -14,7 +14,7 @@
       "private": "nur du selbst",
       "group": "die bestätigten Mitglieder der Gruppe",
       "followers": "Personen, deren Kontakt-Anfrage du bestätigt hast",
-      "public": "alle, die bei Gehmeinsam angemeldet sind – nicht das ganze Internet"
+      "public": "alle, die bei {{appName}} angemeldet sind – nicht das ganze Internet"
     },
     "rows": [
       {
@@ -49,7 +49,7 @@
       },
       {
         "what": "E-Mail-Adresse und Telefonnummer",
-        "who": "Niemand – auch nicht die Gruppenleitung. Anfragen von anderen erreichen dich über Gehmeinsam, ohne dass deine Kontaktdaten weitergegeben werden.",
+        "who": "Niemand – auch nicht die Gruppenleitung. Anfragen von anderen erreichen dich über {{appName}}, ohne dass deine Kontaktdaten weitergegeben werden.",
         "change": "Sie werden nie angezeigt."
       },
       {
@@ -89,7 +89,7 @@
       },
       {
         "what": "Blockieren und Melden",
-        "who": "Nur du siehst, wen du blockiert hast. Die Person wird nicht benachrichtigt. Meldungen prüft nur das Team von Gehmeinsam – vertraulich.",
+        "who": "Nur du siehst, wen du blockiert hast. Die Person wird nicht benachrichtigt. Meldungen prüft nur das Team von {{appName}} – vertraulich.",
         "change": "Ja. Eine Blockierung kannst du jederzeit aufheben."
       },
       {
@@ -104,7 +104,7 @@
       },
       {
         "what": "Premium und Zahlungen",
-        "who": "Nur du. Kartendaten oder Kontodaten speichert Gehmeinsam nicht.",
+        "who": "Nur du. Kartendaten oder Kontodaten speichert {{appName}} nicht.",
         "change": "Ja. Premium ist jederzeit monatlich kündbar – mit einem Klick auf „Premium kündigen“ (Seite „Premium“)."
       }
     ],
@@ -112,9 +112,9 @@
   },
 
   "privacy": {
-    "lead": "Diese Erklärung sagt in einfachen Worten, welche Daten Gehmeinsam speichert, wofür und welche Rechte du hast.",
+    "lead": "Diese Erklärung sagt in einfachen Worten, welche Daten {{appName}} speichert, wofür und welche Rechte du hast.",
     "short": [
-      "Wir speichern nur, was für Gehmeinsam nötig ist.",
+      "Wir speichern nur, was für {{appName}} nötig ist.",
       "Keine Werbung, kein Verkauf von Daten, keine Cookies, die dich im Internet verfolgen.",
       "Alter, E-Mail-Adresse und Telefonnummer sieht niemand außer dir.",
       "Du kannst alle deine Daten jederzeit herunterladen oder dein Konto löschen."
@@ -133,7 +133,7 @@
         "id": "daten",
         "title": "2. Welche Daten wir verarbeiten und wofür",
         "paras": [
-          "In Klammern steht jeweils die Rechtsgrundlage nach der Datenschutz-Grundverordnung (DSGVO). „Vertrag“ bedeutet: Wir brauchen die Daten, damit du Gehmeinsam nutzen kannst (Art. 6 Abs. 1 Buchst. b DSGVO)."
+          "In Klammern steht jeweils die Rechtsgrundlage nach der Datenschutz-Grundverordnung (DSGVO). „Vertrag“ bedeutet: Wir brauchen die Daten, damit du {{appName}} nutzen kannst (Art. 6 Abs. 1 Buchst. b DSGVO)."
         ],
         "items": [
           "Anmeldung: deine E-Mail-Adresse oder Telefonnummer. Damit schicken wir dir einen Anmelde-Link oder einen Code. Ein Passwort gibt es nicht. (Vertrag)",
@@ -141,7 +141,7 @@
           "Gruppen und Walks: Mitgliedschaften, Zusagen, angelegte Termine und Treffpunkte. (Vertrag)",
           "Eingetragene Walks: Datum, Dauer, Kilometer und – nur wenn du eine Datei hochlädst – die Strecke. Daraus berechnen wir Punkte und Abzeichen. (Vertrag)",
           "Beiträge, Kommentare, Herzen und Fotos. Bei Fotos entfernen wir automatisch alle versteckten Zusatzdaten wie den Aufnahmeort (GPS). (Vertrag)",
-          "Kontakte, Blockierungen und Meldungen. Meldungen prüfen wir, um Gehmeinsam sicher zu halten. (Vertrag und berechtigtes Interesse, Art. 6 Abs. 1 Buchst. f DSGVO)",
+          "Kontakte, Blockierungen und Meldungen. Meldungen prüfen wir, um {{appName}} sicher zu halten. (Vertrag und berechtigtes Interesse, Art. 6 Abs. 1 Buchst. f DSGVO)",
           "Standort im Browser: nur, wenn du auf „Meinen Standort verwenden“ tippst. Er wird nur für diese Suche genutzt und nicht gespeichert. (Einwilligung)",
           "E-Mail-Benachrichtigungen, z. B. wenn ein Walk abgesagt wird. Hinweise auf neue Gruppen in deiner Nähe kannst du in den Einstellungen abschalten. (Vertrag)",
           "Technische Daten: Bei der Anmeldung speichern wir IP-Adresse und Browser-Typ zu deiner Sitzung. Das schützt dein Konto und hilft uns, Missbrauch abzuwehren, z. B. massenhafte Anmeldeversuche. (berechtigtes Interesse)",
@@ -159,7 +159,7 @@
           "Neon (Neon Inc., USA) – Datenbank. [Region eintragen, z. B. Frankfurt am Main]",
           "Resend (Resend Inc., USA) – Versand von E-Mails, z. B. Anmelde-Links.",
           "[Nur falls die SMS-Anmeldung aktiv ist: Name und Sitz des SMS-Anbieters] – Versand der Anmelde-Codes per SMS.",
-          "[Nur falls Premium mit Zahlung aktiv ist: Name und Sitz des Zahlungsanbieters] – Abwicklung der Zahlung. Deine Karten- oder Kontodaten gibt es nur dort, nicht bei Gehmeinsam."
+          "[Nur falls Premium mit Zahlung aktiv ist: Name und Sitz des Zahlungsanbieters] – Abwicklung der Zahlung. Deine Karten- oder Kontodaten gibt es nur dort, nicht bei {{appName}}."
         ],
         "after": [
           "Bei Anbietern in den USA stützt sich die Übermittlung auf [das EU-US Data Privacy Framework bzw. die EU-Standardvertragsklauseln – bitte je Anbieter prüfen und eintragen].",
@@ -170,7 +170,7 @@
         "id": "cookies",
         "title": "4. Cookies und Speicher im Browser – warum es keinen Cookie-Hinweis gibt",
         "paras": [
-          "Gehmeinsam setzt genau ein Cookie: das Anmelde-Cookie. Es sorgt dafür, dass du auf deinem Gerät angemeldet bleibst (bis zu 90 Tage, bei Nutzung verlängert es sich). Ohne dieses Cookie könntest du dich nicht anmelden.",
+          "{{appName}} setzt genau ein Cookie: das Anmelde-Cookie. Es sorgt dafür, dass du auf deinem Gerät angemeldet bleibst (bis zu 90 Tage, bei Nutzung verlängert es sich). Ohne dieses Cookie könntest du dich nicht anmelden.",
           "Außerdem merkt sich dein Browser zwei Geräteeinstellungen: die Schriftgröße und die Anrede („Sie“ oder „Du“). Diese bleiben auf deinem Gerät und werden nicht ausgewertet.",
           "Es gibt keine Cookies für Werbung, Statistik oder zum Verfolgen und keine Dienste, die dein Verhalten verfolgen. Alles, was wir speichern, ist für den von dir gewünschten Dienst unbedingt erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG). Dafür ist keine Einwilligung nötig – deshalb gibt es keinen Cookie-Hinweis."
         ]
@@ -216,7 +216,7 @@
       {
         "id": "alter",
         "title": "8. Mindestalter",
-        "paras": ["Gehmeinsam richtet sich an Erwachsene. Die Nutzung ist ab 16 Jahren möglich."]
+        "paras": ["{{appName}} richtet sich an Erwachsene. Die Nutzung ist ab 16 Jahren möglich."]
       }
     ]
   },
@@ -230,7 +230,7 @@
         "q": "Wie melde ich mich an?",
         "paras": ["Du brauchst kein Passwort. Es gibt zwei Wege:"],
         "steps": [
-          "Mit E-Mail: Gib deine E-Mail-Adresse ein und tippe auf „Anmelde-Link senden“. Öffne die E-Mail von Gehmeinsam und tippe auf „Jetzt anmelden“. Der Link ist 20 Minuten gültig und funktioniert nur einmal.",
+          "Mit E-Mail: Gib deine E-Mail-Adresse ein und tippe auf „Anmelde-Link senden“. Öffne die E-Mail von {{appName}} und tippe auf „Jetzt anmelden“. Der Link ist 20 Minuten gültig und funktioniert nur einmal.",
           "Mit SMS (falls angeboten): Gib deine Handynummer ein. Du erhältst einen 6-stelligen Code per SMS. Tippe ihn ein. Der Code ist 10 Minuten gültig."
         ],
         "after": [
@@ -304,7 +304,7 @@
         "id": "schrift",
         "q": "Wie stelle ich die Schrift größer?",
         "steps": [
-          "In Gehmeinsam: Profil → Einstellungen → Schriftgröße. Wähle „Groß“ oder „Sehr groß“.",
+          "In {{appName}}: Profil → Einstellungen → Schriftgröße. Wähle „Groß“ oder „Sehr groß“.",
           "Im Browser am Computer: Halte die Taste Strg (am Mac: cmd) gedrückt und drücke die Plus-Taste (+). Mit Strg und Minus (−) wird es wieder kleiner, mit Strg und 0 normal.",
           "Am Tablet oder Handy: Zieh zwei Finger auf dem Bildschirm auseinander."
         ]

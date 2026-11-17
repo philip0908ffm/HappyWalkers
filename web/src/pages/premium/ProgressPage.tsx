@@ -1,5 +1,5 @@
 import '../../styles/pages-e.css';
-import { badgeDefinition } from '@gehmeinsam/shared';
+import { badgeDefinition } from '@happywalkers/shared';
 import { useQuery } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';

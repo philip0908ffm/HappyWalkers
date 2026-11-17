@@ -2,9 +2,9 @@ import { defineConfig, devices } from '@playwright/test';
 
 /**
  * End-to-End-Tests (Thomas Becker). Startet Server (Port 3100) und Vite (Port 5174)
- * gegen die Test-Datenbank `gehmeinsam_e2e`.
+ * gegen die Test-Datenbank `happywalkers_e2e`.
  */
-const DB = process.env.E2E_DATABASE_URL ?? 'postgres://gehmeinsam:gehmeinsam@localhost:5432/gehmeinsam_e2e';
+const DB = process.env.E2E_DATABASE_URL ?? 'postgres://happywalkers:happywalkers@localhost:5432/happywalkers_e2e';
 
 export default defineConfig({
   testDir: './e2e',

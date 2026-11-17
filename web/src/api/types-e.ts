@@ -2,7 +2,7 @@
  * Antworttypen für Paket E (Oberfläche) – abgeleitet aus docs/API.md,
  * Abschnitte „Paket B“, „Paket C“ und „Ländliche Regionen“ (Paket A).
  */
-import type { BadgeKind, Tempo, Visibility } from '@gehmeinsam/shared';
+import type { BadgeKind, Tempo, Visibility } from '@happywalkers/shared';
 import type { Place } from './types';
 
 export type { Visibility };

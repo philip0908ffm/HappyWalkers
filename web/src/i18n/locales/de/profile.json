@@ -1,7 +1,7 @@
 {
   "settings": {
     "title": "Einstellungen",
-    "lead": "Hier stellen Sie ein, wie Gehmeinsam für Sie aussieht und wer was sehen darf.",
+    "lead": "Hier stellen Sie ein, wie {{appName}} für Sie aussieht und wer was sehen darf.",
     "display": "Anzeige",
     "fontScale": "Schriftgröße",
     "font_normal": "Normal",
@@ -21,7 +21,7 @@
     "leaderboard": "Name in Ranglisten",
     "leaderboard_display": "Meinen Vor- bzw. Spitznamen zeigen",
     "leaderboard_hidden": "Anonym („Teilnehmende Person“) anzeigen",
-    "emailNotifications": "E-Mails von Gehmeinsam erhalten (z. B. wenn sich jemand in Ihrer Nähe einträgt)",
+    "emailNotifications": "E-Mails von {{appName}} erhalten (z. B. wenn sich jemand in Ihrer Nähe einträgt)",
     "whoSeesWhatLink": "Übersicht: Wer sieht was?",
     "saved": "Ihre Einstellungen wurden gespeichert.",
     "account": "Konto",

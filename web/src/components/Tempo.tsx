@@ -1,4 +1,4 @@
-import { TEMPOS, type Tempo } from '@gehmeinsam/shared';
+import { TEMPOS, type Tempo } from '@happywalkers/shared';
 import { useTranslation } from 'react-i18next';
 import { Explain } from './Explain';
 

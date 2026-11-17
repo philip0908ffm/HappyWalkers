@@ -34,7 +34,7 @@
       "private": "nur Sie selbst",
       "group": "die bestätigten Mitglieder der Gruppe",
       "followers": "Personen, deren Kontakt-Anfrage Sie bestätigt haben",
-      "public": "alle, die bei Gehmeinsam angemeldet sind – nicht das ganze Internet"
+      "public": "alle, die bei {{appName}} angemeldet sind – nicht das ganze Internet"
     },
     "tableTitle": "Übersicht",
     "tableCaption": "Welche Angabe wer sehen kann und ob Sie das ändern können",
@@ -74,7 +74,7 @@
       },
       {
         "what": "E-Mail-Adresse und Telefonnummer",
-        "who": "Niemand – auch nicht die Gruppenleitung. Anfragen von anderen erreichen Sie über Gehmeinsam, ohne dass Ihre Kontaktdaten weitergegeben werden.",
+        "who": "Niemand – auch nicht die Gruppenleitung. Anfragen von anderen erreichen Sie über {{appName}}, ohne dass Ihre Kontaktdaten weitergegeben werden.",
         "change": "Sie werden nie angezeigt."
       },
       {
@@ -114,7 +114,7 @@
       },
       {
         "what": "Blockieren und Melden",
-        "who": "Nur Sie sehen, wen Sie blockiert haben. Die Person wird nicht benachrichtigt. Meldungen prüft nur das Team von Gehmeinsam – vertraulich.",
+        "who": "Nur Sie sehen, wen Sie blockiert haben. Die Person wird nicht benachrichtigt. Meldungen prüft nur das Team von {{appName}} – vertraulich.",
         "change": "Ja. Eine Blockierung können Sie jederzeit aufheben."
       },
       {
@@ -129,7 +129,7 @@
       },
       {
         "what": "Premium und Zahlungen",
-        "who": "Nur Sie. Kartendaten oder Kontodaten speichert Gehmeinsam nicht.",
+        "who": "Nur Sie. Kartendaten oder Kontodaten speichert {{appName}} nicht.",
         "change": "Ja. Premium ist jederzeit monatlich kündbar – mit einem Klick auf „Premium kündigen“ (Seite „Premium“)."
       }
     ],
@@ -139,11 +139,11 @@
 
   "privacy": {
     "title": "Datenschutz",
-    "lead": "Diese Erklärung sagt in einfachen Worten, welche Daten Gehmeinsam speichert, wofür und welche Rechte Sie haben.",
+    "lead": "Diese Erklärung sagt in einfachen Worten, welche Daten {{appName}} speichert, wofür und welche Rechte Sie haben.",
     "shortTitle": "Kurz gesagt",
     "tocTitle": "Inhalt",
     "short": [
-      "Wir speichern nur, was für Gehmeinsam nötig ist.",
+      "Wir speichern nur, was für {{appName}} nötig ist.",
       "Keine Werbung, kein Verkauf von Daten, keine Cookies, die Sie im Internet verfolgen.",
       "Alter, E-Mail-Adresse und Telefonnummer sieht niemand außer Ihnen.",
       "Sie können alle Ihre Daten jederzeit herunterladen oder Ihr Konto löschen."
@@ -162,7 +162,7 @@
         "id": "daten",
         "title": "2. Welche Daten wir verarbeiten und wofür",
         "paras": [
-          "In Klammern steht jeweils die Rechtsgrundlage nach der Datenschutz-Grundverordnung (DSGVO). „Vertrag“ bedeutet: Wir brauchen die Daten, damit Sie Gehmeinsam nutzen können (Art. 6 Abs. 1 Buchst. b DSGVO)."
+          "In Klammern steht jeweils die Rechtsgrundlage nach der Datenschutz-Grundverordnung (DSGVO). „Vertrag“ bedeutet: Wir brauchen die Daten, damit Sie {{appName}} nutzen können (Art. 6 Abs. 1 Buchst. b DSGVO)."
         ],
         "items": [
           "Anmeldung: Ihre E-Mail-Adresse oder Telefonnummer. Damit schicken wir Ihnen einen Anmelde-Link oder einen Code. Ein Passwort gibt es nicht. (Vertrag)",
@@ -170,7 +170,7 @@
           "Gruppen und Walks: Mitgliedschaften, Zusagen, angelegte Termine und Treffpunkte. (Vertrag)",
           "Eingetragene Walks: Datum, Dauer, Kilometer und – nur wenn Sie eine Datei hochladen – die Strecke. Daraus berechnen wir Punkte und Abzeichen. (Vertrag)",
           "Beiträge, Kommentare, Herzen und Fotos. Bei Fotos entfernen wir automatisch alle versteckten Zusatzdaten wie den Aufnahmeort (GPS). (Vertrag)",
-          "Kontakte, Blockierungen und Meldungen. Meldungen prüfen wir, um Gehmeinsam sicher zu halten. (Vertrag und berechtigtes Interesse, Art. 6 Abs. 1 Buchst. f DSGVO)",
+          "Kontakte, Blockierungen und Meldungen. Meldungen prüfen wir, um {{appName}} sicher zu halten. (Vertrag und berechtigtes Interesse, Art. 6 Abs. 1 Buchst. f DSGVO)",
           "Standort im Browser: nur, wenn Sie auf „Meinen Standort verwenden“ tippen. Er wird nur für diese Suche genutzt und nicht gespeichert. (Einwilligung)",
           "E-Mail-Benachrichtigungen, z. B. wenn ein Walk abgesagt wird. Hinweise auf neue Gruppen in Ihrer Nähe können Sie in den Einstellungen abschalten. (Vertrag)",
           "Technische Daten: Bei der Anmeldung speichern wir IP-Adresse und Browser-Typ zu Ihrer Sitzung. Das schützt Ihr Konto und hilft uns, Missbrauch abzuwehren, z. B. massenhafte Anmeldeversuche. (berechtigtes Interesse)",
@@ -188,7 +188,7 @@
           "Neon (Neon Inc., USA) – Datenbank. [Region eintragen, z. B. Frankfurt am Main]",
           "Resend (Resend Inc., USA) – Versand von E-Mails, z. B. Anmelde-Links.",
           "[Nur falls die SMS-Anmeldung aktiv ist: Name und Sitz des SMS-Anbieters] – Versand der Anmelde-Codes per SMS.",
-          "[Nur falls Premium mit Zahlung aktiv ist: Name und Sitz des Zahlungsanbieters] – Abwicklung der Zahlung. Ihre Karten- oder Kontodaten gibt es nur dort, nicht bei Gehmeinsam."
+          "[Nur falls Premium mit Zahlung aktiv ist: Name und Sitz des Zahlungsanbieters] – Abwicklung der Zahlung. Ihre Karten- oder Kontodaten gibt es nur dort, nicht bei {{appName}}."
         ],
         "after": [
           "Bei Anbietern in den USA stützt sich die Übermittlung auf [das EU-US Data Privacy Framework bzw. die EU-Standardvertragsklauseln – bitte je Anbieter prüfen und eintragen].",
@@ -199,7 +199,7 @@
         "id": "cookies",
         "title": "4. Cookies und Speicher im Browser – warum es keinen Cookie-Hinweis gibt",
         "paras": [
-          "Gehmeinsam setzt genau ein Cookie: das Anmelde-Cookie. Es sorgt dafür, dass Sie auf Ihrem Gerät angemeldet bleiben (bis zu 90 Tage, bei Nutzung verlängert es sich). Ohne dieses Cookie könnten Sie sich nicht anmelden.",
+          "{{appName}} setzt genau ein Cookie: das Anmelde-Cookie. Es sorgt dafür, dass Sie auf Ihrem Gerät angemeldet bleiben (bis zu 90 Tage, bei Nutzung verlängert es sich). Ohne dieses Cookie könnten Sie sich nicht anmelden.",
           "Außerdem merkt sich Ihr Browser zwei Geräteeinstellungen: die Schriftgröße und die Anrede („Sie“ oder „Du“). Diese bleiben auf Ihrem Gerät und werden nicht ausgewertet.",
           "Es gibt keine Cookies für Werbung, Statistik oder zum Verfolgen und keine Dienste, die Ihr Verhalten verfolgen. Alles, was wir speichern, ist für den von Ihnen gewünschten Dienst unbedingt erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG). Dafür ist keine Einwilligung nötig – deshalb gibt es keinen Cookie-Hinweis."
         ]
@@ -245,14 +245,14 @@
       {
         "id": "alter",
         "title": "8. Mindestalter",
-        "paras": ["Gehmeinsam richtet sich an Erwachsene. Die Nutzung ist ab 16 Jahren möglich."]
+        "paras": ["{{appName}} richtet sich an Erwachsene. Die Nutzung ist ab 16 Jahren möglich."]
       }
     ]
   },
 
   "imprint": {
     "title": "Impressum und Quellen",
-    "lead": "Wer Gehmeinsam betreibt und welche freien Daten und Werke wir nutzen.",
+    "lead": "Wer {{appName}} betreibt und welche freien Daten und Werke wir nutzen.",
     "sections": [
       {
         "id": "anbieter",
@@ -287,7 +287,7 @@
       }
     ],
     "sourcesTitle": "Quellen",
-    "sourcesLead": "Gehmeinsam nutzt diese freien Daten und Werke. Vielen Dank an alle, die sie erstellen.",
+    "sourcesLead": "{{appName}} nutzt diese freien Daten und Werke. Vielen Dank an alle, die sie erstellen.",
     "sources": [
       { "name": "Postleitzahlen und Orte", "credit": "© GeoNames", "license": "Creative Commons Namensnennung 4.0 (CC BY 4.0)", "url": "https://www.geonames.org/" },
       { "name": "Karten", "credit": "© OpenStreetMap-Mitwirkende", "license": "Open Database License (ODbL)", "url": "https://www.openstreetmap.org/copyright" },
@@ -309,7 +309,7 @@
         "q": "Wie melde ich mich an?",
         "paras": ["Sie brauchen kein Passwort. Es gibt zwei Wege:"],
         "steps": [
-          "Mit E-Mail: Geben Sie Ihre E-Mail-Adresse ein und tippen Sie auf „Anmelde-Link senden“. Öffnen Sie die E-Mail von Gehmeinsam und tippen Sie auf „Jetzt anmelden“. Der Link ist 20 Minuten gültig und funktioniert nur einmal.",
+          "Mit E-Mail: Geben Sie Ihre E-Mail-Adresse ein und tippen Sie auf „Anmelde-Link senden“. Öffnen Sie die E-Mail von {{appName}} und tippen Sie auf „Jetzt anmelden“. Der Link ist 20 Minuten gültig und funktioniert nur einmal.",
           "Mit SMS (falls angeboten): Geben Sie Ihre Handynummer ein. Sie erhalten einen 6-stelligen Code per SMS. Tippen Sie ihn ein. Der Code ist 10 Minuten gültig."
         ],
         "after": [
@@ -383,7 +383,7 @@
         "id": "schrift",
         "q": "Wie stelle ich die Schrift größer?",
         "steps": [
-          "In Gehmeinsam: Profil → Einstellungen → Schriftgröße. Wählen Sie „Groß“ oder „Sehr groß“.",
+          "In {{appName}}: Profil → Einstellungen → Schriftgröße. Wählen Sie „Groß“ oder „Sehr groß“.",
           "Im Browser am Computer: Halten Sie die Taste Strg (am Mac: cmd) gedrückt und drücken Sie die Plus-Taste (+). Mit Strg und Minus (−) wird es wieder kleiner, mit Strg und 0 normal.",
           "Am Tablet oder Handy: Ziehen Sie zwei Finger auf dem Bildschirm auseinander."
         ]

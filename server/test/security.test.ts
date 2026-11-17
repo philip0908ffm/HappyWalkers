@@ -92,7 +92,7 @@ describe('S-03 Test-Postfach nur in Tests auf localhost', () => {
     expect(testMailboxAllowed({ NODE_ENV: 'test', APP_URL: 'http://127.0.0.1:5174' }, on)).toBe(true);
     expect(testMailboxAllowed({ NODE_ENV: 'production', APP_URL: 'http://localhost:5174' }, on)).toBe(false);
     expect(testMailboxAllowed({ NODE_ENV: 'development', APP_URL: 'http://localhost:5174' }, on)).toBe(false);
-    expect(testMailboxAllowed({ NODE_ENV: 'test', APP_URL: 'https://gehmeinsam.up.railway.app' }, on)).toBe(false);
+    expect(testMailboxAllowed({ NODE_ENV: 'test', APP_URL: 'https://happywalkers.up.railway.app' }, on)).toBe(false);
     expect(testMailboxAllowed({ NODE_ENV: 'test', APP_URL: 'http://localhost.evil.example' }, on)).toBe(false);
     expect(testMailboxAllowed({ NODE_ENV: 'test', APP_URL: 'http://localhost:5174' }, {})).toBe(false);
     expect(testMailboxAllowed({ NODE_ENV: 'test', APP_URL: 'http://localhost:5174' }, { E2E_MAILBOX: 'true' })).toBe(false);
@@ -108,7 +108,7 @@ describe('S-04 Start in Produktion nur mit sicherer Konfiguration', () => {
       BETTER_AUTH_SECRET: 'dev-secret-bitte-in-produktion-aendern',
       RESEND_API_KEY: undefined,
       SMS_PROVIDER: 'console',
-      APP_URL: 'http://gehmeinsam.example',
+      APP_URL: 'http://happywalkers.example',
       EMAIL_FROM: undefined,
     });
     expect(errors).toHaveLength(5);
@@ -121,8 +121,8 @@ describe('S-04 Start in Produktion nur mit sicherer Konfiguration', () => {
         BETTER_AUTH_SECRET: 'x'.repeat(44),
         RESEND_API_KEY: 're_123',
         SMS_PROVIDER: 'none',
-        APP_URL: 'https://gehmeinsam.example',
-        EMAIL_FROM: 'Gehmeinsam <hallo@gehmeinsam.example>',
+        APP_URL: 'https://happywalkers.example',
+        EMAIL_FROM: 'HappyWalkers <hallo@happywalkers.example>',
       }),
     ).toEqual([]);
   });
@@ -173,7 +173,7 @@ describe('S-05 Anmeldung: Tokens, Bearer, Client-IP', () => {
     // Railway hängt die echte Adresse rechts an X-Forwarded-For an; links steht, was der Browser schickt.
     const { userId } = await magicLogin({
       'X-Forwarded-For': '203.0.113.66, 198.51.100.7',
-      'X-Gehmeinsam-Client-IP': '203.0.113.99',
+      'X-HappyWalkers-Client-IP': '203.0.113.99',
     });
     const [sess] = await db.select().from(s.session).where(eq(s.session.userId, userId));
     expect(sess.ipAddress).toBe('198.51.100.7');

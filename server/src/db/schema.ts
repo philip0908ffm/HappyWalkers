@@ -1,5 +1,5 @@
 /**
- * Datenbankschema „Gehmeinsam“ (PostgreSQL / Neon) mit Drizzle ORM.
+ * Datenbankschema der Plattform (PostgreSQL / Neon) mit Drizzle ORM.
  *
  * Teil 1: Tabellen von Better Auth (user, session, account, verification).
  * Teil 2: Fachliche Tabellen. IDs sind Text-UUIDs, Zeitstempel mit Zeitzone.

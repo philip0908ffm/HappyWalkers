@@ -9,5 +9,5 @@ export default defineConfig({
   clean: true,
   sourcemap: true,
   // gemeinsamer Code wird mitgebündelt, npm-Pakete bleiben extern
-  noExternal: ['@gehmeinsam/shared'],
+  noExternal: ['@happywalkers/shared'],
 });

@@ -1,5 +1,5 @@
 import { maskRouteForOthers } from '../lib/geo.js';
-import { LIMITS, VISIBILITIES } from '@gehmeinsam/shared';
+import { LIMITS, VISIBILITIES } from '@happywalkers/shared';
 import { and, desc, eq, gte, lt, or, sql } from 'drizzle-orm';
 import { Router, type NextFunction, type Request, type Response } from 'express';
 import multer from 'multer';

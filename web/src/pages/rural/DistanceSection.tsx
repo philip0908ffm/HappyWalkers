@@ -1,4 +1,4 @@
-import { LIMITS, TEMPOS, type Tempo } from '@gehmeinsam/shared';
+import { LIMITS, TEMPOS, type Tempo } from '@happywalkers/shared';
 import { useQueryClient } from '@tanstack/react-query';
 import { useId, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';

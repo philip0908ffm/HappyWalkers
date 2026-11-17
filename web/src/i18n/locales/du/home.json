@@ -1,6 +1,6 @@
 {
   "welcome": {
-    "lead": "Gehmeinsam bringt Menschen zusammen, die sich gern mehr bewegen möchten: verabredete Spaziergänge in zügigem Schritt, ganz in deiner Nähe.",
+    "lead": "{{appName}} bringt Menschen zusammen, die sich gern mehr bewegen möchten: verabredete Spaziergänge in zügigem Schritt, ganz in deiner Nähe.",
     "searchTitle": "Walks in deiner Nähe finden",
     "step_find_text": "Gib deine Postleitzahl ein und sieh, wann und wo gegangen wird.",
     "step_join_text": "Ein Klick genügt. Die Gruppe freut sich auf dich und wartet aufeinander.",

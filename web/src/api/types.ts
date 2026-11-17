@@ -1,5 +1,5 @@
 /** Antworttypen der API (siehe docs/API.md). */
-import type { Tempo } from '@gehmeinsam/shared';
+import type { Tempo } from '@happywalkers/shared';
 
 export interface Me {
   id: string;

@@ -1,5 +1,5 @@
 import '../styles/pages-e.css';
-import type { BadgeKind } from '@gehmeinsam/shared';
+import type { BadgeKind } from '@happywalkers/shared';
 
 /**
  * Wappen für ein Abzeichen (Paket E).

@@ -1,4 +1,4 @@
-import { TEMPO_KMH } from '@gehmeinsam/shared';
+import { TEMPO_KMH } from '@happywalkers/shared';
 
 /** „5,2“ oder „5.2“ (auch „5,2 km“) → 5.2; leer/ungültig → NaN */
 export function parseKm(s: string): number {

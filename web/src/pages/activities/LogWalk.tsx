@@ -1,5 +1,5 @@
 import '../../styles/pages-e.css';
-import { LIMITS, VISIBILITIES, badgeDefinition, type Visibility } from '@gehmeinsam/shared';
+import { LIMITS, VISIBILITIES, badgeDefinition, type Visibility } from '@happywalkers/shared';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';

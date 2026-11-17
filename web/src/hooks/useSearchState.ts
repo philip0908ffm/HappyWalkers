@@ -1,4 +1,4 @@
-import type { Tempo } from '@gehmeinsam/shared';
+import type { Tempo } from '@happywalkers/shared';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import type { SearchLocation } from '../api/types-walks';

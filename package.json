@@ -1,8 +1,8 @@
 {
-  "name": "gehmeinsam",
+  "name": "happywalkers",
   "private": true,
   "version": "0.1.0",
-  "description": "Gehmeinsam – gemeinsam zügig gehen. Community-Plattform für Menschen ab 50.",
+  "description": "HappyWalkers – gemeinsam zügig gehen. Community-Plattform für Menschen ab 50.",
   "workspaces": [
     "shared",
     "server",

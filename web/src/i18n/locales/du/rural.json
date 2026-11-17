@@ -49,7 +49,7 @@
     "privacy": "Deine Postleitzahl wird nur dafür genutzt. Andere sehen sie nicht.",
     "saved": "Danke! Wir melden uns per E-Mail, sobald sich in deiner Nähe etwas tut.",
     "active": "Angemeldet: Wir benachrichtigen dich für {{city}} im Umkreis von {{km}} km.",
-    "mailsOff": "Achtung: E-Mails von Gehmeinsam sind in deinen Einstellungen ausgeschaltet. Dann bekommst du keine Nachricht.",
+    "mailsOff": "Achtung: E-Mails von {{appName}} sind in deinen Einstellungen ausgeschaltet. Dann bekommst du keine Nachricht.",
     "deleteText": "Du bekommst dann keine E-Mail mehr, wenn sich in deiner Nähe etwas tut.",
     "deleted": "Du bist abgemeldet."
   }

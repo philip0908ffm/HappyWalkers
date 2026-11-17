@@ -1,4 +1,4 @@
-# Architektur „Gehmeinsam“
+# Architektur „HappyWalkers“
 
 Verantwortlich: Lena Hoffmann (Projektleitung)
 
@@ -38,6 +38,12 @@ iOS/Android (später) ──┘        │  /api/auth/*  Better Auth (Magic Link
 | `web/src/components/` | wiederverwendbare, barrierefreie Bausteine |
 | `web/src/i18n/locales/<sprache>/<bereich>.json` | Texte; `du/` enthält nur abweichende „Du“-Texte |
 | `e2e/` | Playwright-Tests inkl. axe-Barrierefreiheitsprüfung |
+
+## Projektname
+Der Name steht an genau einer Stelle: `shared/src/brand.ts` (`DEFAULT_APP_NAME`) und ist mit der
+Umgebungsvariable `APP_NAME` überschreibbar. Server: `config.APP_NAME`; Oberfläche: `APP_NAME` aus
+`web/src/lib/brand.ts` (beim Bauen eingesetzt) und `{{appName}}` in allen i18n-Texten; Browser-Titel über
+`%APP_NAME%` in `web/index.html`. **Den Namen nie fest in Texte schreiben.**
 
 ## Entscheidungen
 

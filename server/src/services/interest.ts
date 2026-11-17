@@ -120,7 +120,7 @@ async function sendInterestMail(userId: string, ev: InterestEvent, km: number) {
     du
       ? 'Du bekommst diese Nachricht, weil du Interesse an Walks in deiner Nähe angemeldet hast. Du bekommst höchstens eine solche Nachricht am Tag. Abmelden kannst du dich in der App unter „In der Nähe“.'
       : 'Sie bekommen diese Nachricht, weil Sie Interesse an Walks in Ihrer Nähe angemeldet haben. Sie bekommen höchstens eine solche Nachricht am Tag. Abmelden können Sie sich in der App unter „In der Nähe“.',
-    'Herzliche Grüße\nIhr Gehmeinsam-Team'.replace('Ihr', du ? 'Dein' : 'Ihr'),
+    `Herzliche Grüße\n${du ? 'Dein' : 'Ihr'} ${config.APP_NAME}-Team`,
   ].join('\n\n');
   const subject = du ? t.subject.replace('Ihrer', 'deiner') : t.subject;
   try {

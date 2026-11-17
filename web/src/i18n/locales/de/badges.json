@@ -142,8 +142,8 @@
     "goneTitle": "Dieser Link funktioniert nicht mehr",
     "goneText": "Das Abzeichen wird nicht mehr geteilt oder der Link ist nicht vollständig.",
     "toStart": "Zur Startseite",
-    "whatTitle": "Was ist Gehmeinsam?",
-    "whatText": "Bei Gehmeinsam verabreden sich Menschen zum zügigen Gehen in ihrer Nähe – in Gruppen, zu zweit oder gemeinsam auf Distanz. Kostenlos.",
+    "whatTitle": "Was ist {{appName}}?",
+    "whatText": "Bei {{appName}} verabreden sich Menschen zum zügigen Gehen in ihrer Nähe – in Gruppen, zu zweit oder gemeinsam auf Distanz. Kostenlos.",
     "join": "Kostenlos mitmachen",
     "toMyShowcase": "Zu meiner Vitrine",
     "findGroups": "Gruppen in der Nähe finden"

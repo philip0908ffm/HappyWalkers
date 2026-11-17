@@ -1,11 +1,14 @@
+import { DEFAULT_APP_NAME } from '@happywalkers/shared';
 import { z } from 'zod';
 
 const schema = z.object({
+  /** Projektname (überall in Texten, E-Mails, Urkunden) */
+  APP_NAME: z.string().trim().min(1).max(60).default(DEFAULT_APP_NAME),
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().default(3000),
   /** Neon-Verbindungszeichenkette (in Produktion die „pooled“ URL mit sslmode=require) */
-  DATABASE_URL: z.string().default('postgres://gehmeinsam:gehmeinsam@localhost:5432/gehmeinsam'),
-  /** öffentliche Adresse der App, z. B. https://gehmeinsam.up.railway.app */
+  DATABASE_URL: z.string().default('postgres://happywalkers:happywalkers@localhost:5432/happywalkers'),
+  /** öffentliche Adresse der App, z. B. https://happywalkers.up.railway.app */
   APP_URL: z.string().url().default('http://localhost:5173'),
   /** zusätzliche erlaubte Herkünfte (kommagetrennt), z. B. für die Mobil-App */
   TRUSTED_ORIGINS: z.string().default(''),
@@ -36,7 +39,7 @@ const parsed = schema.safeParse(process.env);
 if (!parsed.success) {
   // Verständliche Meldung im Railway-Protokoll statt eines langen Stacktraces
   const lines = parsed.error.issues.map((i) => `- ${i.path.join('.')}: ${i.message}`);
-  console.error(`Gehmeinsam kann nicht starten – ungültige Umgebungsvariablen:\n${lines.join('\n')}`);
+  console.error(`${process.env.APP_NAME || DEFAULT_APP_NAME} kann nicht starten – ungültige Umgebungsvariablen:\n${lines.join('\n')}`);
   process.exit(1);
 }
 export const config: Config = parsed.data;
@@ -60,14 +63,14 @@ export function productionConfigErrors(c: Config): string[] {
   if (c.SMS_PROVIDER === 'console') errors.push("SMS_PROVIDER 'console' ist in Produktion nicht erlaubt (Codes im Protokoll).");
   if (!c.APP_URL.startsWith('https://')) errors.push('APP_URL muss in Produktion mit https:// beginnen.');
   // Ohne eigenen Absender lehnt Resend den Versand ab → niemand bekäme einen Anmelde-Link.
-  if (!c.EMAIL_FROM?.trim()) errors.push('EMAIL_FROM muss in Produktion gesetzt sein, z. B. "Gehmeinsam <hallo@ihre-domain.de>" (Domain bei Resend bestätigt).');
+  if (!c.EMAIL_FROM?.trim()) errors.push(`EMAIL_FROM muss in Produktion gesetzt sein, z. B. "${c.APP_NAME} <hallo@ihre-domain.de>" (Domain bei Resend bestätigt).`);
   return errors;
 }
 
 const startErrors = productionConfigErrors(config);
 if (startErrors.length) {
   console.error(
-    `Gehmeinsam kann in Produktion nicht starten. Bitte diese Variablen in Railway setzen (siehe docs/DEPLOY-RAILWAY.md):\n- ${startErrors.join('\n- ')}`,
+    `${config.APP_NAME} kann in Produktion nicht starten. Bitte diese Variablen in Railway setzen (siehe docs/DEPLOY-RAILWAY.md):\n- ${startErrors.join('\n- ')}`,
   );
   process.exit(1);
 }

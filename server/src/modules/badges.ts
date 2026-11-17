@@ -1,4 +1,5 @@
-import { BADGES, REGION_BADGE_PREFIX, badgeDefinition, badgeNameFor } from '@gehmeinsam/shared';
+import { appSlug } from '@happywalkers/shared';
+import { BADGES, REGION_BADGE_PREFIX, badgeDefinition, badgeNameFor } from '@happywalkers/shared';
 import { and, asc, eq } from 'drizzle-orm';
 import { Router } from 'express';
 import { randomBytes } from 'node:crypto';
@@ -137,7 +138,7 @@ router.get('/:key/certificate.pdf', requireUser, async (req, res) => {
   const b = await loadOwnBadge(userId, parse(zKey, req.params.key));
   const pdf = await certificatePdf(await displayNameOf(userId), badgeName(b.badgeKey, b.label), b.awardedAt);
   res.setHeader('Content-Type', 'application/pdf');
-  res.setHeader('Content-Disposition', 'inline; filename="gehmeinsam-urkunde.pdf"');
+  res.setHeader('Content-Disposition', `inline; filename="${appSlug(config.APP_NAME)}-urkunde.pdf"`);
   res.setHeader('Cache-Control', 'private, no-store');
   res.send(pdf);
 });
@@ -203,9 +204,9 @@ function badgeShareSvg(b: BadgeRow, displayName: string): string {
   <rect width="1200" height="630" fill="#FFF8EE"/>
   <rect x="20" y="20" width="1160" height="590" fill="none" stroke="#2F5D50" stroke-width="6" rx="24"/>
   ${shieldSvg(90, 135, 300, def?.tier ?? 1, badgeSymbol(b.badgeKey))}
-  <text x="460" y="190" font-family="${FONT}" font-size="40" fill="#2F5D50" font-weight="700">Gehmeinsam</text>
+  <text x="460" y="190" font-family="${FONT}" font-size="40" fill="#2F5D50" font-weight="700">${escapeXml(config.APP_NAME)}</text>
   <text x="460" y="300" font-family="${FONT}" font-size="${name.length <= 18 ? 64 : 40}" fill="#1F2A27" font-weight="700">${escapeXml(clip(name, 32))}</text>
-  <text x="460" y="390" font-family="${FONT}" font-size="40" fill="#1F2A27">${escapeXml(clip(displayName || 'Gehmeinsam-Mitglied', 30))}</text>
+  <text x="460" y="390" font-family="${FONT}" font-size="40" fill="#1F2A27">${escapeXml(clip(displayName || `${config.APP_NAME}-Mitglied`, 30))}</text>
   <text x="460" y="450" font-family="${FONT}" font-size="34" fill="#4A5552">erreicht am ${escapeXml(formatDateDe(b.awardedAt))}</text>
 </svg>`;
 }
@@ -217,7 +218,7 @@ export function certificatePdf(name: string, badge: string, date: Date): Promise
       size: 'A4',
       layout: 'portrait',
       margin: 72,
-      info: { Title: `Urkunde – ${badge}`, Author: 'Gehmeinsam' },
+      info: { Title: `Urkunde – ${badge}`, Author: config.APP_NAME },
     });
     const chunks: Buffer[] = [];
     doc.on('data', (c: Buffer) => chunks.push(c));
@@ -231,7 +232,7 @@ export function certificatePdf(name: string, badge: string, date: Date): Promise
     const w = width - 144;
     doc.fillColor('#000000');
     doc.font('Helvetica-Bold').fontSize(48).text('Urkunde', 72, 150, { width: w, align: 'center' });
-    doc.font('Helvetica').fontSize(20).text('Gehmeinsam – zusammen zügig gehen', 72, 220, { width: w, align: 'center' });
+    doc.font('Helvetica').fontSize(20).text(`${config.APP_NAME} – zusammen zügig gehen`, 72, 220, { width: w, align: 'center' });
     doc.fontSize(22).text('Hiermit wird bestätigt, dass', 72, 320, { width: w, align: 'center' });
     doc.font('Helvetica-Bold').fontSize(40).text(name || 'unser Mitglied', 72, 370, { width: w, align: 'center' });
     doc.font('Helvetica').fontSize(22).text('das Abzeichen', 72, 470, { width: w, align: 'center' });

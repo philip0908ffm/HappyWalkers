@@ -1,4 +1,5 @@
-import { PREMIUM } from '@gehmeinsam/shared';
+import { config } from '../config.js';
+import { PREMIUM } from '@happywalkers/shared';
 import { and, asc, eq, gte, lt } from 'drizzle-orm';
 import { Router, type NextFunction, type Request, type Response } from 'express';
 import { z } from 'zod';
@@ -373,7 +374,7 @@ router.get('/share-card.png', requirePremium, async (req, res) => {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
   <rect width="1080" height="1080" fill="#FFF8EE"/>
   <rect x="24" y="24" width="1032" height="1032" fill="none" stroke="#2F5D50" stroke-width="8" rx="32"/>
-  <text x="540" y="130" font-family="${FONT}" font-size="44" font-weight="700" fill="#2F5D50" text-anchor="middle">Gehmeinsam</text>
+  <text x="540" y="130" font-family="${FONT}" font-size="44" font-weight="700" fill="#2F5D50" text-anchor="middle">${escapeXml(config.APP_NAME)}</text>
   <text x="540" y="215" font-family="${FONT}" font-size="64" font-weight="700" fill="#1F2A27" text-anchor="middle">Mein Fortschritt</text>
   <text x="540" y="280" font-family="${FONT}" font-size="44" fill="#4A5552" text-anchor="middle">${escapeXml(period)}</text>
   ${stat(450, `${fmtNum(s.km)} km`, 'gegangen')}

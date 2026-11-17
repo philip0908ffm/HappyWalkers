@@ -6,7 +6,7 @@
  * Abzeichen über den Primärschlüssel (userId, badgeKey), Abschluss einer Challenge über
  * `completedAt IS NULL` im UPDATE.
  */
-import { BADGES, POINTS, REGION_BADGE_PREFIX, pointsForActivity } from '@gehmeinsam/shared';
+import { BADGES, POINTS, REGION_BADGE_PREFIX, pointsForActivity } from '@happywalkers/shared';
 import { and, eq, gt, gte, isNull, lt, sql } from 'drizzle-orm';
 import { db } from '../db/index.js';
 import { activities, challengeParticipants, challenges, pointsLedger, userBadges } from '../db/schema.js';

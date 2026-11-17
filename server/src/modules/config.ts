@@ -1,4 +1,4 @@
-import { PREMIUM } from '@gehmeinsam/shared';
+import { PREMIUM } from '@happywalkers/shared';
 import { Router } from 'express';
 import { config } from '../config.js';
 import { smsEnabled } from '../lib/sms.js';
@@ -8,6 +8,7 @@ export const router = Router();
 
 router.get('/', (_req, res) => {
   res.json({
+    appName: config.APP_NAME,
     smsLogin: smsEnabled(),
     mapTileUrl: config.MAP_TILE_URL,
     mapAttribution: '© OpenStreetMap-Mitwirkende',
