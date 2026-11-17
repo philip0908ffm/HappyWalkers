@@ -20,7 +20,7 @@
 |---|---|
 | `NODE_ENV` | `production` |
 | `DATABASE_URL` | Neon-URL (pooled) |
-| `APP_URL` | öffentliche Adresse, z. B. `https://gehmeinsam.up.railway.app` oder eigene Domain |
+| `APP_URL` | nur bei eigener Domain nötig, z. B. `https://gehmeinsam.de` – sonst wird die Railway-Domain automatisch verwendet (unter *Settings → Networking* „Generate Domain“ klicken) |
 | `BETTER_AUTH_SECRET` | `openssl rand -base64 32` |
 | `RESEND_API_KEY` | Schlüssel von Resend |
 | `EMAIL_FROM` | z. B. `Gehmeinsam <hallo@ihre-domain.de>` |
@@ -30,6 +30,16 @@
 | `TRUSTED_ORIGINS` | später z. B. die Herkunft der Mobil-App |
 
 `PORT` setzt Railway selbst.
+
+## Wenn das Deployment fehlschlägt
+Im Railway-Protokoll (*Deployments → View Logs → Deploy Logs*) steht dann eine Zeile
+„Gehmeinsam kann in Produktion nicht starten …“ mit den fehlenden Variablen. Häufige Ursachen:
+- `BETTER_AUTH_SECRET` fehlt oder ist kürzer als 32 Zeichen
+- `RESEND_API_KEY` fehlt
+- keine öffentliche Domain erzeugt und keine `APP_URL` gesetzt
+- `BILLING_PROVIDER=dev` aus `.env.example` übernommen (in Produktion nicht erlaubt – Variable weglassen)
+- `SMS_PROVIDER=console` übernommen (in Produktion nicht erlaubt – Variable weglassen)
+- `DATABASE_URL` ohne `?sslmode=require`
 
 ## 4. Start
 Beim Start führt der Server die Datenbank-Migrationen automatisch aus (`server/drizzle/`).

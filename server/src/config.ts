@@ -25,7 +25,19 @@ const schema = z.object({
 
 export type Config = z.infer<typeof schema>;
 
-export const config: Config = schema.parse(process.env);
+// Railway: ohne eigene APP_URL die öffentliche Railway-Domain verwenden
+if (!process.env.APP_URL && process.env.RAILWAY_PUBLIC_DOMAIN) {
+  process.env.APP_URL = `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`;
+}
+
+const parsed = schema.safeParse(process.env);
+if (!parsed.success) {
+  // Verständliche Meldung im Railway-Protokoll statt eines langen Stacktraces
+  const lines = parsed.error.issues.map((i) => `- ${i.path.join('.')}: ${i.message}`);
+  console.error(`Gehmeinsam kann nicht starten – ungültige Umgebungsvariablen:\n${lines.join('\n')}`);
+  process.exit(1);
+}
+export const config: Config = parsed.data;
 
 export const isProd = config.NODE_ENV === 'production';
 export const isTest = config.NODE_ENV === 'test';
@@ -49,7 +61,12 @@ export function productionConfigErrors(c: Config): string[] {
 }
 
 const startErrors = productionConfigErrors(config);
-if (startErrors.length) throw new Error(startErrors.join('\n'));
+if (startErrors.length) {
+  console.error(
+    `Gehmeinsam kann in Produktion nicht starten. Bitte diese Variablen in Railway setzen (siehe docs/DEPLOY-RAILWAY.md):\n- ${startErrors.join('\n- ')}`,
+  );
+  process.exit(1);
+}
 
 // Entscheidung Lena (S-11): in Produktion niemals Premium ohne Zahlung.
 // Ohne ausdrückliche Angabe gilt dort 'none'; 'dev' verhindert den Start.
