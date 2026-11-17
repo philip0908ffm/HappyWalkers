@@ -100,7 +100,8 @@
   }
   .app-header .app-nav a {
     padding-inline: 0;
-    font-size: 0.72rem;
+    /* „Abzeichen“ passt auch bei Schrift „Sehr groß“ in ein Fünftel der Breite */
+    font-size: min(0.72rem, 3.9vw);
   }
 }
 
@@ -144,7 +145,8 @@
   .app-nav a {
     min-width: 0;
     padding: var(--space-1);
-    font-size: 0.8rem;
+    /* Bei schmalen Geräten (≤ 400 px) und großer Schrift nicht über die Nachbarpunkte laufen */
+    font-size: min(0.8rem, 3.6vw);
   }
   .app-nav a[aria-current='page']::after {
     top: 0.2rem;
@@ -173,7 +175,8 @@
   color: var(--color-text-muted);
 }
 .app-footer > * {
-  max-width: var(--content-max);
+  /* bündig mit dem Inhalt von .app-main (dort steckt der Seitenabstand in max-width) */
+  max-width: calc(var(--content-max) - 2 * var(--space-4));
   margin-inline: auto;
 }
 .app-footer__brand {
