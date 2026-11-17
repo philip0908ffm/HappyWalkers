@@ -1,4 +1,4 @@
-# Railway (Nixpacks): Node 22
+# Railway (Nixpacks, falls als Builder gewählt): Node 22, Entwicklungswerkzeuge für den Build installieren
 [variables]
-NODE_VERSION = "22"
+NIXPACKS_NODE_VERSION = "22"
 NPM_CONFIG_PRODUCTION = "false"

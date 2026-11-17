@@ -109,8 +109,9 @@ describe('S-04 Start in Produktion nur mit sicherer Konfiguration', () => {
       RESEND_API_KEY: undefined,
       SMS_PROVIDER: 'console',
       APP_URL: 'http://gehmeinsam.example',
+      EMAIL_FROM: undefined,
     });
-    expect(errors).toHaveLength(4);
+    expect(errors).toHaveLength(5);
   });
 
   it('akzeptiert eine vollständige Produktions-Konfiguration', () => {
@@ -121,6 +122,7 @@ describe('S-04 Start in Produktion nur mit sicherer Konfiguration', () => {
         RESEND_API_KEY: 're_123',
         SMS_PROVIDER: 'none',
         APP_URL: 'https://gehmeinsam.example',
+        EMAIL_FROM: 'Gehmeinsam <hallo@gehmeinsam.example>',
       }),
     ).toEqual([]);
   });

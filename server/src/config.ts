@@ -11,10 +11,12 @@ const schema = z.object({
   TRUSTED_ORIGINS: z.string().default(''),
   BETTER_AUTH_SECRET: z.string().min(16).default('dev-secret-bitte-in-produktion-aendern'),
   RESEND_API_KEY: z.string().optional(),
-  EMAIL_FROM: z.string().default('Gehmeinsam <hallo@gehmeinsam.de>'),
+  /** Absender, Domain muss bei Resend bestätigt sein (in Produktion Pflicht) */
+  EMAIL_FROM: z.string().optional(),
   /** SMS-Anbieter: 'console' (Entwicklung) oder 'none' (SMS-Anmeldung aus) */
   SMS_PROVIDER: z.enum(['console', 'none']).default('none'),
-  UPLOAD_DIR: z.string().default('./uploads'),
+  // leer gelassen = Standardordner (auf Railway ohne Volume nur vorübergehend!)
+  UPLOAD_DIR: z.string().default('./uploads').transform((v) => v.trim() || './uploads'),
   /** Kachel-Server der Karte */
   MAP_TILE_URL: z.string().default('https://tile.openstreetmap.org/{z}/{x}/{y}.png'),
   /** Premium-Zahlungsanbieter: 'dev' schaltet ohne Zahlung frei (nur Entwicklung) */
@@ -57,6 +59,8 @@ export function productionConfigErrors(c: Config): string[] {
   // 'console' schreibt SMS-Codes ins Protokoll – nur für die Entwicklung.
   if (c.SMS_PROVIDER === 'console') errors.push("SMS_PROVIDER 'console' ist in Produktion nicht erlaubt (Codes im Protokoll).");
   if (!c.APP_URL.startsWith('https://')) errors.push('APP_URL muss in Produktion mit https:// beginnen.');
+  // Ohne eigenen Absender lehnt Resend den Versand ab → niemand bekäme einen Anmelde-Link.
+  if (!c.EMAIL_FROM?.trim()) errors.push('EMAIL_FROM muss in Produktion gesetzt sein, z. B. "Gehmeinsam <hallo@ihre-domain.de>" (Domain bei Resend bestätigt).');
   return errors;
 }
 

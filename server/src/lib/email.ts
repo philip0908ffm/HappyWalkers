@@ -31,7 +31,7 @@ export async function sendMail(input: MailMessage): Promise<void> {
     return;
   }
   const { error } = await resend.emails.send({
-    from: config.EMAIL_FROM,
+    from: config.EMAIL_FROM || 'Gehmeinsam <hallo@gehmeinsam.de>',
     to: msg.to,
     subject: msg.subject,
     text: msg.text,
