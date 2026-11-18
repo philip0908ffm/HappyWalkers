@@ -1,0 +1,35 @@
+/* Verwaltung (/verwaltung) */
+.admin-table th[scope='row'] {
+  font-weight: var(--weight-regular);
+  min-width: 12rem;
+}
+.admin-table__excerpt {
+  display: inline-block;
+  max-width: 28rem;
+  overflow-wrap: anywhere;
+}
+.admin-table__reason,
+.admin-table__email {
+  overflow-wrap: anywhere;
+}
+.admin-table .field__hint {
+  display: block;
+}
+.admin-quote {
+  margin: var(--space-3) 0;
+  padding: var(--space-3) var(--space-4);
+  border-left: 0.25rem solid var(--color-border);
+  background: var(--color-surface-2);
+  overflow-wrap: anywhere;
+}
+.admin-search {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+.admin-search .field {
+  flex: 1 1 18rem;
+  margin-bottom: 0;
+}

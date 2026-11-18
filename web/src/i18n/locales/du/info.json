@@ -3,11 +3,12 @@
     "lead": "Hier siehst du auf einen Blick, wer welche Angaben von dir sehen kann. Grundsatz: So wenig wie möglich – und du entscheidest.",
     "short": [
       "Dein Profil ist am Anfang privat. Andere sehen nur deinen Vor- oder Spitznamen in gemeinsamen Gruppen.",
-      "Dein Alter, dein Geburtsjahr, deine E-Mail-Adresse und deine Telefonnummer sieht niemand.",
+      "Dein Alter, dein Geburtsjahr und deine Telefonnummer sieht niemand. Deine E-Mail-Adresse sieht nur die Verwaltung (siehe letzter Punkt).",
       "Den genauen Treffpunkt eines Walks sehen nur bestätigte Mitglieder der Gruppe.",
       "Fotos sieht zuerst nur deine Gruppe. Ein Symbol zeigt immer, wer etwas sehen kann.",
       "Niemand kann dir einfach folgen: Du bestätigst jede Anfrage selbst.",
-      "Du kannst Personen blockieren und melden. Die Person wird darüber nicht benachrichtigt."
+      "Du kannst Personen blockieren und melden. Die Person wird darüber nicht benachrichtigt.",
+      "Die Verwaltung von {{appName}} – wenige, ausgewählte Personen – prüft Meldungen, kann gemeldete Inhalte löschen und Konten sperren. Dafür sieht sie deine E-Mail-Adresse, aber nie dein Geburtsjahr, dein Geschlecht oder deine Telefonnummer."
     ],
     "legendTitle": "So erkennst du, wer etwas sehen kann",
     "legend": {
@@ -49,8 +50,8 @@
       },
       {
         "what": "E-Mail-Adresse und Telefonnummer",
-        "who": "Niemand – auch nicht die Gruppenleitung. Anfragen von anderen erreichen dich über {{appName}}, ohne dass deine Kontaktdaten weitergegeben werden.",
-        "change": "Sie werden nie angezeigt."
+        "who": "Niemand – auch nicht die Gruppenleitung. Nur die Verwaltung von {{appName}} sieht deine E-Mail-Adresse, um Konten zu verwalten. Anfragen von anderen erreichen dich über {{appName}}, ohne dass deine Kontaktdaten weitergegeben werden.",
+        "change": "Sie werden anderen Personen nie angezeigt."
       },
       {
         "what": "Genauer Treffpunkt eines Walks",

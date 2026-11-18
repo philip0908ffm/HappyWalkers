@@ -146,3 +146,18 @@ Schwere: hoch / mittel / niedrig. Status: ✅ behoben (Test in `server/test/secu
 - **Premium**: alle Routen nur eigene Daten; `dev`-Anbieter in Produktion verboten (S-11).
 - **Feed nach `walkId`** (`social.ts` `canSeeWalk`): Partner-Walk nur Beteiligte, Einladungsgruppe nur Mitglieder, Blockierung der Erstellerin → 404; einzelne Beiträge zusätzlich nach `visibility` bzw. bei Distanz-Terminen nur für Teilnehmende (S2-15). ✔
 - **Oberfläche**: `dangerouslySetInnerHTML` nur für das vom Server erzeugte QR-SVG (Inhalt = `APP_URL` + Code, keine Benutzertexte) ✔; `target="_blank"` nur mit `rel="noopener noreferrer"` ✔; Links mit Benutzerdaten nur `encodeURIComponent`-kodiert (WhatsApp/Mailto serverseitig) ✔; `localStorage` nur Schriftgröße/Anrede ✔; Tokens nicht in Drittanfragen (`Referrer-Policy: no-referrer`) ✔; Benutzertexte nur über React-Textknoten ✔.
+
+
+## 7. Passwort-Anmeldung und Verwaltung (Admin)
+
+| Thema | Umsetzung |
+|---|---|
+| Passwort-Anmeldung | Better Auth `emailAndPassword`, **Registrierung per Passwort aus** (`disableSignUp`), 12–128 Zeichen, Hashing durch Better Auth (scrypt) |
+| Ratenbegrenzung | `/sign-in/email`: 5 Versuche je 10 min |
+| Benutzeraufzählung | falsche E-Mail und falsches Passwort ergeben dieselbe Antwort |
+| Admin-Rolle | Better-Auth-`admin`-Plugin mit eigener Zugriffskontrolle; Anmelden als andere Person, Konten anlegen/ändern/löschen und Passwort setzen sind abgeschaltet (404) |
+| Eigene Rolle | kann nicht selbst entzogen werden; Selbst-Hochstufen über `update-user` verhindert |
+| Sperren | löscht alle Sitzungen, neue Anmeldung 403; noch vorhandene Sitzung gilt als abgemeldet |
+| Datensparsamkeit | Admin-Personenliste nur `id, name, email, role, banned, banReason, banExpires, createdAt` – keine Telefonnummer |
+| Start-Konten | `ADMIN_EMAILS` / `ADMIN_INITIAL_PASSWORD` nur als Railway-Variablen, nie im Repository; bestehende Passwörter werden nie überschrieben; Passwort wird nie protokolliert |
+| Offen | „Passwort ändern“/„Passwort vergessen“ ohne Oberfläche; Start-Passwort nach erster Anmeldung ändern |

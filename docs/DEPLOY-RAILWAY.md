@@ -37,6 +37,8 @@
 | `SMS_PROVIDER` | `none` (bis ein SMS-Anbieter angebunden ist) |
 | `BILLING_PROVIDER` | `none` (bis ein Zahlungsanbieter angebunden ist; `dev` nur zum Testen!) |
 | `TRUSTED_ORIGINS` | später z. B. die Herkunft der Mobil-App |
+| `ADMIN_EMAILS` | optional, kommagetrennte E-Mail-Adressen der Verwaltung (Rolle `admin`, Seite `/verwaltung`). Vorhandene Konten werden beim Start hochgestuft. |
+| `ADMIN_INITIAL_PASSWORD` | optional, Startpasswort (**mindestens 12 Zeichen**) für Konten aus `ADMIN_EMAILS`, die es noch nicht gibt. Bestehende Passwörter werden nie überschrieben. Als *Sealed Variable* anlegen und nach der ersten Anmeldung wieder löschen. |
 
 `PORT` setzt Railway selbst.
 
@@ -54,6 +56,17 @@ Im Railway-Protokoll (*Deployments → View Logs → Deploy Logs*) steht dann ei
 ## 4. Start
 Beim Start führt der Server die Datenbank-Migrationen automatisch aus (`server/drizzle/`) und legt
 die allgemeinen Challenges selbst an (auch jeden neuen Monat). Ein eigener Seed-Schritt ist nicht nötig.
+
+### Verwaltung (Admins) einrichten
+1. `ADMIN_EMAILS` setzen, z. B. `lena@ihre-domain.de,aylin@ihre-domain.de`.
+2. Entweder: Die Personen melden sich wie alle per E-Mail-Link an – beim nächsten Start (bzw. sofort,
+   wenn das Konto schon existiert und der Dienst neu startet) bekommen sie die Rolle `admin`.
+   Oder: zusätzlich `ADMIN_INITIAL_PASSWORD` setzen – fehlende Konten werden dann beim Start mit diesem
+   Passwort und fertigem Profil angelegt; Anmeldung auf `/anmelden` unter „Mit Passwort“.
+3. Danach `ADMIN_INITIAL_PASSWORD` wieder entfernen. Das Passwort steht nie im Protokoll; ist es in
+   Produktion kürzer als 12 Zeichen, wird eine Warnung protokolliert und kein Konto angelegt.
+4. Weitere Admins vergibt die Verwaltung selbst unter `/verwaltung` → „Personen“. Eine Rolle aus
+   `ADMIN_EMAILS` wird bei jedem Start wieder gesetzt – zum dauerhaften Entziehen die Adresse dort entfernen.
 
 ## 5. Prüfen
 - `https://<APP_URL>/api/v1/health` → `{"ok":true}`

@@ -43,9 +43,20 @@ ohne beides wird die PLZ aus dem Profil genutzt. `radiusKm` ∈ {5, 15, 30, 50},
 | GET | `/geo/postal/:plz` | `{ place: Place }` · 404 `postal_code_unknown` |
 | GET | `/geo/search?q=` | `{ places: Place[] }` (Ortsname oder PLZ-Anfang) |
 
+## Anmeldung (Better Auth, `/api/auth/*`) – `server/src/auth.ts`
+
+| Methode | Pfad | Beschreibung |
+|---|---|---|
+| POST | `/api/auth/sign-in/magic-link` | `{ email, callbackURL, newUserCallbackURL?, errorCallbackURL? }` – einziger Weg, ein Konto per E-Mail anzulegen (5 / 10 min je IP) |
+| POST | `/api/auth/sign-in/email` | `{ email, password }` – nur für Konten mit Passwort (z. B. Start-Konten aus `ADMIN_EMAILS`). Falsches Passwort **und** unbekannte Adresse → 401 `INVALID_EMAIL_OR_PASSWORD` (gleiche Antwort); gesperrt → 403 `BANNED_USER`. 5 Versuche / 10 min je IP |
+| POST | `/api/auth/sign-up/email` | abgeschaltet (`disableSignUp`) → 400; Registrierung nur per Magic Link / SMS-Code |
+| POST | `/api/auth/phone-number/send-otp` · `/verify` | SMS-Code (nur mit SMS-Anbieter) |
+
+Passwörter: mindestens 12, höchstens 128 Zeichen; Hashing durch Better Auth.
+
 ## Ich / Konto (fertig) – `server/src/modules/me.ts`
 
-| GET | `/me` | `{ me: Me }` (siehe `web/src/api/types.ts`) |
+| GET | `/me` | `{ me: Me }` (siehe `web/src/api/types.ts`); `me.isAdmin: boolean` = Rolle `admin` (Verwaltung) |
 |---|---|---|
 | PATCH | `/me/profile` | `{ displayName?, bio?, postalCode?, birthYear?, gender?, completeOnboarding? }` → `{ me }` |
 | PATCH | `/me/settings` | `{ anrede?, locale?, fontScale?, profileVisibility?, leaderboardMode?, emailNotifications? }` → `{ me }` |
@@ -353,3 +364,57 @@ gelöschte Kommentare und zurückgezogene Folge-Anfragen entfernen ihren Hinweis
 
 Hilfsfunktionen für andere Module: `server/src/lib/people.ts` – `personRefs(ids, viewerId?)` (gesammelt, ohne N+1),
 `personRef`, `canSeeAvatar`, `sharesActiveGroup`, `blockedIds`, `loadViewerContext` + `canSeeWith` (Listen-Variante von `canSeeContent`).
+
+---
+
+## Verwaltung (Rolle `admin`) – `server/src/modules/admin.ts`
+
+Rolle über das Better-Auth-Plugin `admin` (Rollen `user`/`admin`, Spalte `user.role`). `requireAdmin` liest die Rolle
+aus der Sitzung: nicht angemeldet → 401 `not_signed_in`, keine Admin-Rolle → 403 `not_admin`.
+Oberfläche: `/verwaltung` (Admins; alle anderen sehen die 404-Seite), Link im Profil nur für Admins.
+
+### Typen
+
+```ts
+AdminReport = {
+  id, status: 'open'|'closed', reason, createdAt,
+  reporter: PersonRef | null,                       // gelöschtes Konto → null
+  target: {
+    type: 'user'|'post'|'comment'|'group'|'photo'|'walk', id,
+    exists: boolean,                                // false, wenn inzwischen gelöscht
+    excerpt: string | null,                         // Text/Titel/Bildbeschreibung, höchstens 200 Zeichen
+    author: PersonRef | null,                       // Autorin/Eigentümerin/Erstellerin; bei 'user' die Person selbst
+    removable: boolean                              // post|comment|photo und noch vorhanden
+  }
+}
+```
+
+| Methode | Pfad | Beschreibung |
+|---|---|---|
+| GET | `/admin/reports?status=open\|closed&limit&cursor` | `{ reports: AdminReport[], nextCursor }`, neueste zuerst (`status` Standard `open`, `limit` 1–100, Standard 50). **Keine E-Mail-Adressen**, Personen nur als `PersonRef`. |
+| POST | `/admin/reports/:id/close` | Meldung schließen, idempotent → `{ ok: true }` · 404 `report_not_found` |
+| POST | `/admin/reports/:id/remove-content` | gemeldeten Beitrag (inkl. Fotos/Dateien, Kommentare, Herzen), Kommentar (wie Löschen durch Autorin, Hinweis verschwindet) oder Foto (inkl. Datei) löschen, dann alle offenen Meldungen zu diesem Inhalt (bei Beiträgen auch zu dessen Fotos/Kommentaren) schließen → `{ ok: true, removed: boolean }` (`removed: false`, wenn schon gelöscht – idempotent). Andere Zieltypen → 400 `content_not_removable`; 404 `report_not_found` |
+
+Personen über die Endpunkte des Better-Auth-Admin-Plugins (Oberfläche: `authClient.admin.*`, `adminClient()`):
+
+| Methode | Pfad | Beschreibung |
+|---|---|---|
+| GET | `/api/auth/admin/list-users?searchValue&searchField=name\|email&searchOperator=contains&limit&offset&sortBy&sortDirection` | `{ users: AdminUser[], total, limit, offset }` |
+| GET | `/api/auth/admin/get-user?id=` | `AdminUser` |
+| POST | `/api/auth/admin/ban-user` | `{ userId, banReason?, banExpiresIn? }` → `{ user }`; beendet sofort alle Sitzungen der Person; sich selbst → 400 `YOU_CANNOT_BAN_YOURSELF` |
+| POST | `/api/auth/admin/unban-user` | `{ userId }` → `{ user }` |
+| POST | `/api/auth/admin/set-role` | `{ userId, role: 'user'\|'admin' }` → `{ user }`; eigene Admin-Rolle entziehen → 400 `CANNOT_REMOVE_OWN_ADMIN_ROLE`; unbekannte Rolle → 400 |
+| POST | `/api/auth/admin/list-user-sessions` · `revoke-user-session(s)` | Sitzungen einer Person ansehen/beenden |
+
+`AdminUser = { id, name, email: string | null, role, banned, banReason, banExpires, createdAt }` – gekürzt per
+`hooks.after` in `auth.ts` (keine Telefonnummer, SMS-Platzhalter-Adressen → `null`). **Abgeschaltet** (404):
+`impersonate-user`, `stop-impersonating`, `create-user`, `update-user`, `remove-user`, `set-user-password`.
+
+Gesperrte Personen (`user.banned`) können sich nicht anmelden (Plugin, 403 `BANNED_USER`); `loadSession` behandelt
+eine trotzdem vorhandene Sitzung als abgemeldet.
+
+Start-Konten: `ADMIN_EMAILS` / `ADMIN_INITIAL_PASSWORD` (`server/src/services/seed-admins.ts`, beim Start, idempotent) –
+siehe `docs/DEPLOY-RAILWAY.md`.
+
+Fehlercodes Verwaltung: `not_admin`, `report_not_found`, `content_not_removable` (Better Auth: `YOU_CANNOT_BAN_YOURSELF`,
+`CANNOT_REMOVE_OWN_ADMIN_ROLE`, `USER_NOT_FOUND`).

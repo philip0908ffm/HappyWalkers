@@ -37,6 +37,7 @@ const WhoSeesWhat = lazy(() => import('./pages/info/WhoSeesWhat'));
 const Privacy = lazy(() => import('./pages/info/Privacy'));
 const Imprint = lazy(() => import('./pages/info/Imprint'));
 const Help = lazy(() => import('./pages/info/Help'));
+const AdminPage = lazy(() => import('./pages/admin/AdminPage'));
 const NotFound = lazy(() => import('./pages/info/NotFound'));
 
 const auth = (el: ReactNode) => <RequireAuth>{el}</RequireAuth>;
@@ -78,6 +79,8 @@ export function App() {
           <Route path="datenschutz" element={<Privacy />} />
           <Route path="impressum" element={<Imprint />} />
           <Route path="hilfe" element={<Help />} />
+          {/* nur für Admins; alle anderen sehen die 404-Seite */}
+          <Route path="verwaltung" element={<AdminPage />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

@@ -28,7 +28,7 @@ iOS/Android (später) ──┘        │  /api/auth/*  Better Auth (Magic Link
 |---|---|
 | `shared/src` | gemeinsame Konstanten (Tempo, Abzeichen, Punkte, Grenzwerte) für Server, Web, später Mobil |
 | `server/src/app.ts` | Express-App, Sicherheits-Header, Modul-Einbindung |
-| `server/src/auth.ts` | Better Auth (Magic Link 20 min, SMS-Code, Sitzung 90 Tage) |
+| `server/src/auth.ts` | Better Auth (Magic Link 20 min, SMS-Code, optional E-Mail + Passwort ohne offene Registrierung, Admin-Plugin, Sitzung 90 Tage) |
 | `server/src/db/schema.ts` | Datenbankschema (Drizzle). Migrationen in `server/drizzle/` |
 | `server/src/lib/access.ts` | **zentrale Zugriffsregeln** (Treffpunkt, Sichtbarkeit, Blockieren) |
 | `server/src/modules/*.ts` | ein Router je Bereich (siehe `docs/API.md`) |

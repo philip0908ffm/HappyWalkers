@@ -42,6 +42,11 @@ export const user = pgTable('user', {
   image: text('image'),
   phoneNumber: text('phone_number').unique(),
   phoneNumberVerified: boolean('phone_number_verified'),
+  /** Admin-Plugin von Better Auth: 'user' | 'admin' */
+  role: text('role').notNull().default('user'),
+  banned: boolean('banned').notNull().default(false),
+  banReason: text('ban_reason'),
+  banExpires: timestamp('ban_expires', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
@@ -54,6 +59,8 @@ export const session = pgTable('session', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   ipAddress: text('ip_address'),
   userAgent: text('user_agent'),
+  /** vom Admin-Plugin verlangt; Anmelden als andere Person ist abgeschaltet (bleibt immer leer) */
+  impersonatedBy: text('impersonated_by'),
   userId: text('user_id')
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),

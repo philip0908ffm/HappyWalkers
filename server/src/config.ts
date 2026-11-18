@@ -24,6 +24,23 @@ const schema = z.object({
   MAP_TILE_URL: z.string().default('https://tile.openstreetmap.org/{z}/{x}/{y}.png'),
   /** Premium-Zahlungsanbieter: 'dev' schaltet ohne Zahlung frei (nur Entwicklung) */
   BILLING_PROVIDER: z.enum(['dev', 'none']).default('dev'),
+  /**
+   * Start-Konten mit Admin-Rolle (kommagetrennte E-Mail-Adressen). Beim Serverstart bekommen
+   * diese Konten die Rolle „admin“; vorhandene Konten werden hochgestuft.
+   */
+  ADMIN_EMAILS: z
+    .string()
+    .default('')
+    .transform((v) => [...new Set(v.split(',').map((e) => e.trim().toLowerCase()).filter(Boolean))])
+    .pipe(z.array(z.string().email('ADMIN_EMAILS enthält eine ungültige E-Mail-Adresse'))),
+  /**
+   * Optionales Startpasswort für Konten aus ADMIN_EMAILS, die es noch nicht gibt.
+   * Bestehende Passwörter werden nie überschrieben. Nach der ersten Anmeldung wieder entfernen.
+   */
+  ADMIN_INITIAL_PASSWORD: z
+    .string()
+    .optional()
+    .transform((v) => (v && v.length ? v : undefined)),
   /** Pfad zur gebauten Weboberfläche (Produktion) */
   WEB_DIST: z.string().default('../web/dist'),
 });

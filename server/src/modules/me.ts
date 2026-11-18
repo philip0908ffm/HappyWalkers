@@ -1,4 +1,5 @@
 import { appSlug } from '@happywalkers/shared';
+import { hasAdminRole } from '../auth.js';
 import { config } from '../config.js';
 import { ANREDEN, FONT_SCALES, LOCALES, PROFILE_VISIBILITIES } from '@happywalkers/shared';
 import { and, asc, eq, inArray, ne, or, sql } from 'drizzle-orm';
@@ -44,6 +45,8 @@ export async function loadMe(userId: string) {
     avatarUrl: p.avatarPath ? `/api/v1/photos/avatar/${u.id}` : null,
     onboarded: !!p.onboardedAt,
     premium,
+    /** Rolle „admin“ (Better-Auth-Admin-Plugin) → Verwaltungsseite */
+    isAdmin: hasAdminRole(u.role),
     subscription: sub
       ? { status: sub.status, currentPeriodEnd: sub.currentPeriodEnd, cancelAtPeriodEnd: sub.cancelAtPeriodEnd, priceCents: sub.priceCents }
       : null,

@@ -15,6 +15,8 @@ export interface Me {
   avatarUrl: string | null;
   onboarded: boolean;
   premium: boolean;
+  /** Rolle „admin“ → Verwaltungsseite /verwaltung */
+  isAdmin: boolean;
   subscription: { status: string; currentPeriodEnd: string; cancelAtPeriodEnd: boolean; priceCents: number } | null;
   settings: {
     anrede: 'sie' | 'du';
@@ -45,3 +47,20 @@ export interface PublicConfig {
 }
 
 export type { Tempo };
+
+/** Verwaltung (nur Admins): Meldung mit Vorschau des Ziels, siehe docs/API.md. */
+export interface AdminReport {
+  id: string;
+  status: 'open' | 'closed';
+  reason: string;
+  createdAt: string;
+  reporter: { id: string; displayName: string; avatarUrl: string | null } | null;
+  target: {
+    type: 'user' | 'post' | 'comment' | 'group' | 'photo' | 'walk';
+    id: string;
+    exists: boolean;
+    excerpt: string | null;
+    author: { id: string; displayName: string; avatarUrl: string | null } | null;
+    removable: boolean;
+  };
+}

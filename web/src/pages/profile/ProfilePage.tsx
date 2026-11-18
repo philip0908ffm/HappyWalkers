@@ -84,6 +84,7 @@ function QuickLinks({ me }: { me: Me }) {
     { to: '/in-der-naehe', icon: 'pin', label: t('profile.linkNearby') },
     { to: '/profil/einstellungen', icon: 'settings', label: t('profile.linkSettings') },
     { to: '/wer-sieht-was', icon: 'eye', label: t('profile.linkWhoSees') },
+    ...(me.isAdmin ? [{ to: '/verwaltung', icon: 'settings' as IconName, label: t('admin:profileLink') }] : []),
   ];
   return (
     <section id="mehr" aria-labelledby="mehr-h" className="section-e">

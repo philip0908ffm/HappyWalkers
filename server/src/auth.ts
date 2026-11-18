@@ -1,5 +1,9 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { APIError, createAuthMiddleware, getSessionFromCtx } from 'better-auth/api';
+import { admin } from 'better-auth/plugins/admin';
+import { createAccessControl } from 'better-auth/plugins/access';
+import { defaultStatements } from 'better-auth/plugins/admin/access';
 import { bearer } from 'better-auth/plugins/bearer';
 import { magicLink } from 'better-auth/plugins/magic-link';
 import { phoneNumber } from 'better-auth/plugins/phone-number';
@@ -12,6 +16,48 @@ import { sendSmsCode } from './lib/sms.js';
 
 const DAY = 60 * 60 * 24;
 
+/** Mindestlänge für Passwörter (Anmeldung „Mit Passwort“ und Start-Konten). */
+export const MIN_PASSWORD_LENGTH = 12;
+
+/**
+ * Rollen für das Admin-Plugin. Admins dürfen nur das, was die Verwaltungsseite braucht:
+ * Personen auflisten/ansehen, sperren/entsperren, Rolle ändern, Sitzungen beenden.
+ * Bewusst NICHT: als andere Person anmelden (impersonate), Konten anlegen/löschen, Passwörter setzen.
+ */
+const ac = createAccessControl(defaultStatements);
+export const adminRoles = {
+  admin: ac.newRole({ user: ['list', 'get', 'ban', 'set-role'], session: ['list', 'revoke'] }),
+  user: ac.newRole({ user: [], session: [] }),
+};
+
+/** Rolle(n) aus Better Auth („admin“ oder „user“, ggf. kommagetrennt) → Admin? */
+export function hasAdminRole(role: string | null | undefined): boolean {
+  return !!role && role.split(',').some((r) => r.trim() === 'admin');
+}
+
+/** Felder, die die Personenverwaltung braucht (Datensparsamkeit: keine Telefonnummer, kein Profilbild). */
+const ADMIN_USER_FIELDS = ['id', 'name', 'email', 'role', 'banned', 'banReason', 'banExpires', 'createdAt'] as const;
+const ADMIN_USER_PATHS = new Set(['/admin/list-users', '/admin/get-user', '/admin/ban-user', '/admin/unban-user', '/admin/set-role']);
+
+function pickAdminUserFields(u: unknown): Record<string, unknown> | null {
+  if (!u || typeof u !== 'object') return null;
+  const src = u as Record<string, unknown>;
+  const out = Object.fromEntries(ADMIN_USER_FIELDS.filter((k) => k in src).map((k) => [k, src[k]]));
+  // Platzhalter-Adressen von SMS-Konten enthalten die Telefonnummer → nicht ausliefern
+  if (typeof out.email === 'string' && out.email.endsWith('.invalid')) out.email = null;
+  return out;
+}
+
+/** Admin-Endpunkte, die die Plattform nicht anbietet (zusätzlich zu den fehlenden Rechten). */
+const DISABLED_ADMIN_PATHS = [
+  '/admin/impersonate-user',
+  '/admin/stop-impersonating',
+  '/admin/create-user',
+  '/admin/update-user',
+  '/admin/remove-user',
+  '/admin/set-user-password',
+];
+
 async function anredeFor(email: string): Promise<'sie' | 'du'> {
   const rows = await db
     .select({ anrede: schema.profile.anrede })
@@ -23,9 +69,12 @@ async function anredeFor(email: string): Promise<'sie' | 'du'> {
 }
 
 /**
- * Anmeldung ohne Passwort:
- *  - Magic Link per E-Mail (Resend), 20 Minuten gültig
+ * Anmeldung:
+ *  - Magic Link per E-Mail (Resend), 20 Minuten gültig – einziger Weg, ein Konto anzulegen
  *  - SMS-Code (falls ein SMS-Anbieter eingerichtet ist)
+ *  - E-Mail + Passwort nur für Konten, die bereits ein Passwort haben (z. B. Start-Konten aus
+ *    ADMIN_EMAILS). Registrierung per Passwort ist aus – niemand muss ein Passwort haben.
+ * Rollen über das Admin-Plugin („user“/„admin“); gesperrte Personen können sich nicht anmelden.
  * „Angemeldet bleiben auf dem eigenen Gerät“: Sitzung 90 Tage, verlängert sich bei Nutzung.
  * `bearer()` erlaubt der späteren Mobil-App Anfragen mit `Authorization: Bearer <token>`.
  */
@@ -39,7 +88,13 @@ export const auth = betterAuth({
     provider: 'pg',
     schema: { user: schema.user, session: schema.session, account: schema.account, verification: schema.verification },
   }),
-  emailAndPassword: { enabled: false },
+  emailAndPassword: {
+    enabled: true,
+    disableSignUp: true,
+    minPasswordLength: MIN_PASSWORD_LENGTH,
+    maxPasswordLength: 128,
+  },
+  disabledPaths: DISABLED_ADMIN_PATHS,
   session: {
     expiresIn: 90 * DAY,
     updateAge: DAY,
@@ -50,6 +105,7 @@ export const auth = betterAuth({
     max: 100,
     customRules: {
       '/sign-in/magic-link': { window: 60 * 10, max: 5 },
+      '/sign-in/email': { window: 60 * 10, max: 5 },
       '/phone-number/send-otp': { window: 60 * 10, max: 3 },
       '/phone-number/verify': { window: 60 * 10, max: 10 },
     },
@@ -63,6 +119,28 @@ export const auth = betterAuth({
     // Die Client-IP setzt app.ts aus req.ip (trust proxy) – ein vom Browser mitgeschickter
     // X-Forwarded-For-Kopf kann die Ratenbegrenzung so nicht umgehen.
     ipAddress: { ipAddressHeaders: ['x-happywalkers-client-ip'] },
+  },
+  hooks: {
+    // Die eigene Admin-Rolle kann man sich nicht selbst entziehen (sonst gäbe es womöglich niemanden mehr).
+    before: createAuthMiddleware(async (ctx) => {
+      if (ctx.path !== '/admin/set-role') return;
+      const session = await getSessionFromCtx(ctx);
+      const body = ctx.body as { userId?: unknown; role?: unknown } | undefined;
+      const roles = Array.isArray(body?.role) ? body.role.join(',') : String(body?.role ?? '');
+      if (session && String(body?.userId ?? '') === session.user.id && !hasAdminRole(roles)) {
+        throw new APIError('BAD_REQUEST', { code: 'CANNOT_REMOVE_OWN_ADMIN_ROLE', message: 'cannot_remove_own_admin_role' });
+      }
+    }),
+    // Personenverwaltung: nur die nötigen Felder ausliefern
+    after: createAuthMiddleware(async (ctx) => {
+      if (!ADMIN_USER_PATHS.has(ctx.path)) return;
+      const returned = ctx.context.returned;
+      if (!returned || returned instanceof Response || returned instanceof Error || typeof returned !== 'object') return;
+      const body = returned as Record<string, unknown>;
+      if (Array.isArray(body.users)) return ctx.json({ ...body, users: body.users.map(pickAdminUserFields) });
+      if (body.user) return ctx.json({ ...body, user: pickAdminUserFields(body.user) });
+      if (ctx.path === '/admin/get-user') return ctx.json(pickAdminUserFields(body));
+    }),
   },
   databaseHooks: {
     user: {
@@ -104,6 +182,13 @@ export const auth = betterAuth({
         getTempEmail: (n) => `${n.replace(/\D/g, '')}@telefon.happywalkers.invalid`,
         getTempName: () => '',
       },
+    }),
+    admin({
+      defaultRole: 'user',
+      adminRoles: ['admin'],
+      ac,
+      roles: adminRoles,
+      bannedUserMessage: 'banned',
     }),
     // Nur signierte Tokens annehmen: ein roher Sitzungs-Token aus einem Datenbank-Auszug reicht nicht.
     bearer({ requireSignature: true }),

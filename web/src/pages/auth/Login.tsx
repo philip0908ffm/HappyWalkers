@@ -33,7 +33,7 @@ export default function Login() {
   const next = safeNext(params.get('weiter'));
   const { data: me } = useMe();
   const { data: cfg } = useConfig();
-  const [method, setMethod] = useState<'email' | 'sms'>('email');
+  const [method, setMethod] = useState<'email' | 'password' | 'sms'>('email');
 
   if (me) return <Navigate to={next} replace />;
 
@@ -42,23 +42,27 @@ export default function Login() {
       <PageHeader title={t('login.title')} lead={t('login.lead')} />
       <p>{t('login.newHere')}</p>
 
-      {cfg?.smsLogin ? (
-        <fieldset className="field">
-          <legend>{t('login.methodLabel')}</legend>
-          <div className="choice-list choice-list--row">
-            <label className="choice">
-              <input type="radio" name="method" checked={method === 'email'} onChange={() => setMethod('email')} />
-              <Icon name="mail" /> {t('login.methodEmail')}
-            </label>
+      <fieldset className="field">
+        <legend>{t('login.methodLabel')}</legend>
+        <div className="choice-list choice-list--row">
+          <label className="choice">
+            <input type="radio" name="method" checked={method === 'email'} onChange={() => setMethod('email')} />
+            <Icon name="mail" /> {t('login.methodEmail')}
+          </label>
+          <label className="choice">
+            <input type="radio" name="method" checked={method === 'password'} onChange={() => setMethod('password')} />
+            <Icon name="lock" /> {t('login.methodPassword')}
+          </label>
+          {cfg?.smsLogin ? (
             <label className="choice">
               <input type="radio" name="method" checked={method === 'sms'} onChange={() => setMethod('sms')} />
               <Icon name="phone" /> {t('login.methodSms')}
             </label>
-          </div>
-        </fieldset>
-      ) : null}
+          ) : null}
+        </div>
+      </fieldset>
 
-      {method === 'email' ? <EmailLogin next={next} /> : <SmsLogin next={next} />}
+      {method === 'email' ? <EmailLogin next={next} /> : method === 'password' ? <PasswordLogin /> : <SmsLogin next={next} />}
 
       <div className="notice notice--info">
         <Icon name="info" />
@@ -159,6 +163,103 @@ function EmailLogin({ next }: { next: string }) {
       </Field>
       <button type="submit" className="btn btn--large" disabled={busy} aria-disabled={busy}>
         <Icon name="mail" /> {busy ? t('common:status.sending') : t('login.sendLink')}
+      </button>
+    </form>
+  );
+}
+
+/**
+ * Anmeldung mit E-Mail und Passwort – nur für Konten, die ein Passwort haben (z. B. Verwaltung).
+ * Die Fehlermeldung verrät nicht, ob es die E-Mail-Adresse gibt.
+ */
+function PasswordLogin() {
+  const { t } = useTranslation('auth');
+  const qc = useQueryClient();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [show, setShow] = useState(false);
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [busy, setBusy] = useState(false);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+
+  async function onSubmit(e: FormEvent) {
+    e.preventDefault();
+    if (busy) return;
+    const value = email.trim();
+    if (!EMAIL_RE.test(value)) {
+      setErrors({ email: t('login.emailInvalid') });
+      emailRef.current?.focus();
+      return;
+    }
+    if (!password) {
+      setErrors({ password: t('login.passwordRequired') });
+      passwordRef.current?.focus();
+      return;
+    }
+    setErrors({});
+    setBusy(true);
+    let status: number | undefined;
+    try {
+      const { error: err } = await authClient.signIn.email({ email: value, password });
+      status = err ? (err.status ?? 500) : undefined;
+    } catch {
+      status = 0;
+    }
+    setBusy(false);
+    if (status === undefined) {
+      // Die Seite leitet weiter, sobald die Anmeldung bekannt ist
+      await qc.invalidateQueries({ queryKey: ['me'] });
+      return;
+    }
+    const message =
+      status === 429
+        ? t('common:errors.rate_limited')
+        : status === 401 || status === 400
+          ? t('login.passwordWrong')
+          : status === 403
+            ? t('login.accountBlocked')
+            : t('login.failed');
+    setErrors({ password: message });
+    passwordRef.current?.focus();
+  }
+
+  return (
+    <form onSubmit={onSubmit} noValidate>
+      <p>{t('login.passwordWhy')}</p>
+      <Field label={t('login.email')} hint={t('login.emailHint')} error={errors.email}>
+        <input
+          ref={emailRef}
+          className="input"
+          type="email"
+          name="email"
+          autoComplete="username"
+          inputMode="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      </Field>
+      <Field label={t('login.password')} error={errors.password}>
+        <input
+          ref={passwordRef}
+          className="input"
+          type={show ? 'text' : 'password'}
+          name="password"
+          autoComplete="current-password"
+          autoCapitalize="none"
+          spellCheck={false}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </Field>
+      <div className="field">
+        <label className="choice">
+          <input type="checkbox" checked={show} onChange={(e) => setShow(e.target.checked)} />
+          <Icon name="eye" /> {t('login.showPassword')}
+        </label>
+      </div>
+      <button type="submit" className="btn btn--large" disabled={busy} aria-disabled={busy}>
+        <Icon name="lock" /> {busy ? t('login.signingIn') : t('login.signIn')}
       </button>
     </form>
   );

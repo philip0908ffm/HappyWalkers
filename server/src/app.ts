@@ -12,6 +12,7 @@ import { errorHandler, forbidden, notFound } from './lib/http.js';
 import { sentSms } from './lib/sms.js';
 import { loadSession } from './middleware/auth.js';
 import { router as activitiesRouter } from './modules/activities.js';
+import { router as adminRouter } from './modules/admin.js';
 import { router as badgesRouter } from './modules/badges.js';
 import { router as challengesRouter } from './modules/challenges.js';
 import { router as configRouter } from './modules/config.js';
@@ -121,6 +122,7 @@ export function createApp() {
   api.use('/rural', ruralRouter);
   api.use('/premium', premiumRouter);
   api.use('/notifications', notificationsRouter);
+  api.use('/admin', adminRouter); // nur Rolle „admin“
   api.use('/', socialRouter); // /feed, /posts, /users, /follows, /blocks, /reports
   api.use((_req, _res, next) => next(notFound()));
   app.use('/api/v1', api);

@@ -1,0 +1,21 @@
+{
+  "lead": "Hier prüfst du Meldungen und verwaltest Personen bei {{appName}}. Diese Seite sehen nur Personen mit Verwaltungsrecht.",
+  "reports": {
+    "statusLabel": "Welche Meldungen möchtest du sehen?",
+    "colActions": "Was möchtest du tun?"
+  },
+  "people": {
+    "privacyHint": "E-Mail-Adressen siehst du nur hier. Bitte gib sie nicht weiter.",
+    "showing": "Die ersten {{shown}} werden gezeigt. Bitte suche genauer.",
+    "empty": "Keine Person gefunden. Bitte prüfe die Schreibweise.",
+    "colActions": "Was möchtest du tun?",
+    "you": "Das bist du",
+    "banText": "Die Person wird sofort abgemeldet und kann sich nicht mehr anmelden, bis du die Sperre aufhebst.",
+    "banReasonRequired": "Bitte gib einen Grund an.",
+    "selfHint": "Dein eigenes Konto kannst du hier nicht ändern."
+  },
+  "errors": {
+    "cannot_remove_own_admin_role": "Dein eigenes Verwaltungsrecht kannst du nicht entziehen.",
+    "you_cannot_ban_yourself": "Du kannst dich nicht selbst sperren."
+  }
+}
